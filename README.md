@@ -62,7 +62,7 @@ Customize the environment variables according to your specific requirements.
     or in the *`/server`* directory
 
     ```bash
-    npm run start-flask-api
+    flask run
    ```
    This will launch the flask server.
 
