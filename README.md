@@ -53,12 +53,13 @@ Customize the environment variables according to your specific requirements.
 
 ### Starting the App
 
-1. Start the Flask backend run either
+1. To start the Flask backend run either
 
     ```bash
     npm run start-flask-api
    ```
-
+    
+    in the *`/frontend`* directory,
     or in the *`/server`* directory
 
     ```bash
