@@ -60,11 +60,14 @@ Customize the environment variables according to your specific requirements.
    ```
     
     in the *`/frontend`* directory,
-    or in the *`/server`* directory
+    
+    or
 
     ```bash
     flask run
    ```
+   in the *`/server`* directory
+   
    This will launch the flask server.
 
 2. Start the React frontend:
