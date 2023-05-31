@@ -1,0 +1,9 @@
+<h1>Movie quiz</h1>
+<form action='/quiz' method='POST'>
+    <ol>
+        <li>{{question}}</li>
+        {% for answer in answers %}
+        <input type='radio' value='{{answer}}' name='{{question}}' />{{answer}}
+        {% endfor %}
+    </ol>
+</form>
