@@ -2,6 +2,7 @@ import { AppBar, Button, ThemeProvider, Toolbar, styled, useTheme } from '@mui/m
 import useSettings from 'app/hooks/useSettings';
 import { topBarHeight } from 'app/utils/constant';
 import { Paragraph, Span } from './Typography';
+import {useEffect, useState} from "react";
 
 const AppFooter = styled(Toolbar)(() => ({
   display: 'flex',
@@ -31,6 +32,17 @@ const FooterContent = styled('div')(() => ({
 const Footer = () => {
   const theme = useTheme();
   const { settings } = useSettings();
+  const [data, setData] = useState([{}])
+
+  useEffect(() => {
+    fetch('/api')
+        .then(
+            response => response.json()
+        )
+        .then(
+            data => setData(data)
+        )
+  }, []);
 
   const footerTheme = settings.themes[settings.footer.theme] || theme;
 
@@ -46,7 +58,7 @@ const Footer = () => {
             </a>
             <Span sx={{ m: 'auto' }}></Span>
             <Paragraph sx={{ m: 0 }}>
-              Design and Developed by <a href="http://ui-lib.com">UI Lib</a>
+              Design and Developed by {data.title}
             </Paragraph>
           </FooterContent>
         </AppFooter>
