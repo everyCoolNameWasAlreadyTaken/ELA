@@ -5,7 +5,8 @@ import DoughnutChart from './shared/Doughnut';
 import RowCards from './shared/RowCards';
 import StatCards from './shared/StatCards';
 import StatCards2 from './shared/StatCards2';
-import TopSellingTable from './shared/TopSellingTable';
+import TrailerRotation from './shared/TrailerRotation';
+import ThemeRotation from './shared/TopSellingTable copy';
 import UpgradeCard from './shared/UpgradeCard';
 
 const ContentBox = styled('div')(({ theme }) => ({
@@ -42,7 +43,8 @@ const Analytics = () => {
         <Grid container spacing={3}>
           <Grid item lg={8} md={8} sm={12} xs={12}>
             <StatCards />
-            <TopSellingTable />
+            <TrailerRotation />
+            <ThemeRotation />
             <StatCards2 />
 
             <H4>Ongoing Projects</H4>
