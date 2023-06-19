@@ -6,7 +6,7 @@ import RowCards from './shared/RowCards';
 import StatCards from './shared/StatCards';
 import StatCards2 from './shared/StatCards2';
 import TopSellingTable from './shared/TopSellingTable';
-import UpgradeCard from './shared/UpgradeCard';
+import MultipleChoice from './shared/MultipleChoice';
 
 const ContentBox = styled('div')(({ theme }) => ({
   margin: '30px',
@@ -60,7 +60,7 @@ const Analytics = () => {
               />
             </Card>
 
-            <UpgradeCard />
+            <MultipleChoice />
             <Campaigns />
           </Grid>
         </Grid>
