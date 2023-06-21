@@ -11,12 +11,12 @@ const CardRoot = styled(Card)(({theme}) => ({
     },
 }));
 
-const ContentBox = styled(Box)(({theme}) => ({
+const ContentBox = styled(Box)({
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
     flexWrap: 'wrap',
-}));
+});
 
 const ResultBox = styled(Box)({
     flexWrap: 'wrap',
@@ -47,16 +47,16 @@ const QuestionFeedback = styled('p')(({theme}) => ({
     color: theme.palette.text.primary,
 }));
 
-const Answers = styled(RadioGroup)(({theme}) => ({
+const Answers = styled(RadioGroup)({
     fontSize: '1rem',
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: '90%',
     marginTop: '5px',
     padding: '10px',
-}));
+});
 
-const AnswerOption = styled(FormControlLabel)(({theme}) => ({
+const AnswerOption = styled(FormControlLabel)({
     marginBottom: '10px',
     marginLeft: '15px',
     width: '90%',
@@ -71,7 +71,7 @@ const AnswerOption = styled(FormControlLabel)(({theme}) => ({
         width: '1rem',
         height: '1rem',
     },
-}));
+});
 
 const QuizStatusBox = styled(Box)(({theme}) => ({
     position: 'absolute',
@@ -107,12 +107,12 @@ const ContinueButton = styled(IconButton)({
     justifyContent: 'center',
 });
 
-const CorrectAnswer = styled('p')(({theme}) => ({
+const CorrectAnswer = styled('p')({
     fontWeight: 'bold',
     margin: '20px',
-}));
+});
 
-const GivenAnswer = styled('p')(({theme, isCorrect}) => ({
+const GivenAnswer = styled('p')(({isCorrect}) => ({
     fontWeight: 'bold',
     margin: '20px',
     color: isCorrect ? 'green' : 'red',
