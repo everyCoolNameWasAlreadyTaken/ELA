@@ -112,7 +112,6 @@ const CorrectAnswer = styled('p')(({theme}) => ({
     margin: '20px',
 }));
 
-
 const GivenAnswer = styled('p')(({theme, isCorrect}) => ({
     fontWeight: 'bold',
     margin: '20px',
