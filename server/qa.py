@@ -15,4 +15,22 @@ def generate_question(data):
                 continue
 
 
+def read_questions_from_file(file_path):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        questions = []
+        for item in data:
+            quid = item['qid']
+            question = item['question']
+            answers = item['answers']
+            correct_index = item['correct_index']
+            questions.append({
+                'qid': quid,
+                'question': question,
+                'answers': answers,
+                'correct_index': correct_index
+            })
+    return questions
+
+
 # print(generate_question("server/data/qa.json"))

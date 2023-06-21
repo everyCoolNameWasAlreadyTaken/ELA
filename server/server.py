@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import openai
 import csv
 import pandas as pd
@@ -23,8 +23,26 @@ def hello():
 #Write a movie name you want to know for variable movie_name
 @app.route("/quiz", methods=['GET'])
 def ask():
-    question, choices, answer = generate_question("data/qa.json")
-    return render_template('movies.html', question=question, answers=choices)
+    questions = read_questions_from_file("data/qa.json")
+    if len(questions) < 5:
+        return jsonify({'error': 'Insufficient questions available.'})
+
+    selected_questions = random.sample(questions, 5)
+    data = []
+    for question in selected_questions:
+        qid = question['qid']
+        question_text = question['question']
+        answers = question['answers']
+        correct_index = question['correct_index']
+
+        data.append({
+            'qid': qid,
+            'question': question_text,
+            'answers': answers,
+            'correctIndex': correct_index,
+        })
+
+    return jsonify(data)
 
 
 #Integrate ChatGPT
