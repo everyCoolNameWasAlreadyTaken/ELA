@@ -11,10 +11,37 @@ const CardRoot = styled(Card)(({theme}) => ({
     },
 }));
 
+const ContentBox = styled(Box)(({theme}) => ({
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+}));
+
+const ResultBox = styled(Box)({
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    width: '100%',
+    margin: '2px',
+    marginBottom: '5px',
+    padding: '2px',
+});
+
 const Question = styled('p')(({theme}) => ({
+    marginTop: '40px',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    width: '90%',
+    fontSize: '1rem',
+    fontWeight: '50',
+    color: theme.palette.text.primary,
+}));
+
+const QuestionFeedback = styled('p')(({theme}) => ({
     marginTop: '5px',
-    paddingTop: '10px',
-    paddingBottom: '10px',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    width: '90%',
     fontSize: '1rem',
     fontWeight: '50',
     color: theme.palette.text.primary,
@@ -22,16 +49,17 @@ const Question = styled('p')(({theme}) => ({
 
 const Answers = styled(RadioGroup)(({theme}) => ({
     fontSize: '1rem',
-    display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    width: '100%',
-    marginTop: '10px',
+    width: '90%',
+    marginTop: '5px',
+    padding: '10px',
 }));
 
 const AnswerOption = styled(FormControlLabel)(({theme}) => ({
     marginBottom: '10px',
-    marginLeft: '12px',
+    marginLeft: '15px',
+    width: '90%',
     '& .MuiFormControlLabel-label': {
         fontSize: '0.9rem',
         marginLeft: '8px',
@@ -47,28 +75,48 @@ const AnswerOption = styled(FormControlLabel)(({theme}) => ({
 
 const QuizStatusBox = styled(Box)(({theme}) => ({
     position: 'absolute',
-    top: '2px',
-    left: '2px',
+    top: '0px',
+    left: '0px',
     padding: '8px',
     background: theme.palette.primary.main,
     color: '#fff',
     borderRadius: '4px',
     fontSize: '0.9rem',
     fontWeight: 'bold',
-    zIndex: 1, // Add this line to ensure visibility
+    zIndex: 1,
 }));
 
-const ContinueButton = styled(IconButton)(({theme}) => ({
-    width: '40px',
-    height: '40px',
+const ButtonWrapper = styled('span')(({theme}) => ({
     display: 'flex',
+    justifyContent: 'center',
+    marginTop: '10px',
+    [theme.breakpoints.down('sm')]: {
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px',
+    },
+}));
+
+const ContinueButton = styled(IconButton)({
+    margin: '1px',
+    alignSelf: 'flex-end',
+    height: '40px',
+    width: '40px',
     overflow: 'hidden',
     borderRadius: '300px',
     justifyContent: 'center',
-    position: 'absolute',
-    bottom: '2%',
-    right: '2%',
-    zIndex: 1, // Add this line to ensure visibility
+});
+
+const CorrectAnswer = styled('p')(({theme}) => ({
+    fontWeight: 'bold',
+    margin: '20px',
+}));
+
+
+const GivenAnswer = styled('p')(({theme, isCorrect}) => ({
+    fontWeight: 'bold',
+    margin: '20px',
+    color: isCorrect ? 'green' : 'red',
 }));
 
 const MultipleChoice = () => {
@@ -124,26 +172,33 @@ const MultipleChoice = () => {
     return (
         <CardRoot>
             {showScore ? (
-                <Box position="relative">
+                <ContentBox>
                     <p>Score: {score}/{questions.length}</p>
                     {questions.map((question, index) => (
-                        <Card key={index}>
-                            <Question>{question.question}</Question>
-                            <p>Correct Answer: {question.answers[question.correctIndex]}</p>
-                            <p>Your Answer: {userAnswers[index]}</p>
-                        </Card>
+                        <ResultBox key={index}>
+                            <QuestionFeedback>{question.question}</QuestionFeedback>
+                            <CorrectAnswer>
+                                Correct Answer: {question.answers[questions[index].correctIndex]}</CorrectAnswer>
+                            <GivenAnswer isCorrect={questions[index].correctIndex === questions[index].answers.indexOf(userAnswers[index])}>
+                                Your Answer: {userAnswers[index]}
+                            </GivenAnswer>
+                        </ResultBox>
                     ))}
-                    <ContinueButton onClick={reload}>
-                        <Icon color="primary">replay</Icon>
-                    </ContinueButton>
-                </Box>
+                    <Tooltip title="New Quiz" placement="top">
+                        <ButtonWrapper>
+                            <ContinueButton onClick={reload}>
+                                <Icon color="primary">replay</Icon>
+                            </ContinueButton>
+                        </ButtonWrapper>
+                    </Tooltip>
+                </ContentBox>
             ) : (
                 <>
-                    <Box position="relative">
-                        <Question>{currentQuestion?.question}</Question>
+                    <ContentBox>
                         <QuizStatusBox>
                             {`${currentIndex + 1}/${questions.length}`}
                         </QuizStatusBox>
+                        <Question>{currentQuestion?.question}</Question>
                         <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
                             {currentQuestion?.answers.map((choice, index) => (
                                 <AnswerOption
@@ -155,11 +210,14 @@ const MultipleChoice = () => {
                             ))}
                         </Answers>
                         <Tooltip title="Continue" placement="top">
-                            <ContinueButton onClick={handleNextQuestion} disabled={!userAnswers[currentIndex]}>
-                                <Icon color="primary">arrow_right_alt</Icon>
-                            </ContinueButton>
+                            <ButtonWrapper>
+                                <ContinueButton onClick={handleNextQuestion} disabled={!userAnswers[currentIndex]}>
+                                    <Icon
+                                        color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
+                                </ContinueButton>
+                            </ButtonWrapper>
                         </Tooltip>
-                    </Box>
+                    </ContentBox>
                 </>
             )}
         </CardRoot>
