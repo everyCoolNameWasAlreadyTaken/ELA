@@ -116,19 +116,39 @@ def latest_movie(names, dataframe):
     return max(release, key=release.get)
 
 
+def movie_genre(names, dataframe):
+    """ 
+    
+    names: a list of movie names in automated_generated_questions.csv
+    dataframe: automated_generated_questions.csv 
+    returning movie that has the latest release date as string
+
+    """
+    df = pd.read_csv(dataframe)
+    release = dict()
+    for name in names:
+        genre = df.loc[df["movie_names"] == name, "genre"].iloc[0]
+
+    if name in genre:
+        return True
+
+
 def generate_question():
     questions = {
         0: "What is $i?",
         1: "Who is the $i?",
-        2: "Which of the following films is the $i",
-        3: "Which of the following film is a $i"
+        2: "Is this film a $i?",
+        3: "What is another film of this $i in this clip?"
     }
+    # 2: "Which of the following films is the $i"
+    #        2: ["earliest", "latest", "longest", "shortest"],
     variables = {
         0: ["the movie release year", "the movie name"],
         1: ["actor/actress", "director"],
-        2: ["earliest", "latest", "longest", "shortest"],
-        3: ["comedy", "thriller", "drama", "romance"]
+        2: ["comedy", "thriller", "drama", "romance"],
+        3: ["actor", "director"]
     }
+
     question_num = len(questions)
     question_idx = random.randint(0, question_num - 1)
     temp_obj = Template(questions[question_idx])
@@ -136,6 +156,7 @@ def generate_question():
     return result
 
 
+print(generate_question())
 # print(
 #     latest_movie(
 #         ["Harry Potter and the Sorcerer's Stone", "Jaws", "The Godfather"],
