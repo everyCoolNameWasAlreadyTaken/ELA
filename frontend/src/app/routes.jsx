@@ -18,6 +18,24 @@ const AppEchart = Loadable(lazy(() => import('app/views/charts/echarts/AppEchart
 // dashboard page
 const Analytics = Loadable(lazy(() => import('app/views/dashboard/Analytics')));
 
+
+
+// Audio page
+const Page_Audio= Loadable(lazy(() => import('app/views/dashboard/Page_Audio')));
+
+// matching page
+const Page_Matching = Loadable(lazy(() => import('app/views/dashboard/Page_Matching')));
+
+// MC page
+const Page_MC= Loadable(lazy(() => import('app/views/dashboard/Page_MC')));
+
+// RandomExam page
+const Page_RandomExam= Loadable(lazy(() => import('app/views/dashboard/Page_RandomExam')));
+
+// Video page
+const Page_Video= Loadable(lazy(() => import('app/views/dashboard/Page_Video')));
+
+
 const routes = [
   {
     element: (
@@ -33,6 +51,40 @@ const routes = [
         element: <Analytics />,
         auth: authRoles.admin
       },
+     // audio
+     {
+      path: '/dashboard/Page_Audio',
+      element: <Page_Audio />,
+      auth: authRoles.admin
+    },      
+      // matching
+      {
+        path: '/dashboard/Page_Matching',
+        element: <Page_Matching />,
+        auth: authRoles.admin
+      },
+
+      // MC
+      {
+        path: '/dashboard/Page_MC',
+        element: <Page_MC />,
+        auth: authRoles.admin
+      },
+
+      // RandomExam
+      {
+        path: '/dashboard/Page_RandomExam',
+        element: <Page_RandomExam />,
+        auth: authRoles.admin
+      },
+
+      // Video
+      {
+        path: '/dashboard/Page_Video',
+        element: <Page_Video />,
+        auth: authRoles.admin
+      },
+
 
       // e-chart rooute
       {
