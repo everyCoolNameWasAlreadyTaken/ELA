@@ -50,7 +50,6 @@ To get started with CineQuizz, follow the instructions below.
    ```
 
 Customize the environment variables according to your specific requirements.
-
 ### Starting the App
 
 1. To start the Flask backend run either
