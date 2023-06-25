@@ -7,7 +7,6 @@ import StatCards from './shared/StatCards';
 import StatCards2 from './shared/StatCards2';
 import TrailerRotation from './shared/TrailerRotation';
 import ThemeRotation from './shared/TopSellingTable copy';
-import UpgradeCard from './shared/UpgradeCard';
 import MultipleChoice from './shared/MultipleChoice';
 
 const ContentBox = styled('div')(({ theme }) => ({
