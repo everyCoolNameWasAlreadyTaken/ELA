@@ -1,4 +1,4 @@
-import { Grid, styled, useTheme } from '@mui/material';
+import { Grid, styled } from '@mui/material';
 import { Fragment } from 'react';
 import MultipleChoice from './shared/MultipleChoice';
 
