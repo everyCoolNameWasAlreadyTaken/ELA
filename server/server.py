@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, jsonify
 import openai
-import csv
-import pandas as pd
 from qa import *
+from user import *
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app, origins=["http://localhost:3000"])
 
 SERVER_PORT = 5000
 HOST = '0.0.0.0'
@@ -65,6 +67,16 @@ def api_get():
         'title': 'Flask React Application',
         'completed': False
     }
+
+
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user_name(user_id):
+    user = get_user(user_id)
+
+    if user:
+        return jsonify({'user_name': user['user_name']})
+    else:
+        return jsonify({'error': 'User not found'})
 
 
 if __name__ == '__main__':
