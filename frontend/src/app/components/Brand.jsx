@@ -24,9 +24,10 @@ const Brand = ({ children }) => {
   return (
     <BrandRoot>
       <Box display="flex" alignItems="center">
-        <MatxLogo />
+      
+        <img src="/assets/images/cinema.png" height ="35px" width="35px"alt="Logo"></img>
         <StyledSpan mode={mode} className="sidenavHoverShow">
-          Matx
+          CineQuizz
         </StyledSpan>
       </Box>
 
