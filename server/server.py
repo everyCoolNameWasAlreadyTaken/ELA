@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify
 import openai
 from qa import *
 from user import *
@@ -77,6 +77,22 @@ def get_user_name(user_id):
         return jsonify({'user_name': user['user_name']})
     else:
         return jsonify({'error': 'User not found'})
+
+
+@app.route('/users/<int:user_id>/answers', methods=['POST'])
+def stor_mc_user_answer(user_id):
+    answer_data = request.get_json()
+    print(answer_data)
+    answer_client = {}
+    for answer in answer_data:
+        qid = answer['qid']
+        is_correct = answer['isCorrect']
+        time_taken = answer['timeTaken']
+        db = (store_mc_answer_data(user_id_in=user_id, qid=qid, is_correct=is_correct, time_taken=time_taken))
+        answer_client["question_data"] = answer_data
+        answer_client["db_response"] = db
+
+    return jsonify(answer_client)
 
 
 if __name__ == '__main__':

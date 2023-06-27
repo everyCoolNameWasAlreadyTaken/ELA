@@ -1,5 +1,18 @@
-import {Box, Card, FormControlLabel, Icon, IconButton, Radio, RadioGroup, styled, Tooltip, Button, Grid} from '@mui/material';
+import {
+    Box,
+    Card,
+    FormControlLabel,
+    Icon,
+    IconButton,
+    Radio,
+    RadioGroup,
+    styled,
+    Tooltip,
+    Button,
+    Grid
+} from '@mui/material';
 import {useEffect, useState} from 'react';
+import server from '../../../../axios/axios';
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -18,7 +31,7 @@ const ContentBox = styled(Box)({
     flexWrap: 'wrap',
 });
 
-const StartButton = styled(Button)(({ theme }) => ({
+const StartButton = styled(Button)(({theme}) => ({
     alignSelf: 'center',
     background: theme.palette.primary.main,
     color: '#fff',
@@ -132,7 +145,7 @@ const GivenAnswer = styled('p')(({isCorrect}) => ({
     color: isCorrect ? 'green' : 'red',
 }));
 
-const TimeTaken = styled('p')(({ theme }) => ({
+const TimeTaken = styled('p')(({theme}) => ({
     display: 'flex',
     alignSelf: 'flex-start',
     fontWeight: 'bold',
@@ -147,25 +160,35 @@ const MultipleChoice = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
-    const [timer, setTimer] = useState(0);
+    const [timer, setTimer] = useState([]);
     const [startTime, setStartTime] = useState(0);
 
-    const load = () => {
-        fetch('/quiz')
-            .then((response) => response.json())
-            .then((data) => setQuestions(data))
-            .catch((error) => console.error('ERROR', error));
+    const userId = 0;
+
+    const fetchQuizData = async () => {
+        try {
+            const response = await server.get(`/quiz`);
+            const Quizdata = response.data;
+            setQuestions(Quizdata);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
-    useEffect(() => {
-        if(currentIndex <= questions.length) {
-            setStartTime(Date.now());
+    const startTimer = async () => {
+        try {
+            if (currentIndex <= questions.length) {
+                setStartTime(Date.now());
+            }
+        } catch (error) {
+            console.error('Error:', error);
         }
-    }, [currentIndex, questions]);
+    }
 
     const handleStartQuiz = () => {
         setQuizStarted(true);
-        load();
+        fetchQuizData();
+        startTimer();
     };
 
     const handleAnswerSelection = (event) => {
@@ -180,8 +203,13 @@ const MultipleChoice = () => {
     const handleNextQuestion = () => {
         const endTime = Date.now();
         const timeTaken = endTime - startTime;
-        setTimer(timeTaken);
-        if (questions[currentIndex].correctIndex === questions[currentIndex].answers.indexOf(userAnswers[currentIndex])) {
+        setTimer((prevTimes) => {
+            const updatedTimes = [...prevTimes];
+            updatedTimes[currentIndex] = timeTaken;
+            return updatedTimes;
+        })
+        const isCorrect = questions[currentIndex].correctIndex === questions[currentIndex].answers.indexOf(userAnswers[currentIndex])
+        if (isCorrect) {
             setScore(score + 1);
         }
         const nextIndex = currentIndex + 1;
@@ -190,6 +218,22 @@ const MultipleChoice = () => {
         } else {
             setShowScore(true);
         }
+    };
+
+    const submitUserAnswers = () => {
+        const answerData = questions.map((question, index) => ({
+            qid: index,
+            isCorrect: question.correctIndex === question.answers.indexOf(userAnswers[index]),
+            timeTaken: Date.now() - startTime,
+        }));
+
+        server.post(`/users/${userId}/answers`, answerData)
+            .then(response => {
+                console.log('Answer data submitted successfully');
+            })
+            .catch(error => {
+                console.error('Error submitting answer data:', error);
+            });
     };
 
     const reload = () => {
@@ -219,13 +263,16 @@ const MultipleChoice = () => {
                             </ContentBox>
                         ) : showScore ? (
                             <ContentBox>
+
                                 <p>Score: {score}/{questions.length}</p>
                                 {questions.map((question, index) => (
                                     <ResultBox key={index}>
                                         <QuestionFeedback>{question.question}</QuestionFeedback>
                                         <CorrectAnswer>
-                                            Correct Answer: {question.answers[questions[index].correctIndex]}</CorrectAnswer>
-                                        <GivenAnswer isCorrect={questions[index].correctIndex === questions[index].answers.indexOf(userAnswers[index])}>
+                                            Correct
+                                            Answer: {question.answers[questions[index].correctIndex]}</CorrectAnswer>
+                                        <GivenAnswer
+                                            isCorrect={questions[index].correctIndex === questions[index].answers.indexOf(userAnswers[index])}>
                                             Your Answer: {userAnswers[index]}
                                         </GivenAnswer>
                                     </ResultBox>
@@ -258,7 +305,8 @@ const MultipleChoice = () => {
                                     </Answers>
                                     <Tooltip title="Continue" placement="top">
                                         <ButtonWrapper>
-                                            <ContinueButton onClick={handleNextQuestion} disabled={!userAnswers[currentIndex]}>
+                                            <ContinueButton onClick={handleNextQuestion}
+                                                            disabled={!userAnswers[currentIndex]}>
                                                 <Icon
                                                     color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
                                             </ContinueButton>
