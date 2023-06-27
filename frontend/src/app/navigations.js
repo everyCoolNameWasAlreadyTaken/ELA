@@ -24,8 +24,8 @@ export const navigations = [
   
 
 
-  //------------------------------------------------------------------
-  { label: 'Components', type: 'label' },
+  //--------------------------Below here is Documentation and Assets in Navigation-------------------------------
+  /* { label: 'Components', type: 'label' },
   {
     name: 'Components',
     icon: 'favorite',
@@ -57,5 +57,5 @@ export const navigations = [
     icon: 'launch',
     type: 'extLink',
     path: 'http://demos.ui-lib.com/matx-react-doc/'
-  }
+  } */
 ];
