@@ -1,4 +1,4 @@
-import { Card, Grid, styled, useTheme } from '@mui/material';
+import { Grid, styled, useTheme } from '@mui/material';
 import { Fragment } from 'react';
 import MultipleChoice from './shared/MultipleChoice';
 
@@ -16,7 +16,6 @@ const Title = styled('span')(() => ({
 }));
 
 const Analytics = () => {
-  const { palette } = useTheme();
 
   return (
     <Fragment>
