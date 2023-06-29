@@ -25,7 +25,6 @@ const Analytics = () => {
             <Title>Single Choice Movie Quiz</Title>
             <MultipleChoice />
           </Grid>
-          <Grid item lg={12} md={12} sm={12} xs={12} />
         </Grid>
       </ContentBox>
     </Fragment>

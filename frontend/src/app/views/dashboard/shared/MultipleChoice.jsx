@@ -1,18 +1,5 @@
-import {
-    Box,
-    Card,
-    FormControlLabel,
-    Icon,
-    IconButton,
-    Radio,
-    RadioGroup,
-    styled,
-    Tooltip,
-    Button,
-    Grid
-} from '@mui/material';
-import {useState} from 'react';
-import server from '../../../../axios/axios';
+import {Box, Card, FormControlLabel, Icon, IconButton, Radio, RadioGroup, styled, Tooltip} from '@mui/material';
+import {useEffect, useState} from 'react';
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -114,9 +101,29 @@ const QuizStatusBox = styled(Box)(({theme}) => ({
 
 const ButtonWrapper = styled('span')(({theme}) => ({
     display: 'flex',
+    position: 'absolute',
+    top: '280px',
+    right: '50px',
+    width: '50px',
+    height: '50px',
     justifyContent: 'center',
-    alignSelf: 'flex-end',
-    marginTop: '10px',
+    float: 'right',
+    [theme.breakpoints.down('sm')]: {
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px',
+    },
+}));
+
+const ButtonWrapperLarge = styled('span')(({theme}) => ({
+    display: 'flex',
+    position: 'absolute',
+    top: '820px',
+    right: '50px',
+    width: '50px',
+    height: '50px',
+    justifyContent: 'center',
+    float: 'right',
     [theme.breakpoints.down('sm')]: {
         position: 'fixed',
         bottom: '24px',
@@ -125,7 +132,7 @@ const ButtonWrapper = styled('span')(({theme}) => ({
 }));
 
 const ContinueButton = styled(IconButton)({
-    marginTop: '20px',
+    margin: '1px',
     alignSelf: 'flex-end',
     height: '40px',
     width: '40px',
@@ -279,11 +286,11 @@ const MultipleChoice = () => {
                                 ))}
                                 <TimeTaken>Time taken: {Math.floor(timer / 1000)} seconds</TimeTaken>
                                 <Tooltip title="New Quiz" placement="top">
-                                    <ButtonWrapper>
+                                    <ButtonWrapperLarge>
                                         <ContinueButton onClick={reload}>
                                             <Icon color="primary">replay</Icon>
                                         </ContinueButton>
-                                    </ButtonWrapper>
+                                    </ButtonWrapperLarge>
                                 </Tooltip>
                             </ContentBox>
                         ) : (
