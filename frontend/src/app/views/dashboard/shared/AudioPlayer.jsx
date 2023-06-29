@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 
 const AudioPlayer = () => {
+    // eslint-disable-next-line
     const [audioFiles, setAudios] = useState([
     '/assets/AudioClips/aHkLpZsYtR.mp3',
     '/assets/AudioClips/qWdEfGjIhT.mp3',

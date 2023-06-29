@@ -2,9 +2,8 @@ import {
   Box,
   Card,
   styled,
-  
 } from '@mui/material';
-import VideoPlayer from './VideoPlayer';
+import AudioPlayer from './AudioPlayer';
 
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -23,18 +22,21 @@ const Title = styled('span')(() => ({
 
 
 
-const TrailerRotation = () => {
+
+const ThemeRotation = () => {
 
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader>
-        <Title>Trailer Rotation</Title>
+        <Title>Theme Rotation</Title>
       </CardHeader>
       <Box overflow="auto">
-        <VideoPlayer/>
+      <AudioPlayer />
       </Box>
     </Card>
   );
 };
 
-export default TrailerRotation;
+
+
+export default ThemeRotation;
