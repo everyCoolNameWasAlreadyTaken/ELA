@@ -11,7 +11,7 @@ import {
     Button,
     Grid
 } from '@mui/material';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import server from '../../../../axios/axios';
 
 const CardRoot = styled(Card)(({theme}) => ({
