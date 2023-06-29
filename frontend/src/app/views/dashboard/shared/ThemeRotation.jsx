@@ -2,9 +2,8 @@ import {
   Box,
   Card,
   styled,
-  
 } from '@mui/material';
-import VideoPlayer from './VideoPlayer';
+import AudioPlayer from './AudioPlayer';
 
 const CardHeader = styled(Box)(() => ({
   display: 'flex',
@@ -21,31 +20,40 @@ const Title = styled('span')(() => ({
   textTransform: 'capitalize',
 }));
 
+
 const SubTitle = styled('span')(({ theme }) => ({
   fontSize: '0.875rem',
   color: theme.palette.text.secondary,
 }));
-const ViewVideo = styled(Box)(() => ({
-  marginTop: '30px',
-  marginLeft: '30%',
-  marginBottom: '50px'
+const ViewAudio = styled(Box)(() => ({
+  marginTop: '50px',
+  marginLeft: '40%',
 }));
 
 
 
-const TrailerRotation = () => {
+
+const ThemeRotation = () => {
 
   return (
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader>
-        <Title>Trailer Rotation</Title>
+        <Title>Theme Rotation</Title>
       </CardHeader>
       <CardHeader>
-        <SubTitle> Play the Video and give the answer. To continue press the Button on the buttom right corner.</SubTitle>
+        <SubTitle> Play the Audio and give the answer. To continue press the Button on the buttom right corner.</SubTitle>
       </CardHeader>
-        <ViewVideo ><VideoPlayer/></ViewVideo >
+
+      <Box overflow="auto">
+
+        <ViewAudio>
+          <AudioPlayer />
+      </ViewAudio>
+      </Box>
     </Card>
   );
 };
 
-export default TrailerRotation;
+
+
+export default ThemeRotation;

@@ -88,8 +88,29 @@ const QuizStatusBox = styled(Box)(({theme}) => ({
 
 const ButtonWrapper = styled('span')(({theme}) => ({
     display: 'flex',
+    position: 'absolute',
+    top: '280px',
+    right: '50px',
+    width: '50px',
+    height: '50px',
     justifyContent: 'center',
-    marginTop: '10px',
+    float: 'right',
+    [theme.breakpoints.down('sm')]: {
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px',
+    },
+}));
+
+const ButtonWrapperLarge = styled('span')(({theme}) => ({
+    display: 'flex',
+    position: 'absolute',
+    top: '820px',
+    right: '50px',
+    width: '50px',
+    height: '50px',
+    justifyContent: 'center',
+    float: 'right',
     [theme.breakpoints.down('sm')]: {
         position: 'fixed',
         bottom: '24px',
@@ -171,6 +192,7 @@ const MultipleChoice = () => {
     return (
         <CardRoot>
             {showScore ? (
+                <>
                 <ContentBox>
                     <p>Score: {score}/{questions.length}</p>
                     {questions.map((question, index) => (
@@ -182,16 +204,16 @@ const MultipleChoice = () => {
                                 Your Answer: {userAnswers[index]}
                             </GivenAnswer>
                         </ResultBox>
-                    ))}
-                    <Tooltip title="New Quiz" placement="top">
-                        <ButtonWrapper>
+                    ))}                   
+                </ContentBox>
+                <Tooltip title="New Quiz" placement="top">
+                        <ButtonWrapperLarge>
                             <ContinueButton onClick={reload}>
                                 <Icon color="primary">replay</Icon>
                             </ContinueButton>
-                        </ButtonWrapper>
+                        </ButtonWrapperLarge>
                     </Tooltip>
-                </ContentBox>
-            ) : (
+                </>) : (
                 <>
                     <ContentBox>
                         <QuizStatusBox>
@@ -208,7 +230,9 @@ const MultipleChoice = () => {
                                 />
                             ))}
                         </Answers>
-                        <Tooltip title="Continue" placement="top">
+
+                    </ContentBox>
+                    <Tooltip title="Continue" placement="top">
                             <ButtonWrapper>
                                 <ContinueButton onClick={handleNextQuestion} disabled={!userAnswers[currentIndex]}>
                                     <Icon
@@ -216,7 +240,6 @@ const MultipleChoice = () => {
                                 </ContinueButton>
                             </ButtonWrapper>
                         </Tooltip>
-                    </ContentBox>
                 </>
             )}
         </CardRoot>

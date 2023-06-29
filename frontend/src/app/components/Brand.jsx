@@ -1,5 +1,4 @@
 import { Box, styled } from '@mui/material';
-import { MatxLogo } from 'app/components';
 import useSettings from 'app/hooks/useSettings';
 import { Span } from './Typography';
 
@@ -24,9 +23,10 @@ const Brand = ({ children }) => {
   return (
     <BrandRoot>
       <Box display="flex" alignItems="center">
-        <MatxLogo />
+      
+        <img src="/assets/images/cinema.png" height ="35px" width="35px"alt="Logo"></img>
         <StyledSpan mode={mode} className="sidenavHoverShow">
-          Matx
+          CineQuizz
         </StyledSpan>
       </Box>
 
