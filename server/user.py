@@ -17,6 +17,8 @@ def get_user(user_id):
         if name:
             res = name
         else:
-            f"User with ID {user_id} has no attribute 'name'"
+            res = f"User with ID {user_id} has no attribute 'name'"
+    return res
+
 
 

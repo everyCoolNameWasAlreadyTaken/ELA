@@ -101,6 +101,7 @@ const Layout1Topbar = () => {
             try {
                 const response = await server.get(`/users/${userId}`);
                 const userData = response.data;
+                console.log(userData);
                 setQuizUser(userData.user_name);
             } catch (error) {
                 console.error('Error:', error);

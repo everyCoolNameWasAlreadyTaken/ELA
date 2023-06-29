@@ -79,7 +79,7 @@ def get_user_name(user_id):
         return jsonify({'error': user})
 
 
-@app.route('/users/<int:user_id>/answers', methods=['POST'])
+@app.route('/users/<int:user_id>/mc', methods=['POST'])
 def store_mc_user_answer(user_id):
     answer_data = request.get_json()
     print(answer_data)

@@ -1,5 +1,6 @@
-import {Box, Card, FormControlLabel, Icon, IconButton, Radio, RadioGroup, styled, Tooltip} from '@mui/material';
-import {useEffect, useState} from 'react';
+import {Box, Card, FormControlLabel, Icon, IconButton, Radio, RadioGroup, styled, Tooltip, Button, Grid} from '@mui/material';
+import {useState} from 'react';
+import server from "../../../../axios/axios";
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -270,7 +271,6 @@ const MultipleChoice = () => {
                             </ContentBox>
                         ) : showScore ? (
                             <ContentBox>
-
                                 <p>Score: {score}/{questions.length}</p>
                                 {questions.map((question, index) => (
                                     <ResultBox key={index}>
