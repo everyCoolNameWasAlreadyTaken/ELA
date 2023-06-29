@@ -21,6 +21,16 @@ const Title = styled('span')(() => ({
 }));
 
 
+const SubTitle = styled('span')(({ theme }) => ({
+  fontSize: '0.875rem',
+  color: theme.palette.text.secondary,
+}));
+const ViewAudio = styled(Box)(() => ({
+  marginTop: '50px',
+  marginLeft: '40%',
+}));
+
+
 
 
 const ThemeRotation = () => {
@@ -30,8 +40,15 @@ const ThemeRotation = () => {
       <CardHeader>
         <Title>Theme Rotation</Title>
       </CardHeader>
+      <CardHeader>
+        <SubTitle> Play the Audio and give the answer. To continue press the Button on the buttom right corner.</SubTitle>
+      </CardHeader>
+
       <Box overflow="auto">
-      <AudioPlayer />
+
+        <ViewAudio>
+          <AudioPlayer />
+      </ViewAudio>
       </Box>
     </Card>
   );

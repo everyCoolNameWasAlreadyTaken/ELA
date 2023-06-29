@@ -21,6 +21,16 @@ const Title = styled('span')(() => ({
   textTransform: 'capitalize',
 }));
 
+const SubTitle = styled('span')(({ theme }) => ({
+  fontSize: '0.875rem',
+  color: theme.palette.text.secondary,
+}));
+const ViewVideo = styled(Box)(() => ({
+  marginTop: '0px',
+  marginLeft: '30%',
+  marginBottom: '50px'
+}));
+
 
 
 const TrailerRotation = () => {
@@ -30,9 +40,10 @@ const TrailerRotation = () => {
       <CardHeader>
         <Title>Trailer Rotation</Title>
       </CardHeader>
-      <Box overflow="auto">
-        <VideoPlayer/>
-      </Box>
+      <CardHeader>
+        <SubTitle> Play the Video and give the answer. To continue press the Button on the buttom right corner.</SubTitle>
+      </CardHeader>
+        <ViewVideo ><VideoPlayer/></ViewVideo >
     </Card>
   );
 };
