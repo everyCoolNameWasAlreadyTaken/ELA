@@ -26,7 +26,7 @@ const SubTitle = styled('span')(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 const ViewVideo = styled(Box)(() => ({
-  marginTop: '0px',
+  marginTop: '30px',
   marginLeft: '30%',
   marginBottom: '50px'
 }));
