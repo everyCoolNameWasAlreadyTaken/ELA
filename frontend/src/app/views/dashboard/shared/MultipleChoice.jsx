@@ -1,4 +1,16 @@
-import {Box, Card, FormControlLabel, Icon, IconButton, Radio, RadioGroup, styled, Tooltip, Button, Grid} from '@mui/material';
+import {
+    Box,
+    Card,
+    FormControlLabel,
+    Icon,
+    IconButton,
+    Radio,
+    RadioGroup,
+    styled,
+    Tooltip,
+    Button,
+    Grid
+} from '@mui/material';
 import {useState} from 'react';
 import server from "../../../../axios/axios";
 
@@ -264,12 +276,14 @@ const MultipleChoice = () => {
         <CardRoot>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6} md={8} lg={9}>
-                    <ContentBox>
-                        {!quizStarted ? (
+                    {!quizStarted ? (
+                        <>
                             <ContentBox>
                                 <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
                             </ContentBox>
-                        ) : showScore ? (
+                        </>
+                    ) : showScore ? (
+                        <>
                             <ContentBox>
                                 <p>Score: {score}/{questions.length}</p>
                                 {questions.map((question, index) => (
@@ -284,45 +298,45 @@ const MultipleChoice = () => {
                                         </GivenAnswer>
                                     </ResultBox>
                                 ))}
-                                <TimeTaken>Time taken: {Math.floor(timer / 1000)} seconds</TimeTaken>
-                                <Tooltip title="New Quiz" placement="top">
-                                    <ButtonWrapperLarge>
-                                        <ContinueButton onClick={reload}>
-                                            <Icon color="primary">replay</Icon>
-                                        </ContinueButton>
-                                    </ButtonWrapperLarge>
-                                </Tooltip>
                             </ContentBox>
-                        ) : (
-                            <>
-                                <ContentBox>
-                                    <QuizStatusBox>
-                                        {`${currentIndex + 1}/${questions.length}`}
-                                    </QuizStatusBox>
-                                    <Question>{currentQuestion?.question}</Question>
-                                    <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
-                                        {currentQuestion?.answers.map((choice, index) => (
-                                            <AnswerOption
-                                                key={index}
-                                                value={choice}
-                                                control={<Radio color="primary"/>}
-                                                label={choice}
-                                            />
-                                        ))}
-                                    </Answers>
-                                    <Tooltip title="Continue" placement="top">
-                                        <ButtonWrapper>
-                                            <ContinueButton onClick={handleNextQuestion}
-                                                            disabled={!userAnswers[currentIndex]}>
-                                                <Icon
-                                                    color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
-                                            </ContinueButton>
-                                        </ButtonWrapper>
-                                    </Tooltip>
-                                </ContentBox>
-                            </>
-                        )}
-                    </ContentBox>
+                            <TimeTaken>Time taken: {Math.floor(timer / 1000)} seconds</TimeTaken>
+                            <Tooltip title="New Quiz" placement="top">
+                                <ButtonWrapperLarge>
+                                    <ContinueButton onClick={reload}>
+                                        <Icon color="primary">replay</Icon>
+                                    </ContinueButton>
+                                </ButtonWrapperLarge>
+                            </Tooltip>
+                        </>
+                    ) : (
+                        <>
+                            <ContentBox>
+                                <QuizStatusBox>
+                                    {`${currentIndex + 1}/${questions.length}`}
+                                </QuizStatusBox>
+                                <Question>{currentQuestion?.question}</Question>
+                                <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
+                                    {currentQuestion?.answers.map((choice, index) => (
+                                        <AnswerOption
+                                            key={index}
+                                            value={choice}
+                                            control={<Radio color="primary"/>}
+                                            label={choice}
+                                        />
+                                    ))}
+                                </Answers>
+                            </ContentBox>
+                            <Tooltip title="Continue" placement="top">
+                                <ButtonWrapper>
+                                    <ContinueButton onClick={handleNextQuestion}
+                                                    disabled={!userAnswers[currentIndex]}>
+                                        <Icon
+                                            color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
+                                    </ContinueButton>
+                                </ButtonWrapper>
+                            </Tooltip>
+                        </>
+                    )}
                 </Grid>
             </Grid>
         </CardRoot>
