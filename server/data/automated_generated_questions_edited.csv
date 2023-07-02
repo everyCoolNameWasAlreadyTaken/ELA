@@ -1,43 +1,43 @@
-,movie_names,released_year,director,genre,cast,length
-0,Harry Potter and the Sorcerer's Stone,2001,Chris Columbus,"Adventure, Family, Fantasy","Daniel Radcliffe, Rupert Grint, Richard Harris, Maggie Smith",152
-1,Jaws,1975,Steven Spielberg,"Adventure, Thriller","Roy Scheider, Robert Shaw, Richard Dreyfuss, Lorraine Gary",124
-2,The Godfather,1972,Francis Ford Coppola,"Crime, Drama","Marlon Brando, Al Pacino, James Caan, Diane Keaton",175
-3,Avatar,2009,James Cameron,"Action, Adventure, Fantasy","Sam Worthington, Zoe Saldana, Sigourney Weaver, Michelle Rodriguez",162
-4,Inception,2010,Christopher Nolan,"Action, Adventure, Sci-Fi","Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page, Ken Watanabe",148
-5,Gladiator,2000,Ridley Scott,"Action, Adventure, Drama","Russell Crowe, Joaquin Phoenix, Connie Nielsen, Oliver Reed",155
-6,Back to the Future,1985,Robert Zemeckis,"Adventure, Comedy, Sci-Fi","Michael J. Fox, Christopher Lloyd, Lea Thompson, Crispin Glover",116
-7,Up,2009,Pete Docter,"Animation, Adventure, Comedy","Bob Peterson, Edward Asner, Jordan Nagai, John Ratzenberger",96
-8,Requiem for a Dream,2000,Darren Aronofsky,Drama,"Ellen Burstyn, Jared Leto, Jennifer Connelly, Marlon Wayans",102
-9,The Dark Knight,2008,Christopher Nolan,"Action, Crime, Drama","Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine",152
-10,Jurassic Park,1993,Steven Spielberg,"Action, Adventure, Sci-Fi","Sam Neill, Laura Dern, Jeff Goldblum, Richard Attenborough",127
-11,E.T. the Extra-Terrestrial,1982,Steven Spielberg,"Family, Sci-Fi","Henry Thomas, Drew Barrymore, Peter Coyote, Dee Wallace",115
-12,Ghostbusters,1984,Ivan Reitman,"Action, Comedy, Fantasy","Bill Murray, Dan Aykroyd, Sigourney Weaver, Harold Ramis",105
-13,Halloween,1978,John Carpenter,"Horror, Thriller","Donald Pleasence, Jamie Lee Curtis, Tony Moran, Nancy Kyes",91
-14,The Lion King,1994,Roger Allers,"Animation, Adventure, Drama","Rob Minkoff, Matthew Broderick, Jeremy Irons, James Earl Jones",88
-15,The Lord of the Rings: The Return of the King,2003,Peter Jackson,"Action, Adventure, Drama","Elijah Wood, Viggo Mortensen, Ian McKellen, Orlando Bloom",201
-16,Star Wars,1977,George Lucas,"Action, Adventure, Fantasy","Mark Hamill, Harrison Ford, Carrie Fisher, Alec Guinness",121
-17,Spider-Man: Into the Spider-Verse,2018,Bob Persichetti,"Animation, Action, Adventure","Peter Ramsey, Rodney Rothman, Shameik Moore, Jake Johnson",117
-18,Schindler's List,1993,Steven Spielberg,"Biography, Drama, History","Liam Neeson, Ralph Fiennes, Ben Kingsley, Caroline Goodall",195
-19,Indiana Jones and the Last Crusade,1989,Steven Spielberg,"Action, Adventure","Harrison Ford, Sean Connery, Alison Doody, Denholm Elliott",127
-20,Terminator 2: Judgment Day,1991,James Cameron,"Action, Sci-Fi","Arnold Schwarzenegger, Linda Hamilton, Edward Furlong, Robert Patrick",137
-21,Once Upon a Time in the West,1968,Sergio Leone,Western,"Henry Fonda, Charles Bronson, Claudia Cardinale, Jason Robards",165
-22,Rocky,1976,John G. Avildsen,"Drama, Sport","Sylvester Stallone, Talia Shire, Burt Young, Carl Weathers",120
-23,Titanic,1997,James Cameron,"Drama, Romance","Leonardo DiCaprio, Kate Winslet, Billy Zane, Kathy Bates",194
-24,Pulp Fiction,1994,Quentin Tarantino,"Crime, Drama","John Travolta, Uma Thurman, Samuel L. Jackson, Bruce Willis",154
-25,Pirates of the Caribbean: The Curse of the Black Pearl,2003,Gore Verbinski,"Action, Adventure, Fantasy","Johnny Depp, Geoffrey Rush, Orlando Bloom, Keira Knightley",143
-26,Interstellar,2014,Christopher Nolan,"Adventure, Drama, Sci-Fi","Matthew McConaughey, Anne Hathaway, Jessica Chastain, Mackenzie Foy",169
-27,Braveheart,1995,Mel Gibson,"Biography, Drama, History","Mel Gibson, Sophie Marceau, Patrick McGoohan, Angus Macfadyen",178
-28,Forrest Gump,1994,Robert Zemeckis,"Drama, Romance","Tom Hanks, Robin Wright, Gary Sinise, Sally Field",142
-29,La La Land,2016,Damien Chazelle,"Comedy, Drama, Music","Ryan Gosling, Emma Stone, Rosemarie DeWitt, J.K. Simmons",128
-30,Gravity,2013,Alfonso Cuarón,"Drama, Sci-Fi, Thriller","Sandra Bullock, George Clooney, Ed Harris, Orto Ignatiussen",91
-31,Blade Runner,1982,Ridley Scott,"Action, Sci-Fi, Thriller","Harrison Ford, Rutger Hauer, Sean Young, Edward James Olmos",117
-32，Transformers，2007，Michael Bay,"Action, Thriller", "Shia LaBeouf, Megan Fox",144
-33, Mission: Impossible,1996, Brian De Palma, "Action,Adventure, Thriller", "Tom Cruise,Jon Voight,Emmanuelle Béart",110
-34,Superman: The Movie,1978, Richard Donner,"Action,Adventure, Sci-Fi","Christopher Reeve,Margot Kidder, Gene Hackman",143
-35, Avengers Assemble,2012-2019, Joss Whedon,"Superhero, Action,Adventure", "Roger Craig Smith,Troy Baker,Fred Tatasciore",23
-36,The Fast and the Furious,2001,Rob Cohen,"Action,Crime, Thriller","Vin Diesel,Paul Walker,Michelle Rodriguez",73
-37,The Good, the Bad and the Ugly,1966,Sergio Leone,"Adventure,Western","Clint Eastwood,Eli Wallach,Lee Van Cleef",148
-38, James Bond,2015,Sai Kishore Macha,"Action, Comedy","Allari Naresh,Sakshi Chaudhary,Raghu Babu",142
-39, Charlie and the Chocolate Factory, 2005, Tim Burton,"Adventure,Comedy","Johnny Depp,Freddie Highmore,David Kelly",115
-40, Narnia,2005,Andrew Adamson,"Adventure,Family, Fantasy","Tilda Swinton,Georgie Henley,William Moseley",143
+,movie_names,released_year,director,genre,cast,length,video/audio_name
+0,Harry Potter and the Sorcerer's Stone,2001,Chris Columbus,"Adventure, Family, Fantasy","Daniel Radcliffe, Rupert Grint, Richard Harris, Maggie Smith",152,aHkLpZsYtR
+1,Jaws,1975,Steven Spielberg,"Adventure, Thriller","Roy Scheider, Robert Shaw, Richard Dreyfuss, Lorraine Gary",124,qWdEfGjIhT
+2,The Godfather,1972,Francis Ford Coppola,"Crime, Drama","Marlon Brando, Al Pacino, James Caan, Diane Keaton",175,bNxMvPlKoJ
+3,Avatar,2009,James Cameron,"Action, Adventure, Fantasy","Sam Worthington, Zoe Saldana, Sigourney Weaver, Michelle Rodriguez",162,mNbVcXzAsD
+4,Inception,2010,Christopher Nolan,"Action, Adventure, Sci-Fi","Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page, Ken Watanabe",148,zXcVbNmLoI
+5,Gladiator,2000,Ridley Scott,"Action, Adventure, Drama","Russell Crowe, Joaquin Phoenix, Connie Nielsen, Oliver Reed",155,qWeRtZUKoP
+6,Back to the Future,1985,Robert Zemeckis,"Adventure, Comedy, Sci-Fi","Michael J. Fox, Christopher Lloyd, Lea Thompson, Crispin Glover",116,pOiUyTrEsD
+7,Up,2009,Pete Docter,"Animation, Adventure, Comedy","Bob Peterson, Edward Asner, Jordan Nagai, John Ratzenberger",96,zXcVbNmLoP
+8,Requiem for a Dream,2000,Darren Aronofsky,Drama,"Ellen Burstyn, Jared Leto, Jennifer Connelly, Marlon Wayans",102,pOkouUrEsD
+9,The Dark Knight,2008,Christopher Nolan,"Action, Crime, Drama","Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine",152,ZxcVbnmAqs
+10,Jurassic Park,1993,Steven Spielberg,"Action, Adventure, Sci-Fi","Sam Neill, Laura Dern, Jeff Goldblum, Richard Attenborough",127,LkjHgfDsAx
+11,E.T. the Extra-Terrestrial,1982,Steven Spielberg,"Family, Sci-Fi","Henry Thomas, Drew Barrymore, Peter Coyote, Dee Wallace",115,QweOlUuIop
+12,Ghostbusters,1984,Ivan Reitman,"Action, Comedy, Fantasy","Bill Murray, Dan Aykroyd, Sigourney Weaver, Harold Ramis",105,pOiuytReWq
+13,Halloween,1978,John Carpenter,"Horror, Thriller","Donald Pleasence, Jamie Lee Curtis, Tony Moran, Nancy Kyes",91,vBnmQwertY
+14,The Lion King,1994,Roger Allers,"Animation, Adventure, Drama","Rob Minkoff, Matthew Broderick, Jeremy Irons, James Earl Jones",88,ZxcVbnmAsd
+15,The Lord of the Rings: The Return of the King,2003,Peter Jackson,"Action, Adventure, Drama","Elijah Wood, Viggo Mortensen, Ian McKellen, Orlando Bloom",201,gHjklpoiUt
+16,Star Wars,1977,George Lucas,"Action, Adventure, Fantasy","Mark Hamill, Harrison Ford, Carrie Fisher, Alec Guinness",121,bNmAsdfghJ
+17,Spider-Man: Into the Spider-Verse,2018,Bob Persichetti,"Animation, Action, Adventure","Peter Ramsey, Rodney Rothman, Shameik Moore, Jake Johnson",117,poiUytReWs
+18,Schindler's List,1993,Steven Spielberg,"Biography, Drama, History","Liam Neeson, Ralph Fiennes, Ben Kingsley, Caroline Goodall",195,XwCvBnMlKj
+19,Indiana Jones and the Last Crusade,1989,Steven Spielberg,"Action, Adventure","Harrison Ford, Sean Connery, Alison Doody, Denholm Elliott",127,RfDsGhJkLm
+20,Terminator 2: Judgment Day,1991,James Cameron,"Action, Sci-Fi","Arnold Schwarzenegger, Linda Hamilton, Edward Furlong, Robert Patrick",137,ZbVnMqWsEr
+21,Once Upon a Time in the West,1968,Sergio Leone,Western,"Henry Fonda, Charles Bronson, Claudia Cardinale, Jason Robards",165,JtYuIqWpAs
+22,Rocky,1976,John G. Avildsen,"Drama, Sport","Sylvester Stallone, Talia Shire, Burt Young, Carl Weathers",120,KjNmLkIuHj
+23,Titanic,1997,James Cameron,"Drama, Romance","Leonardo DiCaprio, Kate Winslet, Billy Zane, Kathy Bates",194,DgThKpFsXd
+24,Pulp Fiction,1994,Quentin Tarantino,"Crime, Drama","John Travolta, Uma Thurman, Samuel L. Jackson, Bruce Willis",154,CbVmNkLjMh
+25,Pirates of the Caribbean: The Curse of the Black Pearl,2003,Gore Verbinski,"Action, Adventure, Fantasy","Johnny Depp, Geoffrey Rush, Orlando Bloom, Keira Knightley",143,RvBnMkLpQw
+26,Interstellar,2014,Christopher Nolan,"Adventure, Drama, Sci-Fi","Matthew McConaughey, Anne Hathaway, Jessica Chastain, Mackenzie Foy",169,BnMlKjHgFv
+27,Braveheart,1995,Mel Gibson,"Biography, Drama, History","Mel Gibson, Sophie Marceau, Patrick McGoohan, Angus Macfadyen",178,GdHsKfJlMq
+28,Forrest Gump,1994,Robert Zemeckis,"Drama, Romance","Tom Hanks, Robin Wright, Gary Sinise, Sally Field",142,MnBhFgJkLp
+29,La La Land,2016,Damien Chazelle,"Comedy, Drama, Music","Ryan Gosling, Emma Stone, Rosemarie DeWitt, J.K. Simmons",128,QwErTyUqWi
+30,Gravity,2013,Alfonso Cuarón,"Drama, Sci-Fi, Thriller","Sandra Bullock, George Clooney, Ed Harris, Orto Ignatiussen",91,"Gravity Clip1,Gravity Clip2,Gravity Clip3"
+31,Blade Runner,1982,Ridley Scott,"Action, Sci-Fi, Thriller","Harrison Ford, Rutger Hauer, Sean Young, Edward James Olmos",117, "BladeRunner Clip1,BladeRunner Clip2,BladeRunner Clip3"
+32,Transformers,2007,Michael Bay,"Action, Thriller", "Shia LaBeouf, Megan Fox",144,bNxMvPlKoJ
+33, Mission: Impossible, 1996, Brian De Palma, "Action, Adventure, Thriller", "Tom Cruise, Jon Voight, Emmanuelle Béart", 110, cVbNmLkPoI
+34, Superman: The Movie, 1978, Richard Donner,"Action,Adventure, Sci-Fi","Christopher Reeve, Margot Kidder, Gene Hackman",143,ZUkltYuIoP
+35, Avengers Assemble,2012-2019, Joss Whedon,"Superhero, Action,Adventure", "Roger Craig Smith,Troy Baker,Fred Tatasciore",23,WerTyuIoPz
+36,The Fast and the Furious,2001,Rob Cohen,"Action,Crime, Thriller","Vin Diesel,Paul Walker,Michelle Rodriguez",73,asdFghjklz
+37,"The Good, the Bad and the Ugly",1966,Sergio Leone,"Adventure,Western","Clint Eastwood,Eli Wallach,Lee Van Cleef",148,ZxVbNkLjHg
+38, James Bond,2015,Sai Kishore Macha,"Action, Comedy","Allari Naresh,Sakshi Chaudhary,Raghu Babu",142, TsWqErYhUj
+39, Charlie and the Chocolate Factory, 2005, Tim Burton,"Adventure, Comedy","Johnny Depp, Freddie Highmore, David Kelly",115, WpAsDfGhJk
+40, Narnia, 2005, Andrew Adamson,"Adventure, Family, Fantasy","Tilda Swinton, Georgie Henley, William Moseley",143, YnTgHmJbFs
 
