@@ -88,7 +88,7 @@ def generate_all_questions():
 
 def generate_qa_for_automated():
     all_questions = generate_all_questions()
-    database = pd.read_csv(r"data/automated_generated_questions_edited.csv",
+    database = pd.read_csv(r"data/automated_questions_video.csv",
                            skipinitialspace=True,
                            quotechar='"')
     auto_qa = dict()
@@ -114,39 +114,11 @@ def generate_qa_for_automated():
     ]
 
     df_autoqa = pd.DataFrame(auto_qa)
-    df_autoqa.to_csv("data/automated_data.csv")
-
-    with open("data/automated_data.json", "w") as outfile:
-        json.dump(auto_qa, outfile)
+    df_autoqa.to_csv("data/video_answers.csv")
 
 
-gravity = [
-    '/assets/VideoClips/Gravity_Clip1.mp4',
-    '/assets/VideoClips/Gravity_Clip2.mp4',
-    '/assets/VideoClips/Gravity_Clip3.mp4'
-]
-
-Blade_Runner = [
-    '/assets/VideoClips/BladeRunner_Clip1.mp4',
-    '/assets/VideoClips/BladeRunner_Clip2.mp4',
-    '/assets/VideoClips/BladeRunner_Clip3.mp4'
-]
-
-movie_clips = {}
-
-database = pd.read_csv(r"data/automated_generated_questions_edited.csv",
-                       skipinitialspace=True,
-                       quotechar='"')
-movies = database["movie_names"].tolist()
-movie_ids = database["video/audio_name"].tolist()
-video_clips = {}
-for i in range(len(movies)):
-    video_clips[movie_ids[i]] = movies[i]
-random_video_id = random.choice(list(video_clips.keys()))
-
-
-def filter_method(random_video_id, question_num):
-    question_data = pd.read_csv("data/automated_data.csv")
+def filter_method(random_video_id, question_num, answer_data, database):
+    question_data = pd.read_csv(answer_data)
     questions = generate_all_questions()
     movie_id = database["video/audio_name"].tolist()
     data = []
@@ -156,18 +128,18 @@ def filter_method(random_video_id, question_num):
             if id == random_video_id:
                 data.append({
                     'question': question,
-                    'answer': question_data.iloc[idx, idx_q + 1]
+                    'answer': str(question_data.iloc[idx, idx_q + 1])
                 })
                 q_num += 1
                 if q_num == question_num:
                     return data
 
 
-def combime_method(random_video_id, filtered_data):
+def combime_method(random_video_id, filtered_data, database, format):
     data = []
     data.append({
         "clip_address":
-        "/assets/AudioClips/" + random_video_id + ".mp3",
+        "/assets/AudioClips/" + random_video_id + format,
         "movie_name":
         database.loc[database["video/audio_name"] == random_video_id,
                      "movie_names"].iloc[0],
