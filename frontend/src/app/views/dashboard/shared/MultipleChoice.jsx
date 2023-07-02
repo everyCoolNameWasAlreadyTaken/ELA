@@ -1,5 +1,18 @@
-import {Box, Card, FormControlLabel, Icon, IconButton, Radio, RadioGroup, styled, Tooltip} from '@mui/material';
-import {useEffect, useState} from 'react';
+import {
+    Box,
+    Card,
+    FormControlLabel,
+    Icon,
+    IconButton,
+    Radio,
+    RadioGroup,
+    styled,
+    Tooltip,
+    Button,
+    Grid
+} from '@mui/material';
+import {useState} from 'react';
+import server from "../../../../axios/axios";
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -17,6 +30,19 @@ const ContentBox = styled(Box)({
     alignItems: 'center',
     flexWrap: 'wrap',
 });
+
+const StartButton = styled(Button)(({theme}) => ({
+    alignSelf: 'center',
+    background: theme.palette.primary.main,
+    color: '#fff',
+    borderRadius: '4px',
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    padding: '12px 24px',
+    '&:hover': {
+        background: theme.palette.primary.dark,
+    },
+}));
 
 const ResultBox = styled(Box)({
     flexWrap: 'wrap',
@@ -139,19 +165,51 @@ const GivenAnswer = styled('p')(({isCorrect}) => ({
     color: isCorrect ? 'green' : 'red',
 }));
 
+const TimeTaken = styled('p')(({theme}) => ({
+    display: 'flex',
+    alignSelf: 'flex-start',
+    fontWeight: 'bold',
+    margin: '5px',
+    color: theme.palette.primary.main,
+}));
+
 const MultipleChoice = () => {
+    const [quizStarted, setQuizStarted] = useState(false);
     const [questions, setQuestions] = useState([]);
     const [userAnswers, setUserAnswers] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
+    const [timer, setTimer] = useState([]);
+    const [startTime, setStartTime] = useState(0);
 
-    useEffect(() => {
-        fetch('/quiz')
-            .then((response) => response.json())
-            .then((data) => setQuestions(data))
-            .catch((error) => console.error('ERROR', error));
-    }, []);
+    const userId = 0;
+
+    const fetchQuizData = async () => {
+        try {
+            const response = await server.get(`/quiz`);
+            const Quizdata = response.data;
+            setQuestions(Quizdata);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+    const startTimer = async () => {
+        try {
+            if (currentIndex <= questions.length) {
+                setStartTime(Date.now());
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleStartQuiz = () => {
+        setQuizStarted(true);
+        fetchQuizData();
+        startTimer();
+    };
 
     const handleAnswerSelection = (event) => {
         const selectedAnswer = event.target.value;
@@ -163,7 +221,15 @@ const MultipleChoice = () => {
     };
 
     const handleNextQuestion = () => {
-        if (questions[currentIndex].correctIndex === questions[currentIndex].answers.indexOf(userAnswers[currentIndex])) {
+        const endTime = Date.now();
+        const timeTaken = endTime - startTime;
+        setTimer((prevTimes) => {
+            const updatedTimes = [...prevTimes];
+            updatedTimes[currentIndex] = timeTaken;
+            return updatedTimes;
+        })
+        const isCorrect = questions[currentIndex].correctIndex === questions[currentIndex].answers.indexOf(userAnswers[currentIndex])
+        if (isCorrect) {
             setScore(score + 1);
         }
         const nextIndex = currentIndex + 1;
@@ -172,6 +238,22 @@ const MultipleChoice = () => {
         } else {
             setShowScore(true);
         }
+    };
+
+    const submitUserAnswers = () => {
+        const answerData = questions.map((question, index) => ({
+            qid: index,
+            isCorrect: question.correctIndex === question.answers.indexOf(userAnswers[index]),
+            timeTaken: Date.now() - startTime,
+        }));
+
+        server.post(`/users/${userId}/answers`, answerData)
+            .then(response => {
+                console.log('Answer data submitted successfully');
+            })
+            .catch(error => {
+                console.error('Error submitting answer data:', error);
+            });
     };
 
     const reload = () => {
@@ -183,6 +265,7 @@ const MultipleChoice = () => {
                 setCurrentIndex(0);
                 setScore(0);
                 setShowScore(false);
+                setQuizStarted(false);
             })
             .catch((error) => console.error('ERROR', error));
     };
@@ -191,57 +274,71 @@ const MultipleChoice = () => {
 
     return (
         <CardRoot>
-            {showScore ? (
-                <>
-                <ContentBox>
-                    <p>Score: {score}/{questions.length}</p>
-                    {questions.map((question, index) => (
-                        <ResultBox key={index}>
-                            <QuestionFeedback>{question.question}</QuestionFeedback>
-                            <CorrectAnswer>
-                                Correct Answer: {question.answers[questions[index].correctIndex]}</CorrectAnswer>
-                            <GivenAnswer isCorrect={questions[index].correctIndex === questions[index].answers.indexOf(userAnswers[index])}>
-                                Your Answer: {userAnswers[index]}
-                            </GivenAnswer>
-                        </ResultBox>
-                    ))}                   
-                </ContentBox>
-                <Tooltip title="New Quiz" placement="top">
-                        <ButtonWrapperLarge>
-                            <ContinueButton onClick={reload}>
-                                <Icon color="primary">replay</Icon>
-                            </ContinueButton>
-                        </ButtonWrapperLarge>
-                    </Tooltip>
-                </>) : (
-                <>
-                    <ContentBox>
-                        <QuizStatusBox>
-                            {`${currentIndex + 1}/${questions.length}`}
-                        </QuizStatusBox>
-                        <Question>{currentQuestion?.question}</Question>
-                        <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
-                            {currentQuestion?.answers.map((choice, index) => (
-                                <AnswerOption
-                                    key={index}
-                                    value={choice}
-                                    control={<Radio color="primary"/>}
-                                    label={choice}
-                                />
-                            ))}
-                        </Answers>
-
-                    </ContentBox>
-                    <Tooltip title="Continue" placement="top">
-                            <ButtonWrapper>
-                                <ContinueButton onClick={handleNextQuestion} disabled={!userAnswers[currentIndex]}>
-                                    <Icon
-                                        color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
-                                </ContinueButton>
-                            </ButtonWrapper>
-                        </Tooltip>
-                </>
-            )}
+            <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={8} lg={9}>
+                    {!quizStarted ? (
+                        <>
+                            <ContentBox>
+                                <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
+                            </ContentBox>
+                        </>
+                    ) : showScore ? (
+                        <>
+                            <ContentBox>
+                                <p>Score: {score}/{questions.length}</p>
+                                {questions.map((question, index) => (
+                                    <ResultBox key={index}>
+                                        <QuestionFeedback>{question.question}</QuestionFeedback>
+                                        <CorrectAnswer>
+                                            Correct
+                                            Answer: {question.answers[questions[index].correctIndex]}</CorrectAnswer>
+                                        <GivenAnswer
+                                            isCorrect={questions[index].correctIndex === questions[index].answers.indexOf(userAnswers[index])}>
+                                            Your Answer: {userAnswers[index]}
+                                        </GivenAnswer>
+                                    </ResultBox>
+                                ))}
+                            </ContentBox>
+                            <TimeTaken>Time taken: {Math.floor(timer / 1000)} seconds</TimeTaken>
+                            <Tooltip title="New Quiz" placement="top">
+                                <ButtonWrapperLarge>
+                                    <ContinueButton onClick={reload}>
+                                        <Icon color="primary">replay</Icon>
+                                    </ContinueButton>
+                                </ButtonWrapperLarge>
+                            </Tooltip>
+                        </>
+                    ) : (
+                        <>
+                            <ContentBox>
+                                <QuizStatusBox>
+                                    {`${currentIndex + 1}/${questions.length}`}
+                                </QuizStatusBox>
+                                <Question>{currentQuestion?.question}</Question>
+                                <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
+                                    {currentQuestion?.answers.map((choice, index) => (
+                                        <AnswerOption
+                                            key={index}
+                                            value={choice}
+                                            control={<Radio color="primary"/>}
+                                            label={choice}
+                                        />
+                                    ))}
+                                </Answers>
+                            </ContentBox>
+                            <Tooltip title="Continue" placement="top">
+                                <ButtonWrapper>
+                                    <ContinueButton onClick={handleNextQuestion}
+                                                    disabled={!userAnswers[currentIndex]}>
+                                        <Icon
+                                            color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
+                                    </ContinueButton>
+                                </ButtonWrapper>
+                            </Tooltip>
+                        </>
+                    )}
+                </Grid>
+            </Grid>
         </CardRoot>
     );
 };
