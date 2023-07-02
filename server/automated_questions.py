@@ -4,10 +4,6 @@ import pandas as pd
 import os
 import json
 
-#path = "/Users/zhaoyuting/23 summer/ELA/server"
-#os.chdir(path)
-
-
 def create_answer_df():
     """ 
 
