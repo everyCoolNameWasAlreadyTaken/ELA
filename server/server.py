@@ -3,6 +3,8 @@ import openai
 import csv
 import pandas as pd
 from qa import *
+from automated_questions import *
+from qa import *
 
 app = Flask(__name__)
 
@@ -42,6 +44,25 @@ def ask():
             'correctIndex': correct_index,
         })
 
+    return jsonify(data)
+
+
+@app.route("/automated", methods=['GET'])
+def qa():
+    questions = generate_all_questions()
+    movie_data = pd.read_csv("data/automated_generated_questions_edited.csv",
+                             skipinitialspace=True,
+                             quotechar='"')
+    question_data = pd.read_csv("data/automated_data.csv")
+    movie_id = movie_data["video/audio_name"].tolist()
+    data = []
+    for idx_q, question in enumerate(questions):
+        for idx, id in enumerate(movie_id):
+            data.append({
+                'question': question,
+                'movie_id': id,
+                'answer': question_data.iloc[idx, idx_q + 1]
+            })
     return jsonify(data)
 
 
