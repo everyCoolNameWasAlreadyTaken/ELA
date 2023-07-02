@@ -20,7 +20,7 @@ movie_name = "The Shawshank Redemption"
 def hello():
     return 'Hello from Flask Server :)'
 
-
+#Multiple Choice
 #Generate movie released year by its name
 #Write a movie name you want to know for variable movie_name
 @app.route("/quiz", methods=['GET'])
@@ -47,6 +47,7 @@ def ask():
     return jsonify(data)
 
 
+#Audio and Video Question Generation
 @app.route("/automated", methods=['GET'])
 def qa():
     questions = generate_all_questions()
