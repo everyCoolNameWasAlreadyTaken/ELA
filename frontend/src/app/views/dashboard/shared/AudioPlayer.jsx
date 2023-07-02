@@ -5,7 +5,7 @@ import server from "../../../../axios/axios";
 
 
 const AudioPlayer = () => {
-    // eslint-disable-next-line
+   /*  // eslint-disable-next-line
     const [audioFiles, setAudios] = useState([
     '/assets/AudioClips/aHkLpZsYtR.mp3',
     '/assets/AudioClips/qWdEfGjIhT.mp3',
@@ -46,33 +46,47 @@ const AudioPlayer = () => {
     '/assets/AudioClips/YnTgHmJbFs.mp3',
     '/assets/AudioClips/WpAsDfGhJk.mp3',
     '/assets/AudioClips/MnBhFgJkLp.mp3',
-    '/assets/AudioClips/QwErTyUqWi.mp3',]);
+    '/assets/AudioClips/QwErTyUqWi.mp3',]); */
 
-  const fetchQuizData = async () => {
-    try {
-         const response = await server.get(`/automated`);
-         const Quizdata = response.data;
-          setData(Quizdata);
-        } catch (error) {
-          console.error('Error:', error);
-    }
-  };
-
-
-
-
+      const [quizStarted, setQuizStarted] = useState(false);
+      const [questions, setQuestions] = useState([]);
+      const [userAnswers, setUserAnswers] = useState([]);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [score, setScore] = useState(0);
+      const [showScore, setShowScore] = useState(false);
+      const [timer, setTimer] = useState([]);
+      const [startTime, setStartTime] = useState(0);
   
+      const [currentAudio, setCurrentAudio] = useState('/assets/AudioClips/aHkLpZsYtR.mp3');
+  
+//Get Audiodata from Backend
+const fetchQuizData = async () => {
+  try {
+       const response = await server.get(`/Audio`);
+       const {audiolink, moviename, question1, answere1, question2, answere2, question3, answere3} = response.data;
+       
+       setCurrentAudio(audiolink);
+      } catch (error) {
+        console.error('Error:', error);
+  }
+};
+ 
+const startTimer = async () => {
+  try {
+      if (currentIndex <= questions.length) {
+          setStartTime(Date.now());
+      }
+  } catch (error) {
+      console.error('Error:', error);
+  }
+}
+const handleStartQuiz = () => {
+  setQuizStarted(true);
+  fetchQuizData();
+  startTimer();
+};
 
-    const [currentAudio, setCurrentAudio] = useState('');
-    const [data, setData] = useState(null);
-      
-    useEffect(() => {
-      const randomIndex = Math.floor(Math.random() * audioFiles.length);
-        setCurrentAudio(audioFiles[randomIndex]);
-        fetchQuizData();
-                    }, [audioFiles]);
-      
-        return (
+return (
           <div>
             {currentAudio && (
               <ReactAudioPlayer 
@@ -80,7 +94,7 @@ const AudioPlayer = () => {
               controls />
             )}
             <div>
-            {data && <p>{data.message}</p>}
+              Examplequestion
             </div>
           </div>
 
