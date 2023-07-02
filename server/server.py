@@ -5,12 +5,8 @@ import pandas as pd
 from qa import *
 from automated_questions import *
 from qa import *
-from user import *
-from flask_cors import CORS
 
 app = Flask(__name__)
-
-CORS(app, origins=["http://localhost:3000"])
 
 SERVER_PORT = 5000
 HOST = '0.0.0.0'
@@ -24,7 +20,7 @@ movie_name = "The Shawshank Redemption"
 def hello():
     return 'Hello from Flask Server :)'
 
-#Multiple Choice
+
 #Generate movie released year by its name
 #Write a movie name you want to know for variable movie_name
 @app.route("/quiz", methods=['GET'])
@@ -51,24 +47,21 @@ def ask():
     return jsonify(data)
 
 
-#Audio and Video Question Generation
-@app.route("/automated", methods=['GET'])
+@app.route("/audio", methods=['GET'])
 def qa():
-    questions = generate_all_questions()
-    movie_data = pd.read_csv("data/automated_generated_questions_edited.csv",
-                             skipinitialspace=True,
-                             quotechar='"')
-    question_data = pd.read_csv("data/automated_data.csv")
-    movie_id = movie_data["video/audio_name"].tolist()
-    data = []
-    for idx_q, question in enumerate(questions):
-        for idx, id in enumerate(movie_id):
-            data.append({
-                'question': question,
-                'movie_id': id,
-                'answer': question_data.iloc[idx, idx_q + 1]
-            })
-    return jsonify(data)
+    database = pd.read_csv(r"data/automated_generated_questions_edited.csv",
+                           skipinitialspace=True,
+                           quotechar='"')
+    movies = database["movie_names"].tolist()
+    movie_ids = database["video/audio_name"].tolist()
+    video_clips = {}
+    for i in range(len(movies)):
+        video_clips[movie_ids[i]] = movies[i]
+    random_video_id = random.choice(list(video_clips.keys()))
+    #retrieve 5 questions for each movie
+    filtered_movie = filter_method(random_video_id, 5)
+    combined_data = combime_method(random_video_id, filtered_movie)
+    return jsonify(combined_data)
 
 
 #Integrate ChatGPT
@@ -91,22 +84,6 @@ def api_get():
         'title': 'Flask React Application',
         'completed': False
     }
-
-
-@app.route('/users/<int:user_id>', methods=['GET'])
-def get_user_name(user_id):
-    user = get_user(int(user_id))
-
-    if user:
-        return jsonify({'user_name': user})
-    else:
-        return jsonify({'error': user})
-
-
-@app.route('/users/<int:user_id>/mc', methods=['POST'])
-def store_mc_user_answer(user_id):
-    answer_data = request.get_json()
-    print(answer_data)
 
 
 if __name__ == '__main__':

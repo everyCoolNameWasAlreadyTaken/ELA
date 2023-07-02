@@ -1,11 +1,7 @@
 from string import Template
 import random
 import pandas as pd
-import os
 import json
-
-#path = "/Users/zhaoyuting/23 summer/ELA/server"
-#os.chdir(path)
 
 
 def create_answer_df():
@@ -58,85 +54,6 @@ def create_answer_df():
     df_answers.to_csv("server/data/automated_generated_questions.csv")
 
 
-def longest_movie(names, dataframe):
-    """ 
-    
-    names: a list of movie names in automated_generated_questions.csv
-    dataframe: automated_generated_questions.csv 
-    returning movie name of the longest length as string
-
-    """
-    df = pd.read_csv(dataframe)
-    length = dict()
-    for name in names:
-        length[name] = df.loc[df["movie_names"] == name, "length"].iloc[0]
-    return max(length, key=length.get)
-
-
-def shortest_movie(names, dataframe):
-    """ 
-    
-    names: a list of movie names in automated_generated_questions.csv
-    dataframe: automated_generated_questions.csv 
-    returning movie name of the shortest length as string
-
-    """
-    df = pd.read_csv(dataframe)
-    length = dict()
-    for name in names:
-        length[name] = df.loc[df["movie_names"] == name, "length"].iloc[0]
-    return min(length, key=length.get)
-
-
-def earliest_movie(names, dataframe):
-    """ 
-    
-    names: a list of movie names in automated_generated_questions.csv
-    dataframe: automated_generated_questions.csv 
-    returning movie that has the earliest release date as string
-
-    """
-    df = pd.read_csv(dataframe)
-    release = dict()
-    for name in names:
-        release[name] = df.loc[df["movie_names"] == name,
-                               "released_year"].iloc[0]
-    return min(release, key=release.get)
-
-
-def latest_movie(names, dataframe):
-    """ 
-    
-    names: a list of movie names in automated_generated_questions.csv
-    dataframe: automated_generated_questions.csv 
-    returning movie that has the latest release date as string
-
-    """
-    df = pd.read_csv(dataframe)
-    release = dict()
-    for name in names:
-        release[name] = df.loc[df["movie_names"] == name,
-                               "released_year"].iloc[0]
-    return max(release, key=release.get)
-
-
-def movie_genre(names, dataframe):
-    """ 
-    
-    names: a list of movie names in automated_generated_questions.csv
-    dataframe: automated_generated_questions.csv 
-    returning movie that has the latest release date as string
-
-    """
-    df = pd.read_csv(dataframe)
-    release = dict()
-    for name in names:
-        genre = df.loc[df["movie_names"] == name, "genre"].iloc[0]
-
-    if name in genre:
-        return True
-
-
 questions = {0: "What is $i?", 1: "Who is the $i?", 2: "Is this film a $i?"}
 # 2: "Which of the following films is the $i"
 #        2: ["earliest", "latest", "longest", "shortest"],
@@ -169,62 +86,92 @@ def generate_all_questions():
     return all_questions
 
 
-all_questions = generate_all_questions()
-print(all_questions)
+def generate_qa_for_automated():
+    all_questions = generate_all_questions()
+    database = pd.read_csv(r"data/automated_generated_questions_edited.csv",
+                           skipinitialspace=True,
+                           quotechar='"')
+    auto_qa = dict()
+    auto_qa[all_questions[0]] = database["released_year"].tolist()
+    auto_qa[all_questions[1]] = database["movie_names"].tolist()
+    auto_qa[all_questions[2]] = database["cast"].tolist()
+    auto_qa[all_questions[3]] = database["director"].tolist()
+    auto_qa[all_questions[4]] = [
+        "yes" if "comedy" in g.lower() else "no"
+        for g in database["genre"].tolist()
+    ]
+    auto_qa[all_questions[5]] = [
+        "yes" if "thriller" in g.lower() else "no"
+        for g in database["genre"].tolist()
+    ]
+    auto_qa[all_questions[6]] = [
+        "yes" if "drama" in g.lower() else "no"
+        for g in database["genre"].tolist()
+    ]
+    auto_qa[all_questions[7]] = [
+        "yes" if "romance" in g.lower() else "no"
+        for g in database["genre"].tolist()
+    ]
+
+    df_autoqa = pd.DataFrame(auto_qa)
+    df_autoqa.to_csv("data/automated_data.csv")
+
+    with open("data/automated_data.json", "w") as outfile:
+        json.dump(auto_qa, outfile)
+
+
+gravity = [
+    '/assets/VideoClips/Gravity_Clip1.mp4',
+    '/assets/VideoClips/Gravity_Clip2.mp4',
+    '/assets/VideoClips/Gravity_Clip3.mp4'
+]
+
+Blade_Runner = [
+    '/assets/VideoClips/BladeRunner_Clip1.mp4',
+    '/assets/VideoClips/BladeRunner_Clip2.mp4',
+    '/assets/VideoClips/BladeRunner_Clip3.mp4'
+]
+
+movie_clips = {}
+
 database = pd.read_csv(r"data/automated_generated_questions_edited.csv",
                        skipinitialspace=True,
                        quotechar='"')
-auto_qa = dict()
-auto_qa[all_questions[0]] = database["released_year"].tolist()
-auto_qa[all_questions[1]] = database["movie_names"].tolist()
-auto_qa[all_questions[2]] = database["cast"].tolist()
-auto_qa[all_questions[3]] = database["director"].tolist()
-auto_qa[all_questions[4]] = [
-    "yes" if "comedy" in g.lower() else "no"
-    for g in database["genre"].tolist()
-]
-auto_qa[all_questions[5]] = [
-    "yes" if "thriller" in g.lower() else "no"
-    for g in database["genre"].tolist()
-]
-auto_qa[all_questions[6]] = [
-    "yes" if "drama" in g.lower() else "no"
-    for g in database["genre"].tolist()
-]
-auto_qa[all_questions[7]] = [
-    "yes" if "romance" in g.lower() else "no"
-    for g in database["genre"].tolist()
-]
-
-df_autoqa = pd.DataFrame(auto_qa)
-df_autoqa.to_csv("data/automated_data.csv")
-
-with open("data/automated_data.json", "w") as outfile:
-    json.dump(auto_qa, outfile)
+movies = database["movie_names"].tolist()
+movie_ids = database["video/audio_name"].tolist()
+video_clips = {}
+for i in range(len(movies)):
+    video_clips[movie_ids[i]] = movies[i]
+random_video_id = random.choice(list(video_clips.keys()))
 
 
-#print(generate_question())
-# print(
-#     latest_movie(
-#         ["Harry Potter and the Sorcerer's Stone", "Jaws", "The Godfather"],
-#         "server/data/automated_generated_questions.csv"))
-def qa():
-    questions = generate_all_questions()
-    movie_data = pd.read_csv("data/automated_generated_questions_edited.csv",
-                             skipinitialspace=True,
-                             quotechar='"')
+def filter_method(random_video_id, question_num):
     question_data = pd.read_csv("data/automated_data.csv")
-    print(question_data.info())
-    movie_id = movie_data["video/audio_name"].tolist()
+    questions = generate_all_questions()
+    movie_id = database["video/audio_name"].tolist()
     data = []
+    q_num = 0
     for idx_q, question in enumerate(questions):
         for idx, id in enumerate(movie_id):
-            data.append({
-                'question': question,
-                'movie_id': id,
-                'answer': question_data.iloc[idx, idx_q + 1]
-            })
+            if id == random_video_id:
+                data.append({
+                    'question': question,
+                    'answer': question_data.iloc[idx, idx_q + 1]
+                })
+                q_num += 1
+                if q_num == question_num:
+                    return data
+
+
+def combime_method(random_video_id, filtered_data):
+    data = []
+    data.append({
+        "clip_address":
+        "/assets/AudioClips/" + random_video_id + ".mp3",
+        "movie_name":
+        database.loc[database["video/audio_name"] == random_video_id,
+                     "movie_names"].iloc[0],
+        "questions":
+        filtered_data
+    })
     return data
-
-
-print(qa())
