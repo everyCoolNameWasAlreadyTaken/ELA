@@ -238,8 +238,9 @@ const AudioPlayer = () => {
 //Get Audiodata from Backend
 const fetchQuizData = async () => {
   try {
-       const response = await server.get(`/Audio`);
-       const {clip_adress, movie_name, questions} = response.data;
+       const response = await server.get(`/audio`);
+       const Quizdata = response.data;
+       console.log("MovieName: ", Quizdata.movie_name);
        
        setCurrentAudio(clip_adress);
        setQuestions(questions);
@@ -363,12 +364,14 @@ return (
               </>
           ) : (
               <>
-                  <ContentBox>
-                  {clip_adress && (
+              Test
+              {`${movie_name}`}
+              {clip_adress && (
                   <ReactAudioPlayer 
                     src={clip_adress} 
                       controls />
                       )}
+                  <ContentBox>
                       <QuizStatusBox>
                           {`${currentIndex + 1}/${questions.length}`}
                       </QuizStatusBox>

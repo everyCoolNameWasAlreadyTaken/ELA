@@ -5,8 +5,11 @@ import pandas as pd
 from qa import *
 from automated_questions import *
 from qa import *
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app, origins=["http://localhost:3000"])
 
 SERVER_PORT = 5000
 HOST = '0.0.0.0'
