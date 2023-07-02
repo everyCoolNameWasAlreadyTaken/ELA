@@ -1,0 +1,42 @@
+,What is the movie release year?,What is the movie name?,Who is the actor/actress?,Who is the director?,Is this film a comedy?,Is this film a thriller?,Is this film a drama?,Is this film a romance?
+0,2001,Harry Potter and the Sorcerer's Stone,"Daniel Radcliffe, Rupert Grint, Richard Harris, Maggie Smith",Chris Columbus,no,no,no,no
+1,1975,Jaws,"Roy Scheider, Robert Shaw, Richard Dreyfuss, Lorraine Gary",Steven Spielberg,no,yes,no,no
+2,1972,The Godfather,"Marlon Brando, Al Pacino, James Caan, Diane Keaton",Francis Ford Coppola,no,no,yes,no
+3,2009,Avatar,"Sam Worthington, Zoe Saldana, Sigourney Weaver, Michelle Rodriguez",James Cameron,no,no,no,no
+4,2010,Inception,"Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page, Ken Watanabe",Christopher Nolan,no,no,no,no
+5,2000,Gladiator,"Russell Crowe, Joaquin Phoenix, Connie Nielsen, Oliver Reed",Ridley Scott,no,no,yes,no
+6,1985,Back to the Future,"Michael J. Fox, Christopher Lloyd, Lea Thompson, Crispin Glover",Robert Zemeckis,yes,no,no,no
+7,2009,Up,"Bob Peterson, Edward Asner, Jordan Nagai, John Ratzenberger",Pete Docter,yes,no,no,no
+8,2000,Requiem for a Dream,"Ellen Burstyn, Jared Leto, Jennifer Connelly, Marlon Wayans",Darren Aronofsky,no,no,yes,no
+9,2008,The Dark Knight,"Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine",Christopher Nolan,no,no,yes,no
+10,1993,Jurassic Park,"Sam Neill, Laura Dern, Jeff Goldblum, Richard Attenborough",Steven Spielberg,no,no,no,no
+11,1982,E.T. the Extra-Terrestrial,"Henry Thomas, Drew Barrymore, Peter Coyote, Dee Wallace",Steven Spielberg,no,no,no,no
+12,1984,Ghostbusters,"Bill Murray, Dan Aykroyd, Sigourney Weaver, Harold Ramis",Ivan Reitman,yes,no,no,no
+13,1978,Halloween,"Donald Pleasence, Jamie Lee Curtis, Tony Moran, Nancy Kyes",John Carpenter,no,yes,no,no
+14,1994,The Lion King,"Rob Minkoff, Matthew Broderick, Jeremy Irons, James Earl Jones",Roger Allers,no,no,yes,no
+15,2003,The Lord of the Rings: The Return of the King,"Elijah Wood, Viggo Mortensen, Ian McKellen, Orlando Bloom",Peter Jackson,no,no,yes,no
+16,1977,Star Wars,"Mark Hamill, Harrison Ford, Carrie Fisher, Alec Guinness",George Lucas,no,no,no,no
+17,2018,Spider-Man: Into the Spider-Verse,"Peter Ramsey, Rodney Rothman, Shameik Moore, Jake Johnson",Bob Persichetti,no,no,no,no
+18,1993,Schindler's List,"Liam Neeson, Ralph Fiennes, Ben Kingsley, Caroline Goodall",Steven Spielberg,no,no,yes,no
+19,1989,Indiana Jones and the Last Crusade,"Harrison Ford, Sean Connery, Alison Doody, Denholm Elliott",Steven Spielberg,no,no,no,no
+20,1991,Terminator 2: Judgment Day,"Arnold Schwarzenegger, Linda Hamilton, Edward Furlong, Robert Patrick",James Cameron,no,no,no,no
+21,1968,Once Upon a Time in the West,"Henry Fonda, Charles Bronson, Claudia Cardinale, Jason Robards",Sergio Leone,no,no,no,no
+22,1976,Rocky,"Sylvester Stallone, Talia Shire, Burt Young, Carl Weathers",John G. Avildsen,no,no,yes,no
+23,1997,Titanic,"Leonardo DiCaprio, Kate Winslet, Billy Zane, Kathy Bates",James Cameron,no,no,yes,yes
+24,1994,Pulp Fiction,"John Travolta, Uma Thurman, Samuel L. Jackson, Bruce Willis",Quentin Tarantino,no,no,yes,no
+25,2003,Pirates of the Caribbean: The Curse of the Black Pearl,"Johnny Depp, Geoffrey Rush, Orlando Bloom, Keira Knightley",Gore Verbinski,no,no,no,no
+26,2014,Interstellar,"Matthew McConaughey, Anne Hathaway, Jessica Chastain, Mackenzie Foy",Christopher Nolan,no,no,yes,no
+27,1995,Braveheart,"Mel Gibson, Sophie Marceau, Patrick McGoohan, Angus Macfadyen",Mel Gibson,no,no,yes,no
+28,1994,Forrest Gump,"Tom Hanks, Robin Wright, Gary Sinise, Sally Field",Robert Zemeckis,no,no,yes,yes
+29,2016,La La Land,"Ryan Gosling, Emma Stone, Rosemarie DeWitt, J.K. Simmons",Damien Chazelle,yes,no,yes,no
+30,2013,Gravity,"Sandra Bullock, George Clooney, Ed Harris, Orto Ignatiussen",Alfonso Cuarón,no,yes,yes,no
+31,1982,Blade Runner,"Harrison Ford, Rutger Hauer, Sean Young, Edward James Olmos",Ridley Scott,no,yes,no,no
+32,2007,Transformers,"Shia LaBeouf, Megan Fox",Michael Bay,no,yes,no,no
+33,1996,Mission: Impossible,"Tom Cruise, Jon Voight, Emmanuelle Béart",Brian De Palma,no,yes,no,no
+34,1978,Superman: The Movie,"Christopher Reeve, Margot Kidder, Gene Hackman",Richard Donner,no,no,no,no
+35,2012-2019,Avengers Assemble,"Roger Craig Smith,Troy Baker,Fred Tatasciore",Joss Whedon,no,no,no,no
+36,2001,The Fast and the Furious,"Vin Diesel,Paul Walker,Michelle Rodriguez",Rob Cohen,no,yes,no,no
+37,1966,"The Good, the Bad and the Ugly","Clint Eastwood,Eli Wallach,Lee Van Cleef",Sergio Leone,no,no,no,no
+38,2015,James Bond,"Allari Naresh,Sakshi Chaudhary,Raghu Babu",Sai Kishore Macha,yes,no,no,no
+39,2005,Charlie and the Chocolate Factory,"Johnny Depp, Freddie Highmore, David Kelly",Tim Burton,yes,no,no,no
+40,2005,Narnia,"Tilda Swinton, Georgie Henley, William Moseley",Andrew Adamson,no,no,no,no
