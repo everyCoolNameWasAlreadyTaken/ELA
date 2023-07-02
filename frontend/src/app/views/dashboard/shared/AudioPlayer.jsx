@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
+import server from "../../../../axios/axios";
+
+
 
 const AudioPlayer = () => {
     // eslint-disable-next-line
@@ -45,13 +48,29 @@ const AudioPlayer = () => {
     '/assets/AudioClips/MnBhFgJkLp.mp3',
     '/assets/AudioClips/QwErTyUqWi.mp3',]);
 
-    const [currentAudio, setCurrentAudio] = useState('');
+  const fetchQuizData = async () => {
+    try {
+         const response = await server.get(`/automated`);
+         const Quizdata = response.data;
+          setData(Quizdata);
+        } catch (error) {
+          console.error('Error:', error);
+    }
+  };
 
+
+
+
+  
+
+    const [currentAudio, setCurrentAudio] = useState('');
+    const [data, setData] = useState(null);
       
-        useEffect(() => {
-          const randomIndex = Math.floor(Math.random() * audioFiles.length);
-          setCurrentAudio(audioFiles[randomIndex]);
-        }, [audioFiles]);
+    useEffect(() => {
+      const randomIndex = Math.floor(Math.random() * audioFiles.length);
+        setCurrentAudio(audioFiles[randomIndex]);
+        fetchQuizData();
+                    }, [audioFiles]);
       
         return (
           <div>
@@ -60,7 +79,12 @@ const AudioPlayer = () => {
               src={currentAudio} 
               controls />
             )}
+            <div>
+            {data && <p>{data.message}</p>}
+            </div>
           </div>
+
+          
         );
       };
       
