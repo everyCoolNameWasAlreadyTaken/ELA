@@ -1,17 +1,15 @@
 import {
     Box,
     Card,
-    FormControlLabel,
     Icon,
     IconButton,
-    RadioGroup,
     styled,
     Tooltip,
     Button,
     Grid
 } from '@mui/material';
 
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
 
@@ -163,8 +161,6 @@ const AudioPlayer = () => {
     const [movieName, setMovieName] = useState('');
     const [questions, setQuestions] = useState([]);
 
-    const [data, setData] = useState(null);
-
     const userId = 0;
 
     const fetchAudioData = async () => {
@@ -172,7 +168,6 @@ const AudioPlayer = () => {
             const response = await server.get(`/audio`);
             const audioData = response.data;
             console.log(audioData);
-            setData(audioData);
             setMovieName(audioData.movie_name);
             setClipAddress(audioData.clipAddress);
             setQuestions(audioData.questions);
