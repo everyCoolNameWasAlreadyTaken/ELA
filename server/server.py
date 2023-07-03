@@ -24,10 +24,10 @@ def hello():
     return 'Hello from Flask Server :)'
 
 
-#Generate movie released year by its name
-#Write a movie name you want to know for variable movie_name
+# Generate movie released year by its name
+# Write a movie name you want to know for variable movie_name
 @app.route("/quiz", methods=['GET'])
-def ask():
+def quiz():
     questions = read_questions_from_file("data/qa.json")
     if len(questions) < 5:
         return jsonify({'error': 'Insufficient questions available.'})
@@ -51,7 +51,7 @@ def ask():
 
 
 @app.route("/audio", methods=['GET'])
-def qa():
+def audio():
     database = pd.read_csv(r"data/automated_generated_questions_edited.csv",
                            skipinitialspace=True,
                            quotechar='"')
@@ -61,15 +61,16 @@ def qa():
     for i in range(len(movies)):
         video_clips[movie_ids[i]] = movies[i]
     random_video_id = random.choice(list(video_clips.keys()))
-    #retrieve 5 questions for each movie
+    # retrieve 5 questions for each movie
     filtered_movie = filter_method(random_video_id, 5)
     combined_data = combime_method(random_video_id, filtered_movie)
+
     return jsonify(combined_data)
 
 
-#Integrate ChatGPT
-#1.Provide open AI API key for variable openai.api_key
-#2.Write a query for variable query
+# Integrate ChatGPT
+# 1.Provide open AI API key for variable openai.api_key
+# 2.Write a query for variable query
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
     response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
@@ -78,15 +79,6 @@ def chat():
                                                 "content": query
                                             }])
     return response.choices[0].message.content
-
-
-@app.route('/api', methods=['GET'])
-def api_get():
-    return {
-        'userId': 1,
-        'title': 'Flask React Application',
-        'completed': False
-    }
 
 
 if __name__ == '__main__':

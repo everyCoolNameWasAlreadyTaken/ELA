@@ -164,14 +164,9 @@ def filter_method(random_video_id, question_num):
 
 
 def combime_method(random_video_id, filtered_data):
-    data = []
-    data.append({
-        "clip_address":
-        "/assets/AudioClips/" + random_video_id + ".mp3",
-        "movie_name":
-        database.loc[database["video/audio_name"] == random_video_id,
-                     "movie_names"].iloc[0],
-        "questions":
-        filtered_data
-    })
+    data = {
+        "clip_address": "/assets/AudioClips/" + random_video_id + ".mp3",
+        "movie_name": database.loc[database["video/audio_name"] == random_video_id, "movie_names"].iloc[0],
+        "questions": filtered_data
+    }
     return data
