@@ -1,15 +1,23 @@
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+from pymongo import MongoClient, InsertOne
+import json
+import mongomock
+from bson import ObjectId
 
-client = MongoClient("localhost", 27017)
-
+client = mongomock.MongoClient()
 db = client.ela
+collection = db.users
+requesting = []
 
-users = db.users
+with open('userdata/users.json') as file:
+    for jsonObj in file:
+        userDict = json.loads(jsonObj)
+        requesting.append(InsertOne(userDict))
+
+result = collection.bulk_write(requesting)
 
 
 def get_user(user_id):
-    user = users.find_one({'_id': user_id})
+    user = collection.find_one({'_id': user_id})
     if user is None:
         res = f"ID {user_id} does not exist in this database"
     else:
