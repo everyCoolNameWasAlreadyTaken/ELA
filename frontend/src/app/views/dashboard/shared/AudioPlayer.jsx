@@ -86,14 +86,14 @@ const QuizStatusBox = styled(Box)(({theme}) => ({
 }));
 
 const ButtonWrapper = styled('span')(({theme}) => ({
-    display: 'flex',
+/*     display: 'flex',
     position: 'absolute',
     top: '280px',
     right: '50px',
     width: '50px',
     height: '50px',
     justifyContent: 'center',
-    float: 'right',
+    float: 'right', */
     [theme.breakpoints.down('sm')]: {
         position: 'fixed',
         bottom: '24px',
@@ -146,20 +146,35 @@ const TimeTaken = styled('p')(({theme}) => ({
     color: theme.palette.primary.main,
 }));
 
+const ViewAudio = styled(Box)(() => ({
+    marginTop: '10%',
+  }));
+
+  
+const Answers = styled(Box)({
+    fontSize: '1rem',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width: '90%',
+    marginTop: '5px',
+    padding: '10px',
+});
+
 
 const AudioPlayer = () => {
 
     const [quizStarted, setQuizStarted] = useState(false);
-    const [userAnswers, setUserAnswers] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
     const [timer, setTimer] = useState([]);
     const [startTime, setStartTime] = useState(0);
 
-    const [clipAddress, setClipAddress] = useState('');
+    const [clip_address, setClipAddress] = useState('');
     const [movieName, setMovieName] = useState('');
     const [questions, setQuestions] = useState([]);
+    const [userAnswers, setUserAnswers] = useState([]);
+    const [correctanswers, setAnswers] = useState([]);
 
     const userId = 0;
 
@@ -167,14 +182,23 @@ const AudioPlayer = () => {
         try {
             const response = await server.get(`/audio`);
             const audioData = response.data;
-            console.log(audioData);
+            console.log("Geladene Daten: ", audioData);
             setMovieName(audioData.movie_name);
-            setClipAddress(audioData.clipAddress);
+            setClipAddress(audioData.clip_address);
             setQuestions(audioData.questions);
+
+            var answers = audioData.questions.map(function(question) {
+                return question.answer;        
+              });
+              setAnswers(answers);
+              console.log(answers);
+            
         } catch (error) {
             console.error('Error:', error);
         }
     };
+
+    
 
 
     const startTimer = async () => {
@@ -192,7 +216,7 @@ const AudioPlayer = () => {
         startTimer();
     };
 
-    const handleAnswerSelection = (event) => {
+    const handleUserAnsweres = (event) => {
         const selectedAnswer = event.target.value;
         setUserAnswers((prevAnswers) => {
             const updatedAnswers = [...prevAnswers];
@@ -204,12 +228,16 @@ const AudioPlayer = () => {
     const handleNextQuestion = () => {
         const endTime = Date.now();
         const timeTaken = endTime - startTime;
+        //TODO: Here must be a option to empty the textfield without losing 
+        //      user imput  
+        //setUserAnswers('');
+
         setTimer((prevTimes) => {
             const updatedTimes = [...prevTimes];
             updatedTimes[currentIndex] = timeTaken;
             return updatedTimes;
         })
-        const isCorrect = questions[currentIndex].correctIndex === questions[currentIndex].answers.indexOf(userAnswers[currentIndex])
+        const isCorrect = correctanswers[currentIndex] === userAnswers[currentIndex]
         if (isCorrect) {
             setScore(score + 1);
         }
@@ -224,7 +252,7 @@ const AudioPlayer = () => {
     const submitUserAnswers = () => {
         const answerData = questions.map((question, index) => ({
             qid: index,
-            isCorrect: question.correctIndex === question.answers.indexOf(userAnswers[index]),
+            isCorrect: question.correctIndex === question.answer.indexOf(userAnswers[index]),
             timeTaken: Date.now() - startTime,
         }));
 
@@ -251,7 +279,10 @@ const AudioPlayer = () => {
             .catch((error) => console.error('ERROR', error));
     };
 
+    
+
     const currentQuestion = questions[currentIndex];
+
 
     return (
         <CardRoot>
@@ -262,6 +293,7 @@ const AudioPlayer = () => {
                             <>
                                 <ContentBox>
                                     <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
+                                    
                                 </ContentBox>
                             </>
                         ) : showScore ? (
@@ -273,9 +305,9 @@ const AudioPlayer = () => {
                                             <QuestionFeedback>{question.question}</QuestionFeedback>
                                             <CorrectAnswer>
                                                 Correct
-                                                Answer: {question.answers[questions[index].correctIndex]}</CorrectAnswer>
+                                                Answer: {correctanswers[index]}</CorrectAnswer>
                                             <GivenAnswer
-                                                isCorrect={questions[index].correctIndex === questions[index].answers.indexOf(userAnswers[index])}>
+                                                isCorrect={correctanswers[index] === userAnswers[index]}>
                                                 Your Answer: {userAnswers[index]}
                                             </GivenAnswer>
                                         </ResultBox>
@@ -291,16 +323,25 @@ const AudioPlayer = () => {
                                 </Tooltip>
                             </>
                         ) : (
-                            <>
+                            
+                            <> 
+                                    
                                 <ContentBox>
                                     <QuizStatusBox>
                                         {`${currentIndex + 1}/${questions.length}`}
                                     </QuizStatusBox>
-                                    <ReactAudioPlayer
-                                        src={clipAddress}
-                                        controls/>
-                                    <Question>{currentQuestion?.question}</Question>
-                                </ContentBox>
+                                    <ViewAudio>
+                                        <ReactAudioPlayer
+                                            src={clip_address}
+                                            controls/>
+                                    </ViewAudio>
+                                    <Question>{currentQuestion?.question}
+                                     </Question>
+                                     <Answers>
+                                     Ihre Antwort: 
+                                    <input type="text" value={userAnswers[currentIndex]} onChange={handleUserAnsweres} />
+                                    </Answers>
+                                
                                 <Tooltip title="Continue" placement="top">
                                     <ButtonWrapper>
                                         <ContinueButton onClick={handleNextQuestion}
@@ -310,12 +351,13 @@ const AudioPlayer = () => {
                                         </ContinueButton>
                                     </ButtonWrapper>
                                 </Tooltip>
+                                </ContentBox>
                             </>
                         )}
                     </ContentBox>
                 </Grid>
             </Grid>
-        </CardRoot>
+        </CardRoot> 
     );
 };
 
