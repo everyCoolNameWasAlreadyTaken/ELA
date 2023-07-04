@@ -122,7 +122,7 @@ def filter_method(random_video_id, question_num, answer_data, database):
     questions = generate_all_questions()
     movie_id = database["video/audio_name"].tolist()
     data = []
-    q_num = 0
+
     for idx_q, question in enumerate(questions):
         for idx, id in enumerate(movie_id):
             if id == random_video_id:
@@ -130,9 +130,9 @@ def filter_method(random_video_id, question_num, answer_data, database):
                     'question': question,
                     'answer': str(question_data.iloc[idx, idx_q + 1])
                 })
-                q_num += 1
-                if q_num == question_num:
-                    return data
+    
+
+    return random.sample(data,question_num)
 
 
 def combime_method(random_video_id, filtered_data, database, format):
