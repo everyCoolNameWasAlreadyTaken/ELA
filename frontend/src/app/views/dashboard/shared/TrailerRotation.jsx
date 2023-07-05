@@ -36,6 +36,7 @@ const ViewVideo = styled(Box)(() => ({
 const TrailerRotation = () => {
 
   return (
+    <> 
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader>
         <Title>Trailer Rotation</Title>
@@ -43,8 +44,11 @@ const TrailerRotation = () => {
       <CardHeader>
         <SubTitle> Play the Video and give the answer. To continue press the Button on the buttom right corner.</SubTitle>
       </CardHeader>
-        <ViewVideo ><VideoPlayer/></ViewVideo >
-    </Card>
+      </Card>
+      <Box overflow="auto">
+        <VideoPlayer/>
+        </Box>
+        </>
   );
 };
 

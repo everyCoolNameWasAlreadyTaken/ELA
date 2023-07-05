@@ -183,9 +183,11 @@ const AudioPlayer = () => {
             const response = await server.get(`/audio`);
             const audioData = response.data;
             console.log("Geladene Daten: ", audioData);
+            console.log("Audiodata: ", audioData.questions[0]);
             setMovieName(audioData.movie_name);
             setClipAddress(audioData.clip_address);
             setQuestions(audioData.questions);
+            
 
             var answers = audioData.questions.map(function(question) {
                 return question.answer;        
@@ -230,7 +232,7 @@ const AudioPlayer = () => {
         const timeTaken = endTime - startTime;
         
             if(inputRef.current){
-            inputRef.current.value =" ";
+            inputRef.current.value ="";
             }
         
         //TODO: Here must be a option to empty the textfield without losing 

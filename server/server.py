@@ -5,8 +5,11 @@ import pandas as pd
 from qa import *
 from automated_questions import *
 from qa import *
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app, origins=["http://localhost:3000"])
 
 SERVER_PORT = 5000
 HOST = '0.0.0.0'
@@ -62,7 +65,7 @@ def audio_qa():
     filtered_movie = filter_method(random_audio_id, 5,
                                    "data/audio_answers.csv", database)
     combined_data = combime_method(random_audio_id, filtered_movie, database,
-                                   ".mp3")
+                                   ".mp3","Audio")
     return jsonify(combined_data)
 
 
@@ -83,7 +86,7 @@ def video_qa():
     filtered_movie = filter_method(random_audio_id, 5,
                                    "data/video_answers.csv", database)
     combined_data = combime_method(random_audio_id, filtered_movie, database,
-                                   ".mp4")
+                                   ".mp4","Video")
     return jsonify(combined_data)
 
 
