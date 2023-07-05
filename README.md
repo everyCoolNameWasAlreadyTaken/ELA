@@ -12,27 +12,48 @@ To get started with CineQuizz, follow the instructions below.
 - Node.js (v12 or above)
 - Python (v3.7 or above)
 - Flask (Python web framework)
+- [MongoDB](https://www.mongodb.com/try/download/community)
 
 ### Installation
 
-1. Clone the repository
-2. Navigate to the project directory
+1. Start MongoDB
+   - start MongoDB server by running the following in your terminal
+
+   ```bash
+   mongod
+   ```
+
+   - by default, MongoDB runs on *`localhost`* at port *`27017`*
+2. Clone the repository
+3. Navigate to the project directory
    ```bash
    cd path/to/your/cloned/repo
    ```
  
-3. Install frontend dependencies:
+4. Install frontend dependencies:
 
     ```bash
     npm install
    ```
  
-4. Install backend dependencies:
+5. Install backend dependencies:
 
     ```bash
     pip install -r requirements.txt
     ```
    Make sure to enter your **Virtual Environment** first
+6. Update the following code to connect to MongoDB if needed in *`server/users.py`* 
+
+   ```bash
+   host = 'localhost'
+   port = 27017
+   user_data = 'userdata/users.json'
+
+   client = pymongo.MongoClient(host, port)
+   db = client.ela
+   collection = db.users
+   ```
+   
 
 ### Environment Configuration
 

@@ -1,13 +1,6 @@
 import { Card, Grid, styled, useTheme } from '@mui/material';
 import { Fragment } from 'react';
-import Campaigns from './shared/Campaigns';
-import DoughnutChart from './shared/Doughnut';
-import RowCards from './shared/RowCards';
-import StatCards from './shared/StatCards';
-import StatCards2 from './shared/StatCards2';
 import TrailerRotation from './shared/TrailerRotation';
-import ThemeRotation from './shared/TopSellingTable copy';
-import MultipleChoice from './shared/MultipleChoice';
 
 const ContentBox = styled('div')(({ theme }) => ({
   margin: '30px',
@@ -42,7 +35,7 @@ const Analytics = () => {
       <ContentBox className="analytics">
         <Grid container spacing={3}>
           <Grid item lg={12} md={12} sm={12} xs={12}>
-          <TrailerRotation />
+            <TrailerRotation />
           </Grid>
         </Grid>
       </ContentBox>
