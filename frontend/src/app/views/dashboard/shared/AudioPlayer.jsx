@@ -9,7 +9,7 @@ import {
     Grid
 } from '@mui/material';
 
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
 
@@ -175,7 +175,7 @@ const AudioPlayer = () => {
     const [questions, setQuestions] = useState([]);
     const [userAnswers, setUserAnswers] = useState([]);
     const [correctanswers, setAnswers] = useState([]);
-
+    const inputRef = useRef('');
     const userId = 0;
 
     const fetchAudioData = async () => {
@@ -228,6 +228,11 @@ const AudioPlayer = () => {
     const handleNextQuestion = () => {
         const endTime = Date.now();
         const timeTaken = endTime - startTime;
+        
+            if(inputRef.current){
+            inputRef.current.value =" ";
+            }
+        
         //TODO: Here must be a option to empty the textfield without losing 
         //      user imput  
         //setUserAnswers('');
@@ -339,7 +344,7 @@ const AudioPlayer = () => {
                                      </Question>
                                      <Answers>
                                      Ihre Antwort: 
-                                    <input type="text" value={userAnswers[currentIndex]} onChange={handleUserAnsweres} />
+                                    <input type="text" value={userAnswers[currentIndex+1]} onChange={handleUserAnsweres} ref={inputRef}/>
                                     </Answers>
                                 
                                 <Tooltip title="Continue" placement="top">
