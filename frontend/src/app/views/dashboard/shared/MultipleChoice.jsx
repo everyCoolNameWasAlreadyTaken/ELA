@@ -11,7 +11,7 @@ import {
     Button,
     Grid
 } from '@mui/material';
-import {useState} from 'react';
+import {useState, useRef, useEffect} from 'react';
 import server from "../../../../axios/axios";
 
 const CardRoot = styled(Card)(({theme}) => ({
@@ -180,10 +180,26 @@ const MultipleChoice = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
-    const [timer, setTimer] = useState([]);
-    const [startTime, setStartTime] = useState(0);
+    const [timer, setTimer] = useState(0);
+    const timerRef = useRef();
 
     const userId = 0;
+
+    useEffect(() => {
+        if (quizStarted && currentIndex === 0) {
+            startTimer();
+        }
+    }, [quizStarted, currentIndex]);
+
+    const startTimer = () => {
+        timerRef.current = setInterval(() => {
+            setTimer((prevTimer) => prevTimer + 1);
+        }, 1000);
+    };
+
+    const stopTimer = () => {
+        clearInterval(timerRef.current);
+    };
 
     const fetchQuizData = async () => {
         try {
@@ -196,20 +212,9 @@ const MultipleChoice = () => {
         }
     };
 
-    const startTimer = async () => {
-        try {
-            if (currentIndex <= questions.length) {
-                setStartTime(Date.now());
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
     const handleStartQuiz = () => {
         setQuizStarted(true);
         fetchQuizData();
-        startTimer();
     };
 
     const handleAnswerSelection = (event) => {
@@ -222,13 +227,6 @@ const MultipleChoice = () => {
     };
 
     const handleNextQuestion = () => {
-        const endTime = Date.now();
-        const timeTaken = endTime - startTime;
-        setTimer((prevTimes) => {
-            const updatedTimes = [...prevTimes];
-            updatedTimes[currentIndex] = timeTaken;
-            return updatedTimes;
-        })
         const isCorrect = questions[currentIndex].correctIndex === questions[currentIndex].answers.indexOf(userAnswers[currentIndex])
         if (isCorrect) {
             setScore(score + 1);
@@ -236,39 +234,48 @@ const MultipleChoice = () => {
         const nextIndex = currentIndex + 1;
         if (nextIndex < questions.length) {
             setCurrentIndex(nextIndex);
-        } else {
+        }
+        if (nextIndex === questions.length) {
+            console.log(currentIndex);
             setShowScore(true);
+            stopTimer();
+            submitUserAnswers();
         }
     };
 
     const submitUserAnswers = () => {
-        const answerData = questions.map((question, index) => ({
-            qid: index,
-            isCorrect: question.correctIndex === question.answers.indexOf(userAnswers[index]),
-            timeTaken: Date.now() - startTime,
-        }));
-
-        server.post(`/users/${userId}/answers`, answerData)
+        const answerData = {
+            itemType: "MultipleChoice",
+            data: {
+                date: new Date().toISOString(),
+                totalQuestions: questions.length,
+                rightAnswers: score,
+                wrongAnswers: (questions.length - score),
+                timeTaken: timer,
+                questions: questions.map((question, index) => ({
+                    qid: question.qid,
+                    isCorrect: question.correctIndex === question.answers.indexOf(userAnswers[index]),
+                }))
+            }
+        };
+        console.log(answerData);
+        server.post(`/users/${userId}/multipleChoiceAnswers`, answerData)
             .then(response => {
                 console.log('Answer data submitted successfully');
             })
             .catch(error => {
-                console.error('Error submitting answer data:', error);
+                console.error('Error sending answer data:', error);
             });
     };
 
     const reload = () => {
-        fetch('/quiz')
-            .then((response) => response.json())
-            .then((data) => {
-                setQuestions(data);
-                setUserAnswers([]);
-                setCurrentIndex(0);
-                setScore(0);
-                setShowScore(false);
-                setQuizStarted(false);
-            })
-            .catch((error) => console.error('ERROR', error));
+        fetchQuizData()
+        setUserAnswers([]);
+        setCurrentIndex(0);
+        setScore(0);
+        setShowScore(false);
+        setQuizStarted(false);
+        setTimer(0);
     };
 
     const currentQuestion = questions[currentIndex];
@@ -285,6 +292,7 @@ const MultipleChoice = () => {
                         </>
                     ) : showScore ? (
                         <>
+                            <TimeTaken>{((timer/60)).toFixed(1)} minutes</TimeTaken>
                             <ContentBox>
                                 <p>Score: {score}/{questions.length}</p>
                                 {questions.map((question, index) => (
@@ -300,7 +308,6 @@ const MultipleChoice = () => {
                                     </ResultBox>
                                 ))}
                             </ContentBox>
-                            <TimeTaken>Time taken: {Math.floor(timer / 1000)} seconds</TimeTaken>
                             <Tooltip title="New Quiz" placement="top">
                                 <ButtonWrapperLarge>
                                     <ContinueButton onClick={reload}>
