@@ -60,29 +60,20 @@ def chat():
     return response.choices[0].message.content
 
 
-@app.route('/api', methods=['GET'])
-def api_get():
-    return {
-        'userId': 1,
-        'title': 'Flask React Application',
-        'completed': False
-    }
-
-
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user_name(user_id):
-    user = get_user(int(user_id))
+    user, code = get_user(int(user_id))
 
     if user:
-        return jsonify({'user_name': user})
+        return jsonify({'user_name': user}), code
     else:
-        return jsonify({'error': user})
+        return jsonify({'error': user}), code
 
 
-@app.route('/users/<int:user_id>/mc', methods=['POST'])
-def store_mc_user_answer(user_id):
-    answer_data = request.get_json()
-    print(answer_data)
+@app.route('/users/<int:user_id>/multipleChoiceAnswers', methods=['POST'])
+def handle_user_answers(user_id):
+    res, code = store_user_answers(user_id, request.json)
+    return jsonify(res), code
 
 
 if __name__ == '__main__':
