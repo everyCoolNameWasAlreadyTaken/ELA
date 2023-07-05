@@ -36,6 +36,7 @@ const ViewAudio = styled(Box)(() => ({
 const ThemeRotation = () => {
 
   return (
+    <>
     <Card elevation={3} sx={{ pt: '20px', mb: 3 }}>
       <CardHeader>
         <Title>Theme Rotation</Title>
@@ -44,13 +45,12 @@ const ThemeRotation = () => {
         <SubTitle> Play the Audio and give the answer. To continue press the Button on the buttom right corner.</SubTitle>
       </CardHeader>
 
-      <Box overflow="auto">
 
-        <ViewAudio>
-          <AudioPlayer />
-      </ViewAudio>
-      </Box>
     </Card>
+      <Box overflow="auto">
+          <AudioPlayer />
+      </Box>
+      </>
   );
 };
 

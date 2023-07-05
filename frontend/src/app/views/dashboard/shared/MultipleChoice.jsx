@@ -205,6 +205,7 @@ const MultipleChoice = () => {
         try {
             const response = await server.get(`/quiz`);
             const Quizdata = response.data;
+            console.log(Quizdata)
             setQuestions(Quizdata);
         } catch (error) {
             console.error('Error:', error);
