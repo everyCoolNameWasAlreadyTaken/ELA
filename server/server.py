@@ -1,8 +1,6 @@
 from flask import Flask, request, jsonify
 import openai
-import csv
-import pandas as pd
-from qa import *
+from user import *
 from automated_questions import *
 from qa import *
 from flask_cors import CORS
