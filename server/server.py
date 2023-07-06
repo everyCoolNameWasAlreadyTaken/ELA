@@ -63,7 +63,7 @@ def audio_qa():
     filtered_movie = filter_method(random_audio_id, 5,
                                    "data/audio_answers.csv", database)
     combined_data = combime_method(random_audio_id, filtered_movie, database,
-                                   ".mp3","Audio")
+                                   ".mp3", "Audio")
     return jsonify(combined_data)
 
 
@@ -84,7 +84,7 @@ def video_qa():
     filtered_movie = filter_method(random_audio_id, 5,
                                    "data/video_answers.csv", database)
     combined_data = combime_method(random_audio_id, filtered_movie, database,
-                                   ".mp4","Video")
+                                   ".mp4", "Video")
     return jsonify(combined_data)
 
 
