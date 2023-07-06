@@ -12,6 +12,8 @@ import {
 import React, {useState, useRef} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
+import { compareTwoStrings } from 'string-similarity';
+
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -226,6 +228,32 @@ const AudioPlayer = () => {
             return updatedAnswers;
         });
     };
+    function containsOnlyNumbers(str) {
+        return /^[0-9]+$/.test(str);
+      } 
+    function handleUserInputErrors(userInput, correctAnswers){
+        var similarityThreshold =1;
+
+        if (correctAnswers.length>10){
+            similarityThreshold = 0.3;
+        } else if (correctAnswers.length>5){
+            similarityThreshold = 0.4;
+        }else {
+            similarityThreshold = 0.5;
+            }
+        
+        if (containsOnlyNumbers(correctAnswers)){
+            similarityThreshold = 1;
+        }
+
+          const similarity = compareTwoStrings(userInput, correctAnswers);
+          if (similarity >= similarityThreshold) {
+            // Die Antwort wird als korrekt betrachtet
+            return true;
+          }
+        // Keine Übereinstimmung gefunden
+        return false;
+      }
 
     const handleNextQuestion = () => {
         const endTime = Date.now();
@@ -235,19 +263,19 @@ const AudioPlayer = () => {
             inputRef.current.value ="";
             }
         
-        //TODO: Here must be a option to empty the textfield without losing 
-        //      user imput  
-        //setUserAnswers('');
-
         setTimer((prevTimes) => {
             const updatedTimes = [...prevTimes];
             updatedTimes[currentIndex] = timeTaken;
             return updatedTimes;
         })
-        const isCorrect = correctanswers[currentIndex] === userAnswers[currentIndex]
-        if (isCorrect) {
+        const UserisCorrect  = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
+
+        if (UserisCorrect) {
             setScore(score + 1);
-        }
+            console.log("Die Antwort ist korrekt!");
+          } else {
+            console.log("Die Antwort ist falsch!");
+          }
         const nextIndex = currentIndex + 1;
         if (nextIndex < questions.length) {
             setCurrentIndex(nextIndex);
