@@ -4,11 +4,12 @@ import pandas as pd
 import json
 
 
-def create_answer_df():
+def create_answer_df(_type):
     """ 
 
     Create a csv file for automated generated questions with audio and video infos
     .csv file saved as server/data/automated_generated_questions.csv
+    _type:video/audio
 
     """
 
@@ -86,11 +87,13 @@ def generate_all_questions():
     return all_questions
 
 
-def generate_qa_for_automated():
+def generate_qa_for_automated(file, outfile):
+    """
+    file:path of either automated_questions_audio.csv/automated_questions_video.csv
+    outfile:path of the resulting file:video_answers.csv/audio_answers.csv
+    """
     all_questions = generate_all_questions()
-    database = pd.read_csv(r"data/automated_questions_video.csv",
-                           skipinitialspace=True,
-                           quotechar='"')
+    database = pd.read_csv(file, skipinitialspace=True, quotechar='"')
     auto_qa = dict()
     auto_qa[all_questions[0]] = database["released_year"].tolist()
     auto_qa[all_questions[1]] = database["movie_names"].tolist()
@@ -114,11 +117,13 @@ def generate_qa_for_automated():
     ]
 
     df_autoqa = pd.DataFrame(auto_qa)
-    df_autoqa.to_csv("data/video_answers.csv")
+    df_autoqa.to_csv(outfile)
 
 
 def filter_method(random_video_id, question_num, answer_data, database):
-    question_data = pd.read_csv(answer_data)
+    question_data = pd.read_csv(answer_data,
+                                skipinitialspace=True,
+                                quotechar='"')
     questions = generate_all_questions()
     movie_id = database["video/audio_name"].tolist()
     data = []
@@ -130,16 +135,16 @@ def filter_method(random_video_id, question_num, answer_data, database):
                     'question': question,
                     'answer': str(question_data.iloc[idx, idx_q + 1])
                 })
-    
+    random.shuffle(data)
 
-    return random.sample(data,question_num)
+    return data[:question_num]
 
 
-def combime_method(random_video_id, filtered_data, database, format,_type):
+def combime_method(random_video_id, filtered_data, database, format, _type):
 
-    data={
+    data = {
         "clip_address":
-        "/assets/"+_type+"Clips/" + random_video_id + format,
+        "/assets/" + _type + "Clips/" + random_video_id + format,
         "movie_name":
         database.loc[database["video/audio_name"] == random_video_id,
                      "movie_names"].iloc[0],
@@ -147,3 +152,4 @@ def combime_method(random_video_id, filtered_data, database, format,_type):
         filtered_data
     }
     return data
+
