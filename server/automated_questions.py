@@ -144,7 +144,7 @@ def combime_method(random_video_id, filtered_data, database, format, _type):
 
     data = {
         "clip_address":
-        "/assets/" + _type + "Clips/" + random_video_id + format,
+        "/assets/" + _type + "Clips/" + random_video_id.strip() + format,
         "movie_name":
         database.loc[database["video/audio_name"] == random_video_id,
                      "movie_names"].iloc[0],
