@@ -10,6 +10,15 @@ db = client.ela
 collection = db.users
 
 
+def query_item_data(item_type):
+    items = db.collection.find({"Quizdata." + item_type: {"$exists": True}})
+    for item in items:
+        if "Quizdata" in item and item_type in item["Quizdata"]:
+            for data in item["Quizdata"][item_type]:
+                print(data)
+                return data
+
+
 def import_data_to_db(filename):
     with open(filename, 'r') as file:
         for jsonObj in file:

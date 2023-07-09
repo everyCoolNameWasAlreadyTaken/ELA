@@ -25,7 +25,7 @@ def hello():
 #Generate movie released year by its name
 #Write a movie name you want to know for variable movie_name
 @app.route("/quiz", methods=['GET'])
-def ask():
+def quiz_qa():
     questions = read_questions_from_file("data/qa_merged.json")
     if len(questions) < 5:
         return jsonify({'error': 'Insufficient questions available.'})
@@ -39,14 +39,16 @@ def ask():
         correct_index = question['correct_index']
         year = question['year']
         name = question['name']
+        genre = question['genre']
 
         data.append({
             'qid': qid,
             'question': question_text,
             'answers': answers,
             'correctIndex': correct_index,
-            'movie_name': name,
-            'released_year': year,
+            'title': name,
+            'year': year,
+            'genre': genre
         })
 
     return jsonify(data)
