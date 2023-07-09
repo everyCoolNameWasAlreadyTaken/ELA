@@ -26,7 +26,7 @@ def hello():
 #Write a movie name you want to know for variable movie_name
 @app.route("/quiz", methods=['GET'])
 def ask():
-    questions = read_questions_from_file("data/qa.json")
+    questions = read_questions_from_file("data/qa_merged.json")
     if len(questions) < 5:
         return jsonify({'error': 'Insufficient questions available.'})
 
@@ -37,12 +37,16 @@ def ask():
         question_text = question['question']
         answers = question['answers']
         correct_index = question['correct_index']
+        year = question['year']
+        name = question['name']
 
         data.append({
             'qid': qid,
             'question': question_text,
             'answers': answers,
             'correctIndex': correct_index,
+            'movie_name': name,
+            'released_year': year,
         })
 
     return jsonify(data)
@@ -115,6 +119,10 @@ def get_user_name(user_id):
 def handle_user_answers(user_id):
     res, code = store_user_answers(user_id, request.json)
     return jsonify(res), code
+
+
+if __name__ == '__main__':
+    app.run(host=HOST, port=SERVER_PORT, debug=True)
 
 
 if __name__ == '__main__':
