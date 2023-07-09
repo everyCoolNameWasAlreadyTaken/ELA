@@ -5,8 +5,8 @@ export const navigations = [
     name: 'Classic',
     icon: 'local_library',
     children: [
-      { name: 'Multiple Choice', iconText: 'MC', path: '/dashboard/Page_MC' },
-      { name: 'Matching - Coming soon ', iconText: 'MA', path: '/dashboard/Page_Matching' },
+      { name: 'Single Choice', iconText: 'MC', path: '/dashboard/Page_MC' },
+      { name: 'Poster Matching', iconText: 'MA', path: '/dashboard/Page_Matching' },
     ]
   },
   {
