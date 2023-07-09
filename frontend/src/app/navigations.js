@@ -5,7 +5,7 @@ export const navigations = [
     name: 'Classic',
     icon: 'local_library',
     children: [
-      { name: 'Muliple Coice - Best of Five', iconText: 'MC', path: '/dashboard/Page_MC' },
+      { name: 'Muliple Choice - Best of Five', iconText: 'MC', path: '/dashboard/Page_MC' },
       { name: 'Matching', iconText: 'MA', path: '/dashboard/Page_Matching' },
     ]
   },
