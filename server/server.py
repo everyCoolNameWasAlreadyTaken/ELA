@@ -117,15 +117,18 @@ def get_user_name(user_id):
         return jsonify({'error': user}), code
 
 
-@app.route('/users/<int:user_id>/multipleChoiceAnswers', methods=['POST'])
+@app.route('/users/<int:user_id>/multipleChoice/answers', methods=['POST'])
 def handle_user_answers(user_id):
     res, code = store_user_answers(user_id, request.json)
+    return jsonify(res), code
+
+
+@app.route('/users/<int:user_id>/multipleChoice/stats', methods=['GET'])
+def get_user_mc_stats(user_id):
+    res, code = get_genre_stats(user_id, "MultipleChoice")
     return jsonify(res), code
 
 
 if __name__ == '__main__':
     app.run(host=HOST, port=SERVER_PORT, debug=True)
 
-
-if __name__ == '__main__':
-    app.run(host=HOST, port=SERVER_PORT, debug=True)

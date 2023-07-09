@@ -67,7 +67,7 @@ const Question = styled('p')(({theme}) => ({
 const QuestionTitle = styled(Typography)(({ theme }) => ({
     marginTop: '50px',
     right: '0px',
-    width: '200px',
+    width: '80%',
     height: '20px',
     fontSize: '1rem',
     fontWeight: 'bold',
@@ -246,7 +246,6 @@ const MultipleChoice = () => {
             setCurrentIndex(nextIndex);
         }
         if (nextIndex === questions.length) {
-            console.log(currentIndex);
             setShowScore(true);
             stopTimer();
             submitUserAnswers();
@@ -272,9 +271,9 @@ const MultipleChoice = () => {
             }
         };
         console.log(answerData);
-        server.post(`/users/${userId}/multipleChoiceAnswers`, answerData)
+        server.post(`/users/${userId}/multipleChoice/answers`, answerData)
             .then(response => {
-                console.log('Answer data submitted successfully');
+                console.log(response.data)
             })
             .catch(error => {
                 console.error('Error sending answer data:', error);
