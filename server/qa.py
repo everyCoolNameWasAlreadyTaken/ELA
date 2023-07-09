@@ -24,11 +24,15 @@ def read_questions_from_file(file_path):
             question = item['question']
             answers = item['answers']
             correct_index = item['correct_index']
+            year=item['year']
+            name=item['name']
             questions.append({
                 'qid': quid,
                 'question': question,
                 'answers': answers,
-                'correct_index': correct_index
+                'correct_index': correct_index,
+                'name':name,
+                'year':year
             })
     return questions
 
