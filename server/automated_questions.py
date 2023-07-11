@@ -1,7 +1,6 @@
 from string import Template
 import random
 import pandas as pd
-import json
 
 
 def create_answer_df(_type):

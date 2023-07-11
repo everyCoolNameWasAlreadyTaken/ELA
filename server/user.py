@@ -59,6 +59,7 @@ def calculate_genre_stats(user_id, item_type, question_data):
         genre_stats = user.get("Quizdata", {}).get(item_type, {}).get("genre_stats", {})
 
         genre_stats = add_genre_stats(genre_stats, question_data)
+        genre_stats = calculate_percentage(genre_stats)
 
         for genre, stats in genre_stats.items():
             collection.update_one(
@@ -201,7 +202,6 @@ def get_genre_stats(user_id, item_type):
         user = collection.find_one({"_id": user_id})
 
         genre_data = user["Quizdata"][item_type]["genre_stats"]
-
 
         return genre_data, 200
     except Exception as e:

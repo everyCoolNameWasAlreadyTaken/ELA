@@ -59,16 +59,15 @@ def audio_qa():
     database = pd.read_csv(r"data/automated_questions_audio.csv",
                            skipinitialspace=True,
                            quotechar='"')
-    movies = database["movie_names"].tolist()
-    movie_ids = database["video/audio_name"].tolist()
+    audios = database["movie_names"].tolist()
+    audio_ids = database["video/audio_name"].tolist()
     audio_clips = {}
-    for i in range(len(movies)):
-        audio_clips[movie_ids[i]] = movies[i]
+    for i in range(len(audios)):
+        audio_clips[audio_ids[i]] = audios[i]
     random_audio_id = random.choice(list(audio_clips.keys()))
-    #retrieve 5 questions for each movie
-    filtered_movie = filter_method(random_audio_id, 5,
+    filtered_audio = filter_method(random_audio_id, 5,
                                    "data/audio_answers.csv", database)
-    combined_data = combime_method(random_audio_id, filtered_movie, database,
+    combined_data = combime_method(random_audio_id, filtered_audio, database,
                                    ".mp3", "Audio")
     return jsonify(combined_data)
 

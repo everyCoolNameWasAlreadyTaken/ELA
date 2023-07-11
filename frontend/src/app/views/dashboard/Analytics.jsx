@@ -2,6 +2,7 @@ import { Card, Grid, styled, useTheme } from '@mui/material';
 import { Fragment } from 'react';
 import Campaigns from './shared/Campaigns';
 import DoughnutChart from './shared/Doughnut';
+import RadarChart from './shared/Radar';
 import RowCards from './shared/RowCards';
 import StatCards from './shared/StatCards';
 import StatCards2 from './shared/StatCards2';
@@ -47,10 +48,10 @@ const Analytics = () => {
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
             <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Traffic Sources</Title>
-              <SubTitle>Last 30 days</SubTitle>
+              <Title>Multiple Choice Performance</Title>
+              <SubTitle>Genres</SubTitle>
 
-              <DoughnutChart
+              <RadarChart
                 height="300px"
                 color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
               />
