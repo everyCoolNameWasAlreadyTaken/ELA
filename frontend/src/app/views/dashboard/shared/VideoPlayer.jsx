@@ -136,7 +136,6 @@ const CorrectAnswer = styled('p')({
 const GivenAnswer = styled('p')(({isCorrect}) => ({
   fontWeight: 'bold',
   margin: '20px',
-  color: isCorrect ? 'green' : 'red',
 }));
 
 const TimeTaken = styled('p')(({theme}) => ({
@@ -247,12 +246,12 @@ const VideoPlayer = () => {
         }
 
           const similarity = compareTwoStrings(userInput, correctAnswers);
+          var UserisCorrect = false;
           if (similarity >= similarityThreshold) {
-            // Die Antwort wird als korrekt betrachtet
-            return true;
-          }
-        // Keine Übereinstimmung gefunden
-        return false;
+            UserisCorrect = true;
+          }else{
+            UserisCorrect = false;}
+        return {UserisCorrect, similarity};
       }
 
   const handleNextQuestion = () => {
@@ -268,12 +267,15 @@ const VideoPlayer = () => {
           updatedTimes[currentIndex] = timeTaken;
           return updatedTimes;
       })
-      const UserisCorrect  = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
+      const {UserisCorrect, similarity}  = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
+      
       if (UserisCorrect) {
             setScore(score + 1);
             console.log("Die Antwort ist korrekt!");
+            console.log("answerscore", similarity);
           } else {
             console.log("Die Antwort ist falsch!");
+            console.log("answerscore", similarity);
           }
       const nextIndex = currentIndex + 1;
       if (nextIndex < questions.length) {
@@ -282,6 +284,17 @@ const VideoPlayer = () => {
           setShowScore(true);
       }
   };
+      function makeTextColourful(similarity) {
+        console.log("The similarity is: ", similarity.similarity);
+        var textStyle = 'red';
+        if (similarity.similarity==1){
+         textStyle = 'green';}
+            else if (similarity.similarity>0){
+                 textStyle = 'orange';
+            } else{
+                 textStyle = 'red';}
+                console.log("The colour is: ", textStyle);
+          return (textStyle);}
 
   const submitUserAnswers = () => {
       const answerData = questions.map((question, index) => ({
@@ -340,8 +353,8 @@ const VideoPlayer = () => {
                                             <CorrectAnswer>
                                                 Correct
                                                 Answer: {correctanswers[index]}</CorrectAnswer>
-                                            <GivenAnswer
-                                                isCorrect={correctanswers[index] === userAnswers[index]}>
+                                                                                       <GivenAnswer style={{ color: makeTextColourful(handleUserInputErrors(userAnswers[index],correctanswers[index]))
+                                                 }}>
                                                 Your Answer: {userAnswers[index]}
                                             </GivenAnswer>
                                         </ResultBox>
