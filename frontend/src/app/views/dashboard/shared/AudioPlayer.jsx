@@ -9,7 +9,7 @@ import {
     Grid
 } from '@mui/material';
 
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
 import {compareTwoStrings} from 'string-similarity';
@@ -169,15 +169,17 @@ const AudioPlayer = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
-    const [timer, setTimer] = useState([]);
-    const [startTime, setStartTime] = useState(0);
+    const [timer, setTimer] = useState(0);
 
     const [clip_address, setClipAddress] = useState('');
     const [audioName, setAudioName] = useState('');
     const [questions, setQuestions] = useState([]);
+    const [genre, setGenre] = useState('');
+    const [year, setYear] = useState(0);
     const [userAnswers, setUserAnswers] = useState([]);
     const [correctanswers, setAnswers] = useState([]);
     const inputRef = useRef('');
+    const timerRef = useRef();
     const userId = 0;
 
     const fetchAudioData = async () => {
@@ -189,28 +191,37 @@ const AudioPlayer = () => {
             setAudioName(audioData.movie_name);
             setClipAddress(audioData.clip_address);
             setQuestions(audioData.questions);
-
+            setGenre(audioData.genre);
+            setYear(audioData.year.toString());
 
             var answers = audioData.questions.map(function (question) {
                 return question.answer;
             });
             setAnswers(answers);
-            console.log(answers);
 
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
-    const startTimer = async () => {
-        try {
-            if (currentIndex <= questions.length) {
-                setStartTime(Date.now());
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    const startTimer = () => {
+        timerRef.current = setInterval(() => {
+            setTimer((prevTimer) => prevTimer + 1);
+        }, 1000);
+    };
+
+    useEffect(() => {
+        if (quizStarted && currentIndex === 0) {
+            startTimer();
         }
-    }
+        return () => {
+            stopTimer();
+        };
+    }, [quizStarted, currentIndex]);
+
+    const stopTimer = () => {
+        clearInterval(timerRef.current);
+    };
 
     const handleStartQuiz = () => {
         setQuizStarted(true);
@@ -257,18 +268,11 @@ const AudioPlayer = () => {
 
 
     const handleNextQuestion = () => {
-        const endTime = Date.now();
-        const timeTaken = endTime - startTime;
 
         if (inputRef.current) {
             inputRef.current.value = "";
         }
 
-        setTimer((prevTimes) => {
-            const updatedTimes = [...prevTimes];
-            updatedTimes[currentIndex] = timeTaken;
-            return updatedTimes;
-        })
         const {UserisCorrect, similarity}  = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
 
         if (UserisCorrect) {
@@ -283,12 +287,13 @@ const AudioPlayer = () => {
         if (nextIndex < questions.length) {
             setCurrentIndex(nextIndex);
         } else {
+            stopTimer();
             setShowScore(true);
+            submitUserAnswers(UserisCorrect);
         }
     };
 
     function makeTextColourful(similarity) {
-        console.log("The similarity is: ", similarity.similarity);
         var textStyle = 'red';
         if (similarity.similarity==1){
          textStyle = 'green';}
@@ -296,13 +301,13 @@ const AudioPlayer = () => {
                  textStyle = 'yellow';
             } else{
                  textStyle = 'red';}
-                console.log("The colour is: ", textStyle);
           return (textStyle);}
 
 
     const submitUserAnswers = () => {
+        stopTimer();
         const answerData = {
-            itemType: "MultipleChoice",
+            itemType: "AudioQuiz",
             data: {
                 date: new Date().toISOString(),
                 totalQuestions: questions.length,
@@ -310,14 +315,15 @@ const AudioPlayer = () => {
                 wrongAnswers: (questions.length - score),
                 timeTaken: timer,
                 questions: questions.map((question, index) => ({
-                    isCorrect: handleUserInputErrors(userAnswers[index].toString(), correctanswers[index].toString()),
+                    isCorrect: handleUserInputErrors(userAnswers[index].toString(), correctanswers[index].toString()).UserisCorrect,
                     title: audioName,
-                    genre: question.genre,
+                    year: year,
+                    genre: genre,
                 }))
             }
         };
         console.log(answerData);
-        server.post(`/users/${userId}/multipleChoice/answers`, answerData)
+        server.post(`/users/${userId}/quiz/answers`, answerData)
             .then(response => {
                 console.log(response.data)
             })
@@ -373,7 +379,7 @@ const AudioPlayer = () => {
                                         </ResultBox>
                                     ))}
                                 </ContentBox>
-                                <TimeTaken>Time taken: {Math.floor(timer / 1000)} seconds</TimeTaken>
+                                <TimeTaken>{((timer/60)).toFixed(1)} minutes</TimeTaken>
                                 <Tooltip title="New Quiz" placement="top">
                                     <ButtonWrapperLarge>
                                         <ContinueButton onClick={reload}>

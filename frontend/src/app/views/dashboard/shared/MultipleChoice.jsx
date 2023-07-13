@@ -271,7 +271,7 @@ const MultipleChoice = () => {
             }
         };
         console.log(answerData);
-        server.post(`/users/${userId}/multipleChoice/answers`, answerData)
+        server.post(`/users/${userId}/quiz/answers`, answerData)
             .then(response => {
                 console.log(response.data)
             })

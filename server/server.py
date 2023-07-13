@@ -4,10 +4,12 @@ from user import *
 from automated_questions import *
 from qa import *
 from flask_cors import CORS
+import logging
 
 app = Flask(__name__)
 
 CORS(app, origins=["http://localhost:3000"])
+logger = logging.getLogger('werkzeug')
 
 SERVER_PORT = 5000
 HOST = '0.0.0.0'
@@ -116,7 +118,7 @@ def get_user_name(user_id):
         return jsonify({'error': user}), code
 
 
-@app.route('/users/<int:user_id>/multipleChoice/answers', methods=['POST'])
+@app.route('/users/<int:user_id>/quiz/answers', methods=['POST'])
 def handle_user_answers(user_id):
     res, code = store_user_answers(user_id, request.json)
     return jsonify(res), code

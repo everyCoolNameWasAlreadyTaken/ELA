@@ -31,13 +31,13 @@ def create_answer_df(_type):
 
             movie_names.append(name)
             years.append(df.loc[df["Series_Title"] == name,
-                                "Released_Year"].iloc[0])
+            "Released_Year"].iloc[0])
             director.append((df.loc[df["Series_Title"] == name,
-                                    "Director"].iloc[0]))
+            "Director"].iloc[0]))
             genre.append((df.loc[df["Series_Title"] == name, "Genre"].iloc[0]))
             cast.append((df.loc[df["Series_Title"] == name, "Star"].iloc[0]))
             length.append((df.loc[df["Series_Title"] == name,
-                                  "Runtime"].iloc[0].split()[0]))
+            "Runtime"].iloc[0].split()[0]))
 
         else:
             print(name)
@@ -67,7 +67,6 @@ variables = {
 
 
 def generate_random_question(questions, variables):
-
     question_num = len(questions)
     question_idx = random.randint(0, question_num - 1)
     temp_obj = Template(questions[question_idx])
@@ -140,15 +139,16 @@ def filter_method(random_video_id, question_num, answer_data, database):
 
 
 def combime_method(random_video_id, filtered_data, database, format, _type):
-
     data = {
         "clip_address":
-        "/assets/" + _type + "Clips/" + random_video_id.strip() + format,
+            "/assets/" + _type + "Clips/" + random_video_id.strip() + format,
         "movie_name":
-        database.loc[database["video/audio_name"] == random_video_id,
-                     "movie_names"].iloc[0],
+            database.loc[database["video/audio_name"] == random_video_id, "movie_names"].iloc[0],
+        "genre":
+            database.loc[database["video/audio_name"] == random_video_id, "genre"].iloc[0],
+        "year":
+            database.loc[database["video/audio_name"] == random_video_id, "released_year"].iloc[0],
         "questions":
-        filtered_data
+            filtered_data
     }
     return data
-

@@ -19,7 +19,7 @@ const RadarChart = ({height, color = []}) => {
         };
 
         fetchGenreStatsData();
-    }, [genreStats]);
+    }, []);
 
     if (Object.keys(genreStats).length === 0) {
         return <div>Loading...</div>;
