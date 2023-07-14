@@ -268,7 +268,6 @@ const AudioPlayer = () => {
 
 
     const handleNextQuestion = () => {
-
         if (inputRef.current) {
             inputRef.current.value = "";
         }
@@ -298,14 +297,13 @@ const AudioPlayer = () => {
         if (similarity.similarity==1){
          textStyle = 'green';}
             else if (similarity.similarity>0){
-                 textStyle = 'yellow';
+                 textStyle = 'orange';
             } else{
                  textStyle = 'red';}
           return (textStyle);}
 
 
     const submitUserAnswers = () => {
-        stopTimer();
         const answerData = {
             itemType: "AudioQuiz",
             data: {
