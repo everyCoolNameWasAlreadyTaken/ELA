@@ -15,9 +15,8 @@ logger = logging.getLogger('werkzeug')
 
 def add_genre_stats(genre_stats, question_data):
     for question in question_data:
-        logger.info(question)
         genres = question.get("genre", "").replace(" ", "").split(",")
-        logger.info("genres: " + str(genres))
+
         if not genres:
             continue
         for genre in genres:
@@ -28,7 +27,6 @@ def add_genre_stats(genre_stats, question_data):
             if is_correct:
                 genre_stats[genre]["correct"] += 1
 
-        logger.info("genre_stats calc end: " + str(genre_stats))
     return genre_stats
 
 
@@ -46,7 +44,6 @@ def calculate_genre_stats(user_id, item_type, question_data):
     try:
         user = collection.find_one({"_id": user_id})
         genre_stats = user.get("Quizdata", {}).get(item_type, {}).get("genre_stats", {})
-        logger.info("calculate_genre_stats: " + str(genre_stats))
 
         genre_stats = add_genre_stats(genre_stats, question_data)
         genre_stats = calculate_percentage(genre_stats)
@@ -107,7 +104,7 @@ def store_user_answers(user_id, answer_data):
                 {"$set": {f"Quizdata.{item_type}.genre_stats": genre_stats}}
             )
 
-        res = calculate_genre_stats(user_id, item_type, answer_data["data"])
+        res = calculate_genre_stats(user_id, item_type, new_data["questions"])
 
         return str(res) + "\nAnswer data stored successfully", 200
     except Exception as e:

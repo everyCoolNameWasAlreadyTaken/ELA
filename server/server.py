@@ -79,15 +79,14 @@ def video_qa():
     database = pd.read_csv(r"data/automated_questions_video.csv",
                            skipinitialspace=True,
                            quotechar='"')
-    # database = database.astype({"released_year": object, "length": object})
-    print(database.info())
+
     movies = database["movie_names"].tolist()
     movie_ids = database["video/audio_name"].tolist()
     audio_clips = {}
     for i in range(len(movies)):
         audio_clips[movie_ids[i]] = movies[i]
     random_audio_id = random.choice(list(audio_clips.keys()))
-    #retrieve 5 questions for each movie
+
     filtered_movie = filter_method(random_audio_id, 5,
                                    "data/video_answers.csv", database)
     combined_data = combime_method(random_audio_id, filtered_movie, database,
