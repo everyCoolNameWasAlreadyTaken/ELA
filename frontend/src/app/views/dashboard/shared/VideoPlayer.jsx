@@ -133,7 +133,7 @@ const CorrectAnswer = styled('p')({
     margin: '20px',
 });
 
-const GivenAnswer = styled('p')(({isCorrect}) => ({
+const GivenAnswer = styled('p')(() => ({
     fontWeight: 'bold',
     margin: '20px',
 }));
@@ -260,11 +260,7 @@ const VideoPlayer = () => {
 
         const similarity = compareTwoStrings(userInput, correctAnswers);
         var UserisCorrect = false;
-        if (similarity >= similarityThreshold) {
-            UserisCorrect = true;
-        } else {
-            UserisCorrect = false;
-        }
+        UserisCorrect = similarity >= similarityThreshold;
         return {UserisCorrect, similarity};
     }
 
@@ -299,7 +295,7 @@ const VideoPlayer = () => {
     function makeTextColourful(similarity) {
         console.log("The similarity is: ", similarity.similarity);
         var textStyle = 'red';
-        if (similarity.similarity == 1) {
+        if (similarity.similarity === 1) {
             textStyle = 'green';
         } else if (similarity.similarity > 0) {
             textStyle = 'orange';
