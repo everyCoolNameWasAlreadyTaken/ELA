@@ -21,13 +21,25 @@ movie_name = "The Shawshank Redemption"
 
 @app.route('/')
 def hello():
+    """
+    This method is the root route of the Flask server and returns a greeting message.
+
+    Returns:
+    - A string message: "Hello from Flask Server :)"
+    """
     return 'Hello from Flask Server :)'
 
 
-#Generate movie released year by its name
-#Write a movie name you want to know for variable movie_name
 @app.route("/quiz", methods=['GET'])
 def quiz_qa():
+    """
+    This method generates quiz questions and answers from a set of available questions.
+
+    Returns:
+    - If successful: Returns a JSON response containing a list of randomly selected quiz questions and answers.
+    - If insufficient questions available: Returns a JSON response with an error message indicating that there are not
+        enough questions available.
+    """
     questions = read_questions_from_file("data/qa_merged.json")
     if len(questions) < 5:
         return jsonify({'error': 'Insufficient questions available.'})
@@ -58,6 +70,12 @@ def quiz_qa():
 
 @app.route("/audio", methods=['GET'])
 def audio_qa():
+    """
+    This method generates audio-related questions and answers.
+
+    Returns:
+    - If successful: Returns a JSON response containing audio-related question and answer data.
+    """
     database = pd.read_csv(r"data/automated_questions_audio.csv",
                            skipinitialspace=True,
                            quotechar='"')
@@ -76,6 +94,12 @@ def audio_qa():
 
 @app.route("/video", methods=['GET'])
 def video_qa():
+    """
+    This method generates video-related questions and answers.
+
+    Returns:
+    - If successful: Returns a JSON response containing video-related question and answer data.
+    """
     database = pd.read_csv(r"data/automated_questions_video.csv",
                            skipinitialspace=True,
                            quotechar='"')
@@ -94,11 +118,14 @@ def video_qa():
     return jsonify(combined_data)
 
 
-#Integrate ChatGPT
-#1.Provide open AI API key for variable openai.api_key
-#2.Write a query for variable query
 @app.route('/chat', methods=['GET', 'POST'])
 def chat():
+    """
+    This method integrates ChatGPT and generates a response based on the provided query.
+
+    Returns:
+    - The generated response from ChatGPT as a string.
+    """
     response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
                                             messages=[{
                                                 "role": "user",
@@ -109,6 +136,18 @@ def chat():
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user_name(user_id):
+    """
+    This method retrieves the user's name based on the user ID.
+
+    Parameters:
+    - user_id (int): User ID for whom the name is being retrieved.
+
+    Returns:
+    - If successful: Returns a JSON response containing the user's name.
+    - If user not found: Returns a JSON response with an error message indicating that the user with the specified ID
+        does not exist.
+
+    """
     user, code = get_user(int(user_id))
 
     if user:
@@ -119,12 +158,36 @@ def get_user_name(user_id):
 
 @app.route('/users/<int:user_id>/quiz/answers', methods=['POST'])
 def handle_user_answers(user_id):
+    """
+    This method handles the user's answers and stores them in the database.
+
+    Parameters:
+    - user_id (int): User ID for whom the answer data is being stored.
+
+    Returns:
+    - If successful: Returns a JSON response with a success message indicating that the answer data was
+        stored successfully.
+    - If error: Returns a JSON response with an error message indicating the error encountered during the
+        storage process.
+    """
     res, code = store_user_answers(user_id, request.json)
     return jsonify(res), code
 
 
 @app.route('/users/<int:user_id>/multipleChoice/stats', methods=['GET'])
 def get_user_mc_stats(user_id):
+    """
+    This method retrieves the genre statistics for the Multiple Choice item type for a specific user.
+
+    Parameters:
+    - user_id (int): User ID for whom the genre statistics are being retrieved.
+
+    Returns:
+    - If successful: Returns a JSON response containing the genre statistics for the user and the Multiple Choice
+        item type.
+    - If error: Returns a JSON response with an error message indicating the error encountered during the
+        retrieval process.
+    """
     res, code = get_genre_stats(user_id, "MultipleChoice")
     return jsonify(res), code
 
