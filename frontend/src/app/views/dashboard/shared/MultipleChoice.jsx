@@ -9,7 +9,8 @@ import {
     styled,
     Tooltip,
     Button,
-    Grid
+    Grid,
+    Typography
 } from '@mui/material';
 import {useState, useRef, useEffect} from 'react';
 import server from "../../../../axios/axios";
@@ -54,12 +55,23 @@ const ResultBox = styled(Box)({
 });
 
 const Question = styled('p')(({theme}) => ({
-    marginTop: '40px',
-    paddingTop: '5px',
+    marginTop: '10px',
+    paddingTop: '10px',
     paddingBottom: '5px',
     width: '90%',
     fontSize: '1rem',
     fontWeight: '50',
+    color: theme.palette.text.primary,
+}));
+
+const QuestionTitle = styled(Typography)(({ theme }) => ({
+    marginTop: '50px',
+    right: '0px',
+    width: '80%',
+    height: '20px',
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    zIndex: 1,
     color: theme.palette.text.primary,
 }));
 
@@ -78,7 +90,6 @@ const Answers = styled(RadioGroup)({
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: '90%',
-    marginTop: '5px',
     padding: '10px',
 });
 
@@ -145,7 +156,6 @@ const ButtonWrapperLarge = styled('span')(({theme}) => ({
 }));
 
 const ContinueButton = styled(IconButton)({
-    margin: '1px',
     alignSelf: 'flex-end',
     height: '40px',
     width: '40px',
@@ -236,7 +246,6 @@ const MultipleChoice = () => {
             setCurrentIndex(nextIndex);
         }
         if (nextIndex === questions.length) {
-            console.log(currentIndex);
             setShowScore(true);
             stopTimer();
             submitUserAnswers();
@@ -255,13 +264,16 @@ const MultipleChoice = () => {
                 questions: questions.map((question, index) => ({
                     qid: question.qid,
                     isCorrect: question.correctIndex === question.answers.indexOf(userAnswers[index]),
+                    title: question.title,
+                    year: question.year,
+                    genre: question.genre,
                 }))
             }
         };
         console.log(answerData);
-        server.post(`/users/${userId}/multipleChoiceAnswers`, answerData)
+        server.post(`/users/${userId}/quiz/answers`, answerData)
             .then(response => {
-                console.log('Answer data submitted successfully');
+                console.log(response.data)
             })
             .catch(error => {
                 console.error('Error sending answer data:', error);
@@ -322,6 +334,11 @@ const MultipleChoice = () => {
                                 <QuizStatusBox>
                                     {`${currentIndex + 1}/${questions.length}`}
                                 </QuizStatusBox>
+                                {currentQuestion && (
+                                    <QuestionTitle>
+                                        Movie: {currentQuestion.title}
+                                    </QuestionTitle>
+                                )}
                                 <Question>{currentQuestion?.question}</Question>
                                 <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
                                     {currentQuestion?.answers.map((choice, index) => (
