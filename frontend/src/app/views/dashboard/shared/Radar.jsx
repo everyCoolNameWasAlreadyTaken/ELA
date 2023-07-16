@@ -1,15 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactEcharts from 'echarts-for-react';
-import server from "../../../../axios/axios";
+import server from '../../../../axios/axios';
 
-const RadarChart = ({height, color = []}) => {
+const RadarChart = ({ height, color = [], userId, statsEndpoint }) => {
     const [genreStats, setGenreStats] = useState({});
-    const userId = 0;
 
     useEffect(() => {
         const fetchGenreStatsData = async () => {
             try {
-                const response = await server.get(`/users/${userId}/multipleChoice/stats`);
+                const response = await server.get(`/users/${userId}/stats/${statsEndpoint}`);
                 const statsData = response.data;
                 setGenreStats(statsData);
                 console.log(genreStats);
@@ -19,7 +18,7 @@ const RadarChart = ({height, color = []}) => {
         };
 
         fetchGenreStatsData();
-    }, []);
+    }, [statsEndpoint]);
 
     if (Object.keys(genreStats).length === 0) {
         return <div>Loading...</div>;
@@ -28,7 +27,7 @@ const RadarChart = ({height, color = []}) => {
     const genres = Object.keys(genreStats);
     const percentages = genres.map((genre) => {
         const percentage = genreStats[genre].percentage;
-        return Number(percentage.toFixed(1)); // Round to 1 digit after the decimal point
+        return Number(percentage.toFixed(1));
     });
 
     const option = {
@@ -56,13 +55,13 @@ const RadarChart = ({height, color = []}) => {
 
     return (
         <ReactEcharts
-            style={{height: height}}
+            style={{ height: height }}
             option={{
                 ...option,
-                color: [...color]
+                color: [...color],
             }}
         />
     );
-}
+};
 
 export default RadarChart;

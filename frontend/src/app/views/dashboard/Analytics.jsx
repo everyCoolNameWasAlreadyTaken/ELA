@@ -1,11 +1,7 @@
-import { Card, Grid, styled, useTheme } from '@mui/material';
-import { Fragment } from 'react';
-import Campaigns from './shared/Campaigns';
-import DoughnutChart from './shared/Doughnut';
+import {Card, CardContent, Grid, styled, useTheme} from '@mui/material';
+import {Fragment, useState} from 'react';
 import RadarChart from './shared/Radar';
-import RowCards from './shared/RowCards';
-import StatCards from './shared/StatCards';
-import StatCards2 from './shared/StatCards2';
+
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
@@ -13,6 +9,7 @@ const ContentBox = styled('div')(({theme}) => ({
 }));
 
 const Title = styled('span')(() => ({
+    margin: '10px',
     fontSize: '1rem',
     fontWeight: '500',
     marginRight: '.5rem',
@@ -24,44 +21,90 @@ const SubTitle = styled('span')(({theme}) => ({
     color: theme.palette.text.secondary,
 }));
 
-const H4 = styled('h4')(({theme}) => ({
-    fontSize: '1rem',
-    fontWeight: '500',
-    marginBottom: '16px',
-    textTransform: 'capitalize',
-    color: theme.palette.text.secondary,
+const TitleWrapper = styled('div')(({theme}) => ({
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(2),
 }));
+
+const capitalizeAndSpace = (text) => {
+    return text.replace(/([A-Z])/g, ' $1').trim();
+};
 
 const Analytics = () => {
     const {palette} = useTheme();
+    const [selectedOption, setSelectedOption] = useState('genre');
+    const userId = 0;
 
-  return (
-    <Fragment>
-      <ContentBox className="analytics">
-        <Grid container spacing={3}>
-          <Grid item lg={8} md={8} sm={12} xs={12}>
-            <StatCards />
-            <StatCards2 />
-            <H4>Ongoing Projects</H4>
-            <RowCards />
-          </Grid>
+    const handleOptionChange = (event) => {
+        setSelectedOption(event.target.value);
+    };
 
-          <Grid item lg={4} md={4} sm={12} xs={12}>
-            <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Multiple Choice Performance</Title>
-              <SubTitle>Genres</SubTitle>
+    const multipleChoiceStatsEndpoint = `multipleChoice`;
+    const audioQuizStatsEndpoint = `audioQuiz`;
+    const videoQuizStatsEndpoint = `videoQuiz`;
 
-              <RadarChart
-                height="300px"
-                color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
-              />
-            </Card>
-            <Campaigns />
-          </Grid>
-        </Grid>
-      </ContentBox>
-    </Fragment>
-  );
+    return (
+        <Fragment>
+            <ContentBox className="analytics" justifyContent="center">
+                <Grid container spacing={2}>
+                    <Grid item lg={8} md={8} sm={12} xs={12}>
+                        <Card sx={{px: 3, py: 2, mb: 3, height: '100%'}}>
+                            <Grid
+                                container
+                                direction="column"
+                                alignItems="center"
+                                justifyContent="center"
+                                height="100%"
+                            >
+                                <TitleWrapper>
+                                    <Title>{capitalizeAndSpace(multipleChoiceStatsEndpoint)} Performance</Title>
+                                    <SubTitle>Genres</SubTitle>
+                                </TitleWrapper>
+
+                                <Grid item sx={{width: '100%'}}>
+                                    <Card>
+                                        <CardContent>
+                                            <RadarChart
+                                                height="300px"
+                                                color={[
+                                                    palette.primary.dark,
+                                                    palette.primary.main,
+                                                    palette.primary.light,
+                                                ]}
+                                                userId={userId}
+                                                statsEndpoint={`${multipleChoiceStatsEndpoint}/${selectedOption}`}
+                                            />
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+
+                                <TitleWrapper>
+                                    <Title>{capitalizeAndSpace(audioQuizStatsEndpoint)} Performance</Title>
+                                    <SubTitle>Genres</SubTitle>
+                                </TitleWrapper>
+
+                                <Grid item sx={{width: '100%'}}>
+                                    <Card>
+                                        <CardContent>
+                                            <RadarChart
+                                                height="300px"
+                                                color={[
+                                                    palette.primary.dark,
+                                                    palette.primary.main,
+                                                    palette.primary.light,
+                                                ]}
+                                                userId={userId}
+                                                statsEndpoint={`${audioQuizStatsEndpoint}/${selectedOption}`}/>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                            </Grid>
+                        </Card>
+                    </Grid>
+                </Grid>
+            </ContentBox>
+        </Fragment>
+    );
 };
 
 export default Analytics;

@@ -174,24 +174,30 @@ def handle_user_answers(user_id):
     return jsonify(res), code
 
 
-@app.route('/users/<int:user_id>/multipleChoice/stats', methods=['GET'])
-def get_user_mc_stats(user_id):
+@app.route('/users/<int:user_id>/stats/<string:item_type>/<string:selected_option>', methods=['GET'])
+def get_user_mc_stats(user_id, item_type, selected_option):
     """
-    This method retrieves the genre statistics for the Multiple Choice item type for a specific user.
+    This method retrieves the genre statistics for a specific item type for a specific user.
 
     Parameters:
     - user_id (int): User ID for whom the genre statistics are being retrieved.
+    - item_type (string): Type of stats data to retrieve (e.g., "multipleChoice", "audioQuiz", "videoQuiz").
 
     Returns:
-    - If successful: Returns a JSON response containing the genre statistics for the user and the Multiple Choice
-        item type.
-    - If error: Returns a JSON response with an error message indicating the error encountered during the
-        retrieval process.
+    - If successful: Returns a JSON response containing the genre statistics for the user and the specified item type.
+    - If error: Returns a JSON response with an error message indicating the error encountered during the retrieval process.
     """
-    res, code = get_genre_stats(user_id, "MultipleChoice")
+    item_type_cap = item_type[0].upper() + item_type[1:]
+    if selected_option == 'genre':
+        res, code = get_genre_stats(user_id, item_type_cap)
+    elif selected_option == 'movie':
+        res, code = calculate_top_movies_percentage(user_id, item_type_cap)
+    else:
+        return jsonify({'error': 'Invalid selected option.'}), 400
     return jsonify(res), code
 
 
 if __name__ == '__main__':
     app.run(host=HOST, port=SERVER_PORT, debug=True)
+
 

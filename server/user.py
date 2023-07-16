@@ -245,3 +245,48 @@ def get_genre_stats(user_id, item_type):
         return genre_data, 200
     except Exception as e:
         return "Error retrieving genre stats: " + str(e), 500
+
+
+def calculate_top_movies_percentage(user_id, item_type_in):
+    try:
+        pipeline = [
+            {"$match": {"_id": user_id}},
+            {"$unwind": f"$Quizdata.{item_type_in}.data"},
+            {"$unwind": f"$Quizdata.{item_type_in}.data.questions"},
+            {"$group": {
+                "_id": {
+                    "title": f"$Quizdata.{item_type_in}.data.questions.title",
+                },
+                "right_answers": {"$sum": {
+                    "$cond": {
+                        "if": {f"$eq": [f"$Quizdata.{item_type_in}.data.questions.isCorrect", True]},
+                        "then": 1,
+                        "else": 0
+                    }
+                }},
+                "total_questions": {"$sum": 1}
+            }},
+            {"$sort": {"right_answers": -1}},
+            {"$limit": 10},
+            {"$project": {
+                "_id": 0,
+                "title": "$_id.title",
+                "right_answers": 1,
+                "total_questions": 1,
+                "percentage": {"$multiply": [{"$divide": ["$right_answers", "$total_questions"]}, 100]}
+            }}
+        ]
+
+        result = collection.aggregate(pipeline)
+
+        movie_stats = list(result)
+
+        return movie_stats, 200
+    except Exception as e:
+        return "Error calculating top movies percentage: " + str(e), 500
+
+
+if __name__ == '__main__':
+    item_type = "AudioQuiz"
+    top_movies_percentage = calculate_top_movies_percentage(0, item_type)
+    print(top_movies_percentage)
