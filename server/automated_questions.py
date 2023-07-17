@@ -192,7 +192,7 @@ def combime_method(random_video_id, filtered_data, database, format, _type):
         "genre":
             database.loc[database["video/audio_name"] == random_video_id, "genre"].iloc[0],
         "year":
-            database.loc[database["video/audio_name"] == random_video_id, "released_year"].iloc[0],
+            str(database.loc[database["video/audio_name"] == random_video_id, "released_year"].iloc[0]),
         "questions":
             filtered_data
     }
