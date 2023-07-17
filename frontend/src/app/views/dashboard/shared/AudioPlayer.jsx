@@ -9,10 +9,10 @@ import {
     Grid
 } from '@mui/material';
 
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
-import { compareTwoStrings } from 'string-similarity';
+import {compareTwoStrings} from 'string-similarity';
 
 
 const CardRoot = styled(Card)(({theme}) => ({
@@ -88,14 +88,14 @@ const QuizStatusBox = styled(Box)(({theme}) => ({
 }));
 
 const ButtonWrapper = styled('span')(({theme}) => ({
-/*     display: 'flex',
-    position: 'absolute',
-    top: '280px',
-    right: '50px',
-    width: '50px',
-    height: '50px',
-    justifyContent: 'center',
-    float: 'right', */
+    /*     display: 'flex',
+        position: 'absolute',
+        top: '280px',
+        right: '50px',
+        width: '50px',
+        height: '50px',
+        justifyContent: 'center',
+        float: 'right', */
     [theme.breakpoints.down('sm')]: {
         position: 'fixed',
         bottom: '24px',
@@ -137,7 +137,7 @@ const CorrectAnswer = styled('p')({
 const GivenAnswer = styled('p')(({isCorrect}) => ({
     fontWeight: 'bold',
     margin: '20px',
-    color: isCorrect ? 'green' : 'red',
+
 }));
 
 const TimeTaken = styled('p')(({theme}) => ({
@@ -150,9 +150,9 @@ const TimeTaken = styled('p')(({theme}) => ({
 
 const ViewAudio = styled(Box)(() => ({
     marginTop: '10%',
-  }));
+}));
 
-  
+
 const Answers = styled(Box)({
     fontSize: '1rem',
     flexDirection: 'column',
@@ -169,15 +169,17 @@ const AudioPlayer = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
-    const [timer, setTimer] = useState([]);
-    const [startTime, setStartTime] = useState(0);
+    const [timer, setTimer] = useState(0);
 
     const [clip_address, setClipAddress] = useState('');
-    const [movieName, setMovieName] = useState('');
+    const [audioName, setAudioName] = useState('');
     const [questions, setQuestions] = useState([]);
+    const [genre, setGenre] = useState('');
+    const [year, setYear] = useState(0);
     const [userAnswers, setUserAnswers] = useState([]);
     const [correctanswers, setAnswers] = useState([]);
     const inputRef = useRef('');
+    const timerRef = useRef();
     const userId = 0;
 
     const fetchAudioData = async () => {
@@ -186,34 +188,41 @@ const AudioPlayer = () => {
             const audioData = response.data;
             console.log("Geladene Daten: ", audioData);
             console.log("Audiodata: ", audioData.questions[0]);
-            setMovieName(audioData.movie_name);
+            setAudioName(audioData.movie_name);
             setClipAddress(audioData.clip_address);
             setQuestions(audioData.questions);
-            
+            setGenre(audioData.genre);
+            setYear(audioData.year.toString());
 
-            var answers = audioData.questions.map(function(question) {
-                return question.answer;        
-              });
-              setAnswers(answers);
-              console.log(answers);
-            
+            var answers = audioData.questions.map(function (question) {
+                return question.answer;
+            });
+            setAnswers(answers);
+
         } catch (error) {
             console.error('Error:', error);
         }
     };
 
-    
+    const startTimer = () => {
+        timerRef.current = setInterval(() => {
+            setTimer((prevTimer) => prevTimer + 1);
+        }, 1000);
+    };
 
-
-    const startTimer = async () => {
-        try {
-            if (currentIndex <= questions.length) {
-                setStartTime(Date.now());
-            }
-        } catch (error) {
-            console.error('Error:', error);
+    useEffect(() => {
+        if (quizStarted && currentIndex === 0) {
+            startTimer();
         }
-    }
+        return () => {
+            stopTimer();
+        };
+    }, [quizStarted, currentIndex]);
+
+    const stopTimer = () => {
+        clearInterval(timerRef.current);
+    };
+
     const handleStartQuiz = () => {
         setQuizStarted(true);
         fetchAudioData();
@@ -228,75 +237,96 @@ const AudioPlayer = () => {
             return updatedAnswers;
         });
     };
+
     function containsOnlyNumbers(str) {
         return /^[0-9]+$/.test(str);
-      } 
-    function handleUserInputErrors(userInput, correctAnswers){
-        var similarityThreshold =1;
+    }
 
-        if (correctAnswers.length>10){
+    function handleUserInputErrors(userInput, correctAnswers) {
+        var similarityThreshold = 1;
+
+        if (correctAnswers.length > 10) {
             similarityThreshold = 0.3;
-        } else if (correctAnswers.length>5){
+        } else if (correctAnswers.length > 5) {
             similarityThreshold = 0.4;
-        }else {
+        } else {
             similarityThreshold = 0.5;
-            }
-        
-        if (containsOnlyNumbers(correctAnswers)){
+        }
+
+        if (containsOnlyNumbers(correctAnswers)) {
             similarityThreshold = 1;
         }
 
           const similarity = compareTwoStrings(userInput, correctAnswers);
+          var UserisCorrect = false;
           if (similarity >= similarityThreshold) {
-            // Die Antwort wird als korrekt betrachtet
-            return true;
-          }
-        // Keine Übereinstimmung gefunden
-        return false;
+            UserisCorrect = true;
+          }else{
+            UserisCorrect = false;}
+        return {UserisCorrect, similarity};
       }
 
+
     const handleNextQuestion = () => {
-        const endTime = Date.now();
-        const timeTaken = endTime - startTime;
-        
-            if(inputRef.current){
-            inputRef.current.value ="";
-            }
-        
-        setTimer((prevTimes) => {
-            const updatedTimes = [...prevTimes];
-            updatedTimes[currentIndex] = timeTaken;
-            return updatedTimes;
-        })
-        const UserisCorrect  = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
+        if (inputRef.current) {
+            inputRef.current.value = "";
+        }
+
+        const {UserisCorrect, similarity}  = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
 
         if (UserisCorrect) {
             setScore(score + 1);
             console.log("Die Antwort ist korrekt!");
+            console.log("answerscore", similarity);
           } else {
             console.log("Die Antwort ist falsch!");
+            console.log("answerscore", similarity);
           }
         const nextIndex = currentIndex + 1;
         if (nextIndex < questions.length) {
             setCurrentIndex(nextIndex);
         } else {
+            stopTimer();
             setShowScore(true);
+            submitUserAnswers(UserisCorrect);
         }
     };
 
-    const submitUserAnswers = () => {
-        const answerData = questions.map((question, index) => ({
-            qid: index,
-            isCorrect: question.correctIndex === question.answer.indexOf(userAnswers[index]),
-            timeTaken: Date.now() - startTime,
-        }));
+    function makeTextColourful(similarity) {
+        var textStyle = 'red';
+        if (similarity.similarity==1){
+         textStyle = 'green';}
+            else if (similarity.similarity>0){
+                 textStyle = 'orange';
+            } else{
+                 textStyle = 'red';}
+          return (textStyle);}
 
-        server.post(`/users/${userId}/answers`, answerData)
+
+    const submitUserAnswers = () => {
+        const answerData = {
+            itemType: "AudioQuiz",
+            data: {
+                date: new Date().toISOString(),
+                totalQuestions: questions.length,
+                rightAnswers: score,
+                wrongAnswers: (questions.length - score),
+                timeTaken: timer,
+                questions: questions.map((question, index) => ({
+                    isCorrect: handleUserInputErrors(userAnswers[index].toString(), correctanswers[index].toString()).UserisCorrect,
+                    title: audioName,
+                    year: year,
+                    genre: genre,
+                }))
+            }
+        };
+        console.log(answerData);
+        server.post(`/users/${userId}/quiz/answers`, answerData)
             .then(response => {
-                console.log('Answer data submitted successfully');
+                console.log(response.data)
             })
             .catch(error => {
-                console.error('Error submitting answer data:', error);
+                console.error('Error sending answer data:', error);
             });
     };
 
@@ -314,7 +344,6 @@ const AudioPlayer = () => {
             .catch((error) => console.error('ERROR', error));
     };
 
-    
 
     const currentQuestion = questions[currentIndex];
 
@@ -328,7 +357,7 @@ const AudioPlayer = () => {
                             <>
                                 <ContentBox>
                                     <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
-                                    
+
                                 </ContentBox>
                             </>
                         ) : showScore ? (
@@ -341,14 +370,14 @@ const AudioPlayer = () => {
                                             <CorrectAnswer>
                                                 Correct
                                                 Answer: {correctanswers[index]}</CorrectAnswer>
-                                            <GivenAnswer
-                                                isCorrect={correctanswers[index] === userAnswers[index]}>
+                                            <GivenAnswer style={{ color: makeTextColourful(handleUserInputErrors(userAnswers[index],correctanswers[index]))
+                                                 }}>
                                                 Your Answer: {userAnswers[index]}
                                             </GivenAnswer>
                                         </ResultBox>
                                     ))}
                                 </ContentBox>
-                                <TimeTaken>Time taken: {Math.floor(timer / 1000)} seconds</TimeTaken>
+                                <TimeTaken>{((timer/60)).toFixed(1)} minutes</TimeTaken>
                                 <Tooltip title="New Quiz" placement="top">
                                     <ButtonWrapperLarge>
                                         <ContinueButton onClick={reload}>
@@ -358,9 +387,9 @@ const AudioPlayer = () => {
                                 </Tooltip>
                             </>
                         ) : (
-                            
-                            <> 
-                                    
+
+                            <>
+
                                 <ContentBox>
                                     <QuizStatusBox>
                                         {`${currentIndex + 1}/${questions.length}`}
@@ -371,28 +400,29 @@ const AudioPlayer = () => {
                                             controls/>
                                     </ViewAudio>
                                     <Question>{currentQuestion?.question}
-                                     </Question>
-                                     <Answers>
-                                     Ihre Antwort: 
-                                    <input type="text" value={userAnswers[currentIndex+1]} onChange={handleUserAnsweres} ref={inputRef}/>
+                                    </Question>
+                                    <Answers>
+                                        Ihre Antwort:
+                                        <input type="text" value={userAnswers[currentIndex + 1]}
+                                               onChange={handleUserAnsweres} ref={inputRef}/>
                                     </Answers>
-                                
-                                <Tooltip title="Continue" placement="top">
-                                    <ButtonWrapper>
-                                        <ContinueButton onClick={handleNextQuestion}
-                                                        disabled={!userAnswers[currentIndex]}>
-                                            <Icon
-                                                color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
-                                        </ContinueButton>
-                                    </ButtonWrapper>
-                                </Tooltip>
+
+                                    <Tooltip title="Continue" placement="top">
+                                        <ButtonWrapper>
+                                            <ContinueButton onClick={handleNextQuestion}
+                                                            disabled={!userAnswers[currentIndex]}>
+                                                <Icon
+                                                    color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
+                                            </ContinueButton>
+                                        </ButtonWrapper>
+                                    </Tooltip>
                                 </ContentBox>
                             </>
                         )}
                     </ContentBox>
                 </Grid>
             </Grid>
-        </CardRoot> 
+        </CardRoot>
     );
 };
 
