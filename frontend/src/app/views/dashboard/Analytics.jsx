@@ -1,6 +1,7 @@
-import {Card, CardContent, Grid, styled, useTheme} from '@mui/material';
+import {Card, CardContent, Grid, styled, useTheme, FormControl, Select, MenuItem } from '@mui/material';
 import {Fragment, useState} from 'react';
 import RadarChart from './shared/Radar';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
 const ContentBox = styled('div')(({theme}) => ({
@@ -16,11 +17,6 @@ const Title = styled('span')(() => ({
     textTransform: 'capitalize',
 }));
 
-const SubTitle = styled('span')(({theme}) => ({
-    fontSize: '0.875rem',
-    color: theme.palette.text.secondary,
-}));
-
 const TitleWrapper = styled('div')(({theme}) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(2),
@@ -32,11 +28,19 @@ const capitalizeAndSpace = (text) => {
 
 const Analytics = () => {
     const {palette} = useTheme();
-    const [selectedOption, setSelectedOption] = useState('genre');
+    const [selectedOptions, setSelectedOptions] = useState({
+        multipleChoice: 'genre',
+        audioQuiz: 'genre',
+        videoQuiz: 'genre',
+    });
     const userId = 0;
 
-    const handleOptionChange = (event) => {
-        setSelectedOption(event.target.value);
+    const handleOptionChange = (event, chartType) => {
+        const selectedValue = event.target.value;
+        setSelectedOptions((prevOptions) => ({
+            ...prevOptions,
+            [chartType]: selectedValue,
+        }));
     };
 
     const multipleChoiceStatsEndpoint = `multipleChoice`;
@@ -48,7 +52,7 @@ const Analytics = () => {
             <ContentBox className="analytics" justifyContent="center">
                 <Grid container spacing={2}>
                     <Grid item lg={8} md={8} sm={12} xs={12}>
-                        <Card sx={{px: 3, py: 2, mb: 3, height: '100%'}}>
+                        <Card sx={{ px: 3, py: 2, mb: 3, height: '100%' }}>
                             <Grid
                                 container
                                 direction="column"
@@ -58,12 +62,23 @@ const Analytics = () => {
                             >
                                 <TitleWrapper>
                                     <Title>{capitalizeAndSpace(multipleChoiceStatsEndpoint)} Performance</Title>
-                                    <SubTitle>Genres</SubTitle>
                                 </TitleWrapper>
 
-                                <Grid item sx={{width: '100%'}}>
+                                <Grid item sx={{ width: '100%' }}>
                                     <Card>
                                         <CardContent>
+                                            <FormControl>
+                                                <Select
+                                                    labelId="chart-option-label-mc"
+                                                    id="chart-option-mc"
+                                                    value={selectedOptions.multipleChoice}
+                                                    onChange={(event) => handleOptionChange(event, 'multipleChoice')}
+                                                    IconComponent={ExpandMoreIcon}
+                                                >
+                                                    <MenuItem value="genre">Genre</MenuItem>
+                                                    <MenuItem value="movie">Top 10 Movies</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                             <RadarChart
                                                 height="300px"
                                                 color={[
@@ -72,7 +87,7 @@ const Analytics = () => {
                                                     palette.primary.light,
                                                 ]}
                                                 userId={userId}
-                                                statsEndpoint={`${multipleChoiceStatsEndpoint}/${selectedOption}`}
+                                                statsEndpoint={`${multipleChoiceStatsEndpoint}/${selectedOptions.multipleChoice}`}
                                             />
                                         </CardContent>
                                     </Card>
@@ -80,12 +95,23 @@ const Analytics = () => {
 
                                 <TitleWrapper>
                                     <Title>{capitalizeAndSpace(audioQuizStatsEndpoint)} Performance</Title>
-                                    <SubTitle>Genres</SubTitle>
                                 </TitleWrapper>
 
-                                <Grid item sx={{width: '100%'}}>
+                                <Grid item sx={{ width: '100%' }}>
                                     <Card>
                                         <CardContent>
+                                            <FormControl>
+                                                <Select
+                                                    labelId="chart-option-label-aq"
+                                                    id="chart-option-aq"
+                                                    value={selectedOptions.audioQuiz}
+                                                    onChange={(event) => handleOptionChange(event, 'audioQuiz')}
+                                                    IconComponent={ExpandMoreIcon}
+                                                >
+                                                    <MenuItem value="genre">Genre</MenuItem>
+                                                    <MenuItem value="movie">Top 10 Movies</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                             <RadarChart
                                                 height="300px"
                                                 color={[
@@ -94,19 +120,31 @@ const Analytics = () => {
                                                     palette.primary.light,
                                                 ]}
                                                 userId={userId}
-                                                statsEndpoint={`${audioQuizStatsEndpoint}/${selectedOption}`}/>
+                                                statsEndpoint={`${audioQuizStatsEndpoint}/${selectedOptions.audioQuiz}`}
+                                            />
                                         </CardContent>
                                     </Card>
                                 </Grid>
 
                                 <TitleWrapper>
                                     <Title>{capitalizeAndSpace(videoQuizStatsEndpoint)} Performance</Title>
-                                    <SubTitle>Genres</SubTitle>
                                 </TitleWrapper>
 
-                                <Grid item sx={{width: '100%'}}>
+                                <Grid item sx={{ width: '100%' }}>
                                     <Card>
                                         <CardContent>
+                                            <FormControl>
+                                                <Select
+                                                    labelId="chart-option-label-vq"
+                                                    id="chart-option-vq"
+                                                    value={selectedOptions.videoQuiz}
+                                                    onChange={(event) => handleOptionChange(event, 'videoQuiz')}
+                                                    IconComponent={ExpandMoreIcon}
+                                                >
+                                                    <MenuItem value="genre">Genre</MenuItem>
+                                                    <MenuItem value="movie">Top 10 Movies</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                             <RadarChart
                                                 height="300px"
                                                 color={[
@@ -115,7 +153,8 @@ const Analytics = () => {
                                                     palette.primary.light,
                                                 ]}
                                                 userId={userId}
-                                                statsEndpoint={`${videoQuizStatsEndpoint}/${selectedOption}`}/>
+                                                statsEndpoint={`${videoQuizStatsEndpoint}/${selectedOptions.videoQuiz}`}
+                                            />
                                         </CardContent>
                                     </Card>
                                 </Grid>
