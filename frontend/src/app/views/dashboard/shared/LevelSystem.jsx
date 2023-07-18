@@ -9,14 +9,15 @@ const ContainerStyle = styled(Box)({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '250px', // oder die gewünschte Höhe des Containers
+    height: '250px', 
     
   });
 
   const imageStyle = {
-    objectFit: 'contain', // Anpassen, um das gewünschte Verhalten zu erzielen (cover, contain, etc.)
+    objectFit: 'contain', 
     maxWidth: '100%',
     maxHeight: '100%',
+    borderRadius: '15px',
   };
 
 const LevelSystem = () => {
