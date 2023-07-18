@@ -98,6 +98,27 @@ const Analytics = () => {
                                         </CardContent>
                                     </Card>
                                 </Grid>
+
+                                <TitleWrapper>
+                                    <Title>{capitalizeAndSpace(videoQuizStatsEndpoint)} Performance</Title>
+                                    <SubTitle>Genres</SubTitle>
+                                </TitleWrapper>
+
+                                <Grid item sx={{width: '100%'}}>
+                                    <Card>
+                                        <CardContent>
+                                            <RadarChart
+                                                height="300px"
+                                                color={[
+                                                    palette.primary.dark,
+                                                    palette.primary.main,
+                                                    palette.primary.light,
+                                                ]}
+                                                userId={userId}
+                                                statsEndpoint={`${videoQuizStatsEndpoint}/${selectedOption}`}/>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
                             </Grid>
                         </Card>
                     </Grid>

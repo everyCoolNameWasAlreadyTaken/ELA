@@ -163,11 +163,9 @@ def store_user_answers(user_id, answer_data):
     - If error: Returns an error message as a string indicating the error encountered during the storage process and
         HTTP status code 500.
     """
-    logger.info(answer_data)
     try:
         item_type = answer_data["itemType"]
         new_data = answer_data["data"]
-        logger.info(new_data)
 
         user = collection.find_one({"_id": user_id})
         if not user:
