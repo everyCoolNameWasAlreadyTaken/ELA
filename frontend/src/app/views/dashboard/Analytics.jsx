@@ -1,6 +1,7 @@
-import {Card, CardContent, Grid, styled, useTheme} from '@mui/material';
+import {Card, CardContent, Grid, styled, useTheme, Tooltip} from '@mui/material';
 import {Fragment, useState} from 'react';
 import RadarChart from './shared/Radar';
+import LevelSystem from './shared/LevelSystem';
 
 
 const ContentBox = styled('div')(({theme}) => ({
@@ -46,8 +47,8 @@ const Analytics = () => {
     return (
         <Fragment>
             <ContentBox className="analytics" justifyContent="center">
-                <Grid container spacing={2}>
-                    <Grid item lg={8} md={8} sm={12} xs={12}>
+                <Grid container spacing={3}>
+                    <Grid item lg={12} md={12} sm={12} xs={12}>
                         <Card sx={{px: 3, py: 2, mb: 3, height: '100%'}}>
                             <Grid
                                 container
@@ -55,7 +56,15 @@ const Analytics = () => {
                                 alignItems="center"
                                 justifyContent="center"
                                 height="100%"
-                            >
+                                >
+
+                                <TitleWrapper>
+                                    <Title>Your current Level</Title>
+                                    <Tooltip title="Your Current Level Shows your progress in the exams you have taken. Your correct answers and the time taken are used for the calculation. There are six levels: Level 0 represents a new entry into the world of film and Level 5 represents absolute expertise in all areas of film and series.">
+                                        <SubTitle>Level 2 - Junior Light Operator</SubTitle>
+                                    </Tooltip>
+                                </TitleWrapper>
+                                     <LevelSystem />
                                 <TitleWrapper>
                                     <Title>{capitalizeAndSpace(multipleChoiceStatsEndpoint)} Performance</Title>
                                     <SubTitle>Genres</SubTitle>
