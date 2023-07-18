@@ -167,6 +167,7 @@ def store_user_answers(user_id, answer_data):
         item_type = answer_data["itemType"]
         new_data = answer_data["data"]
 
+
         user = collection.find_one({"_id": user_id})
         if not user:
             user = create_new_user(user_id, item_type, new_data)

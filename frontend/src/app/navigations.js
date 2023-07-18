@@ -21,6 +21,9 @@ export const navigations = [
   
   { label: 'Exam', type: 'label' },
   { name: 'Random Exam', path: '/dashboard/Page_RandomExam', icon: 'school' },
+
+  { label: 'UserData ', type: 'label' },
+  { name: 'Clustering', path: '/dashboard/Page_Clustering', icon: 'admin_panel_settings' },
   
 
 

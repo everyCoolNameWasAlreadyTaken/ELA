@@ -29,6 +29,9 @@ const Page_RandomExam = Loadable(lazy(() => import('app/views/dashboard/Page_Ran
 // Video page
 const Page_Video = Loadable(lazy(() => import('app/views/dashboard/Page_Video')));
 
+// Clustering page
+const Page_Clustering = Loadable(lazy(() => import('app/views/dashboard/Page_Clustering')));
+
 
 const routes = [
     {
@@ -69,6 +72,12 @@ const routes = [
             {
                 path: '/dashboard/Page_Video',
                 element: <Page_Video/>,
+            },
+
+            // Clustering
+            {
+                path: '/dashboard/Page_Clustering',
+                element: <Page_Clustering/>,
             },
 
 
