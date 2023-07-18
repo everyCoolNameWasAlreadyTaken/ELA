@@ -353,7 +353,7 @@ def get_percentage_per_item_type_and_date(user_id_in):
                         date = datetime.fromisoformat(date_str).strftime("%Y/%m/%d")
                         total_questions = data_point["totalQuestions"]
                         right_answers = data_point["rightAnswers"]
-                        percentage = (right_answers / total_questions) * 100
+                        percentage = int((right_answers / total_questions) * 100)
 
                         data_entry = [date, percentage, item_type]
                         percentage_stats.append(data_entry)

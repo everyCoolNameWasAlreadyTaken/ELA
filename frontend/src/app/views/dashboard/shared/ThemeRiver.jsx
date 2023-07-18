@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import server from '../../../../axios/axios';
 
-const ThemeRiver = ({ height, color = [], userId, statsEndpoint }) => {
-
+const ThemeRiver = ({ userId, statsEndpoint }) => {
     const [themeData, setThemeData] = useState([]);
     const [legend, setLegend] = useState([]);
 
@@ -13,79 +12,87 @@ const ThemeRiver = ({ height, color = [], userId, statsEndpoint }) => {
                 const response = await server.get(`/users/${userId}/stats/${statsEndpoint}`);
                 const statsData = response.data;
                 setThemeData(statsData.data);
-                setLegend(statsData.legend)
-                console.log(themeData);
+                setLegend(statsData.legend);
             } catch (error) {
                 console.error('Error:', error);
             }
         };
 
         fetchThemeStatsData();
-    }, [statsEndpoint]);
+    }, [statsEndpoint, userId]);
 
-    if (Object.keys(genreStats).length === 0) {
+    useEffect(() => {
+        console.log(themeData);
+        console.log(legend);
+    }, [themeData, legend]);
+
+    if (Object.keys(themeData).length === 0) {
         return <div>Loading...</div>;
     }
 
-    let option = {
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'line',
-                lineStyle: {
-                    color: 'rgba(0,0,0,0.2)',
-                    width: 1,
-                    type: 'solid'
-                }
-            }
-        },
-        legend: {
-            data: legend
-        },
-        singleAxis: {
-            top: 50,
-            bottom: 50,
-            axisTick: {},
-            axisLabel: {},
-            type: 'time',
-            axisPointer: {
-                animation: true,
-                label: {
-                    show: true
+    const getOption = () => {
+        const colors = ["#5470c6", "#91cc75", "#fac858"];
+
+        const series = legend.map(name => ({
+            name,
+            type: "themeRiver",
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 20,
+                    shadowColor: "rgba(0, 0, 0, 0.8)"
                 }
             },
-            splitLine: {
-                show: true,
-                lineStyle: {
-                    type: 'dashed',
-                    opacity: 0.2
+            data: themeData
+                .filter(item => item[2] === name)
+                .map(item => [item[0], item[1], item[2]])
+        }));
+
+        return {
+            tooltip: {
+                trigger: "axis",
+                axisPointer: {
+                    type: "line",
+                    lineStyle: {
+                        color: "rgba(0, 0, 0, 0.2)",
+                        width: 1,
+                        type: "solid"
+                    }
                 }
-            }
-        },
-        series: [
-            {
-                type: 'themeRiver',
-                emphasis: {
-                    itemStyle: {
-                        shadowBlur: 20,
-                        shadowColor: 'rgba(0, 0, 0, 0.8)'
+            },
+            legend: {
+                data: legend
+            },
+            singleAxis: {
+                top: 50,
+                bottom: 50,
+                axisTick: {},
+                axisLabel: {},
+                type: "time",
+                axisPointer: {
+                    animation: true,
+                    label: {
+                        show: true
                     }
                 },
-                data: themeData
-            }
-        ]
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        type: "dashed",
+                        opacity: 0.2
+                    }
+                }
+            },
+            series,
+            color: colors
+        };
     };
 
     return (
         <ReactEcharts
-            style={{ height: height }}
-            option={{
-                ...option,
-                color: [...color],
-            }}
+            option={getOption()}
+            style={{ height: "400px" }}
         />
     );
-
 };
 
 export default ThemeRiver;

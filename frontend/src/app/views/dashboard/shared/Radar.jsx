@@ -17,7 +17,7 @@ const RadarChart = ({ height, color = [], userId, statsEndpoint }) => {
         };
 
         fetchGenreStatsData();
-    }, [statsEndpoint]);
+    }, [statsEndpoint, userId]);
 
     if (Object.keys(genreStats).length === 0) {
         return <div>Loading...</div>;

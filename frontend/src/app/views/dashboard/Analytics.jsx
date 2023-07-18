@@ -1,9 +1,9 @@
-import {Card, CardContent, Grid, styled, useTheme, Tooltip, FormControl, Select, MenuItem } from '@mui/material';
+import {Card, CardContent, Grid, styled, useTheme, Tooltip, FormControl, Select, MenuItem} from '@mui/material';
 import {Fragment, useState} from 'react';
 import RadarChart from './shared/Radar';
+import ThemeRiver from "./shared/ThemeRiver";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LevelSystem from './shared/LevelSystem';
-
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
@@ -52,6 +52,7 @@ const Analytics = () => {
     const multipleChoiceStatsEndpoint = `multipleChoice`;
     const audioQuizStatsEndpoint = `audioQuiz`;
     const videoQuizStatsEndpoint = `videoQuiz`;
+    const themeStatsEndpoint = `time`;
 
     return (
         <Fragment>
@@ -65,20 +66,37 @@ const Analytics = () => {
                                 alignItems="center"
                                 justifyContent="center"
                                 height="100%"
-                                >
+                            >
 
                                 <TitleWrapper>
                                     <Title>Your current Level</Title>
-                                    <Tooltip title="Your Current Level Shows your progress in the exams you have taken. Your correct answers and the time taken are used for the calculation. There are six levels: Level 0 represents a new entry into the world of film and Level 5 represents absolute expertise in all areas of film and series.">
+                                    <Tooltip title="Your Current Level Shows your progress in the exams you have taken.
+                                    Your correct answers and the time taken are used for the calculation. There are six
+                                    levels: Level 0 represents a new entry into the world of film and Level 5 represents
+                                    absolute expertise in all areas of film and series.">
                                         <SubTitle>Level 2 - Junior Light Operator</SubTitle>
                                     </Tooltip>
                                 </TitleWrapper>
-                                     <LevelSystem />
+                                <LevelSystem/>
+
+                                <TitleWrapper>
+                                    <Title>Your Progress Over Time</Title>
+                                </TitleWrapper>
+                                <Grid item sx={{width: '100%'}}>
+                                    <Card>
+                                        <CardContent>
+                                            <ThemeRiver height="300px"
+                                                        userId={userId}
+                                                        statsEndpoint={`${themeStatsEndpoint}`}/>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+
                                 <TitleWrapper>
                                     <Title>{capitalizeAndSpace(multipleChoiceStatsEndpoint)} Performance</Title>
                                 </TitleWrapper>
 
-                                <Grid item sx={{ width: '100%' }}>
+                                <Grid item sx={{width: '100%'}}>
                                     <Card>
                                         <CardContent>
                                             <FormControl>
@@ -111,7 +129,7 @@ const Analytics = () => {
                                     <Title>{capitalizeAndSpace(audioQuizStatsEndpoint)} Performance</Title>
                                 </TitleWrapper>
 
-                                <Grid item sx={{ width: '100%' }}>
+                                <Grid item sx={{width: '100%'}}>
                                     <Card>
                                         <CardContent>
                                             <FormControl>
@@ -144,7 +162,7 @@ const Analytics = () => {
                                     <Title>{capitalizeAndSpace(videoQuizStatsEndpoint)} Performance</Title>
                                 </TitleWrapper>
 
-                                <Grid item sx={{ width: '100%' }}>
+                                <Grid item sx={{width: '100%'}}>
                                     <Card>
                                         <CardContent>
                                             <FormControl>
