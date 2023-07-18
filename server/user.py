@@ -261,6 +261,20 @@ def get_genre_stats(user_id, item_type):
 
 
 def calculate_top_movies_percentage(user_id, item_type_in):
+    """
+    Calculate the top movies' performance for a specific user and item type.
+
+    Parameters:
+    - user_id (str): User ID for whom the top movies' performance is being calculated.
+    - item_type_in (str): Item type for which the top movies' performance is being calculated.
+
+    Returns:
+    - If successful: Returns a dictionary containing the performance stats of the top movies and HTTP status code 200.
+    - If no movie stats found: Returns an error message as a string indicating that no movie stats were found and
+        HTTP status code 404.
+    - If error: Returns an error message as a string indicating the error encountered during the calculation and
+        HTTP status code 500.
+    """
     try:
         pipeline = [
             {"$match": {"_id": user_id}},
@@ -281,20 +295,28 @@ def calculate_top_movies_percentage(user_id, item_type_in):
             }},
             {"$sort": {"right_answers": -1}},
             {"$limit": 10},
-            {"$project": {
-                "_id": 0,
-                "title": "$_id.title",
-                "right_answers": 1,
-                "total_questions": 1,
-                "percentage": {"$multiply": [{"$divide": ["$right_answers", "$total_questions"]}, 100]}
-            }}
+            {"$group": {
+                "_id": None,
+                "movies": {"$push": {
+                    "k": "$_id.title",
+                    "v": {
+                        "correct": "$right_answers",
+                        "percentage": {"$multiply": [{"$divide": ["$right_answers", "$total_questions"]}, 100]},
+                        "total": "$total_questions"
+                    }
+                }}
+            }},
+            {"$addFields": {"movies": {"$arrayToObject": "$movies"}}},
+            {"$project": {"movies": 1, "_id": 0}}
         ]
 
         result = collection.aggregate(pipeline)
 
         movie_stats = list(result)
-
-        return movie_stats, 200
+        if movie_stats:
+            return movie_stats[0]["movies"], 200
+        else:
+            return "No movie stats found", 404
     except Exception as e:
         return "Error calculating top movies percentage: " + str(e), 500
 
