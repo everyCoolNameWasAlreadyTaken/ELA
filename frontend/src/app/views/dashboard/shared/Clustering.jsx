@@ -37,14 +37,14 @@ const ContainerStyle = styled(Box)({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '250px', 
+    height: '410px', 
     
   });
 
   const imageStyle = {
     objectFit: 'contain',
     maxWidth: '100%',
-    maxHeight: '100%',
+    maxHeight: '90%',
   };
 
 const Clustering = () => {
@@ -59,13 +59,15 @@ const Clustering = () => {
         <Title>Clustering</Title>
       </CardHeader>
       <CardHeader>
-        <SubTitle> Here is the Clustering Diagram</SubTitle>
+        <SubTitle> Here are the Clustering Diagrams shown</SubTitle>
       </CardHeader>
       </Card>
       <Card>
         <ContentBox>
             <ContainerStyle>
-                <img src="/assets/images/Level_Pics/Lvl2.jpg" style={imageStyle} alt="Level 2"/>
+                <img src="/assets/clustering.jpg" style={imageStyle} alt="All Questions"/>
+                <img src="/assets/clusteringMedia.jpg" style={imageStyle} alt="Media Questions"/>
+                <img src="/assets/clusteringMultiplechoice.jpg" style={imageStyle} alt="MC Questions"/>
             </ContainerStyle>
             </ContentBox>
             </Card>
