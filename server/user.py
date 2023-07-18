@@ -99,7 +99,13 @@ def import_data_to_db(filename):
     """
     with open(filename, 'r') as file:
         data = json.load(file)
-        collection.insert_many(data)
+        if isinstance(data, dict):
+            data = [data]
+
+        if data:
+            collection.insert_many(data)
+        else:
+            print("No data found in the JSON file.")
 
 
 def export_data_to_json(filename):
@@ -157,17 +163,25 @@ def store_user_answers(user_id, answer_data):
     - If error: Returns an error message as a string indicating the error encountered during the storage process and
         HTTP status code 500.
     """
+    logger.info(answer_data)
     try:
         item_type = answer_data["itemType"]
         new_data = answer_data["data"]
+        logger.info(new_data)
 
         user = collection.find_one({"_id": user_id})
         if not user:
             user = create_new_user(user_id, item_type, new_data)
             collection.insert_one(user)
-        else:
-            user = add_answer_data(user, item_type, new_data)
-            collection.update_one({"_id": user_id}, {"$set": user})
+
+        if "Quizdata" not in user:
+            user["Quizdata"] = {}
+
+        if item_type not in user["Quizdata"]:
+            user["Quizdata"][item_type] = {"data": [], "genre_stats": {}}
+
+        user = add_answer_data(user, item_type, new_data)
+        collection.update_one({"_id": user_id}, {"$set": user})
 
         genre_stats = user.get("Quizdata", {}).get(item_type, {}).get("genre_stats", {})
         if not genre_stats:
