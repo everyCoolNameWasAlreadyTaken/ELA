@@ -88,7 +88,7 @@ const QuizStatusBox = styled(Box)(({theme}) => ({
 }));
 
 const ButtonWrapper = styled('span')(({theme}) => ({
-    /*     display: 'flex',
+    /*  display: 'flex',
         position: 'absolute',
         top: '280px',
         right: '50px',

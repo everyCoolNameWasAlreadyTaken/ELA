@@ -11,7 +11,6 @@ const RadarChart = ({ height, color = [], userId, statsEndpoint }) => {
                 const response = await server.get(`/users/${userId}/stats/${statsEndpoint}`);
                 const statsData = response.data;
                 setGenreStats(statsData);
-                console.log(genreStats);
             } catch (error) {
                 console.error('Error:', error);
             }

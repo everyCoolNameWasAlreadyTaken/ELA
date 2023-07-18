@@ -1,6 +1,8 @@
 import pymongo
 import json
 import logging
+from datetime import datetime
+import re
 
 host = 'localhost'
 port = 27017
@@ -167,7 +169,6 @@ def store_user_answers(user_id, answer_data):
         item_type = answer_data["itemType"]
         new_data = answer_data["data"]
 
-
         user = collection.find_one({"_id": user_id})
         if not user:
             user = create_new_user(user_id, item_type, new_data)
@@ -321,7 +322,54 @@ def calculate_top_movies_percentage(user_id, item_type_in):
         return "Error calculating top movies percentage: " + str(e), 500
 
 
+def get_theme_river_data(user_id_in):
+    try:
+        user = collection.find_one({"_id": user_id_in})
+        item_types = []
+
+        if user:
+            for item_type, item_data in user["Quizdata"].items():
+                if "data" in item_data:
+                    item_types.append(item_type)
+
+        return item_types
+
+    except Exception as e:
+        raise Exception("Error retrieving theme river data: " + str(e))
+
+
+def get_percentage_per_item_type_and_date(user_id_in):
+    try:
+        user = collection.find_one({"_id": user_id_in})
+
+        if user:
+            item_types = get_theme_river_data(user_id_in)
+            percentage_stats = []
+
+            for item_type, item_data in user["Quizdata"].items():
+                if "data" in item_data:
+                    for data_point in item_data["data"]:
+                        date_str = re.sub(r'[^0-9]+$', '', data_point["date"])
+                        date = datetime.fromisoformat(date_str).strftime("%Y/%m/%d")
+                        total_questions = data_point["totalQuestions"]
+                        right_answers = data_point["rightAnswers"]
+                        percentage = (right_answers / total_questions) * 100
+
+                        data_entry = [date, percentage, item_type]
+                        percentage_stats.append(data_entry)
+
+            return {
+                'data': percentage_stats,
+                'legend': item_types
+            }, 200
+        else:
+            return "User not found", 404
+
+    except Exception as e:
+        return "Error retrieving percentage stats: " + str(e), 500
+
+
 if __name__ == '__main__':
-    item_type = "AudioQuiz"
-    top_movies_percentage = calculate_top_movies_percentage(0, item_type)
+    user_id = 0
+    top_movies_percentage = get_percentage_per_item_type_and_date(user_id)
     print(top_movies_percentage)
