@@ -1,9 +1,10 @@
-import {Card, CardContent, Grid, styled, useTheme, Tooltip, FormControl, Select, MenuItem } from '@mui/material';
+import {Card, CardContent, Grid, styled, useTheme, FormControl, Select, MenuItem} from '@mui/material';
 import {Fragment, useState} from 'react';
-import RadarChart from './shared/Radar';
+import RadarChart from './shared/charts/Radar';
+import ThemeRiver from "./shared/charts/ThemeRiver";
+import Doughnut from "./shared/charts/Doughnut";
+import ComparisonChart from "./shared/charts/ComparisonChart";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LevelSystem from './shared/LevelSystem';
-
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
@@ -16,16 +17,27 @@ const Title = styled('span')(() => ({
     fontWeight: '500',
     marginRight: '.5rem',
     textTransform: 'capitalize',
-}));
-
-const SubTitle = styled('span')(({theme}) => ({
-    fontSize: '0.875rem',
-    color: theme.palette.text.secondary,
+    alignSelf: 'center',
+    display: 'flex',
 }));
 
 const TitleWrapper = styled('div')(({theme}) => ({
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(2),
+    alignSelf: 'center',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+}));
+
+const TitleWrapperSolid = styled('div')(({theme}) => ({
+    marginTop: theme.spacing(3),
+    marginBottom: theme.spacing(2),
+    alignSelf: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
 }));
 
 const capitalizeAndSpace = (text) => {
@@ -34,145 +46,214 @@ const capitalizeAndSpace = (text) => {
 
 const Analytics = () => {
     const {palette} = useTheme();
-    const [selectedOptions, setSelectedOptions] = useState({
+    const [selectedOptionsItemTypse, setSelectedOptionsItemTypse] = useState({
         multipleChoice: 'genre',
         audioQuiz: 'genre',
         videoQuiz: 'genre',
     });
+    const [selectedOptionsNrPerc, setSelectedOptionsNrPerc] = useState('numbers');
     const userId = 0;
 
-    const handleOptionChange = (event, chartType) => {
+    const handleItemTypeChange = (event, chartType) => {
         const selectedValue = event.target.value;
-        setSelectedOptions((prevOptions) => ({
+        setSelectedOptionsItemTypse((prevOptions) => ({
             ...prevOptions,
             [chartType]: selectedValue,
         }));
     };
 
+    const handleNumberPercentageChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedOptionsNrPerc(selectedValue);
+    };
+
     const multipleChoiceStatsEndpoint = `multipleChoice`;
     const audioQuizStatsEndpoint = `audioQuiz`;
     const videoQuizStatsEndpoint = `videoQuiz`;
+    const themeStatsEndpoint = `time`;
+    const quizPercentage = `percentage`;
+    const comparison = `itemTypes`;
 
     return (
         <Fragment>
             <ContentBox className="analytics" justifyContent="center">
                 <Grid container spacing={3}>
-                    <Grid item lg={12} md={12} sm={12} xs={12}>
+
+                    <Grid item xs={12}>
                         <Card sx={{px: 3, py: 2, mb: 3, height: '100%'}}>
-                            <Grid
-                                container
-                                direction="column"
-                                alignItems="center"
-                                justifyContent="center"
-                                height="100%"
-                                >
+                            <CardContent>
+                                <TitleWrapperSolid>
+                                    <Title>Your Progress Over Time</Title>
+                                </TitleWrapperSolid>
+                                <ThemeRiver userId={userId}
+                                            statsEndpoint={`${themeStatsEndpoint}`}/>
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
+                    <Grid item xs={12} md={6}>
+                        <Card>
+                            <CardContent>
+                                <TitleWrapperSolid>
+                                    <Title>Your Taken Quizzes</Title>
+                                </TitleWrapperSolid>
+                                <Doughnut
+                                    height="300px"
+                                    color={[
+                                        palette.primary.dark,
+                                        palette.primary.main,
+                                        palette.primary.light,
+                                    ]}
+                                    userId={userId}
+                                    statsEndpoint={`${quizPercentage}`}/>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Card>
+                            <CardContent>
                                 <TitleWrapper>
-                                    <Title>Your current Level</Title>
-                                    <Tooltip title="Your Current Level Shows your progress in the exams you have taken. Your correct answers and the time taken are used for the calculation. There are six levels: Level 0 represents a new entry into the world of film and Level 5 represents absolute expertise in all areas of film and series.">
-                                        <SubTitle>Level 2 - Junior Light Operator</SubTitle>
-                                    </Tooltip>
+                                    <div style={{flex: 1}}>
+                                        <FormControl>
+                                            <Select
+                                                labelId="chart-option-label-mc"
+                                                id="chart-option-mc"
+                                                value={selectedOptionsNrPerc}
+                                                onChange={handleNumberPercentageChange}
+                                                IconComponent={ExpandMoreIcon}
+                                            >
+                                                <MenuItem value="numbers">Numbers</MenuItem>
+                                                <MenuItem value="percentages">Percentages</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{flex: 1, textAlign: 'right'}}>
+                                        <Title>Your Overall Quizzes Stats</Title>
+                                    </div>
+                                    <div style={{flex: 1}}/>
                                 </TitleWrapper>
-                                     <LevelSystem />
+                                <ComparisonChart
+                                    height="300px"
+                                    color={[
+                                        palette.primary.dark,
+                                        palette.primary.main,
+                                        palette.primary.light,
+                                    ]}
+                                    userId={userId}
+                                    statsEndpoint={`${comparison}/${selectedOptionsNrPerc}`}/>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Card>
+                            <CardContent>
                                 <TitleWrapper>
-                                    <Title>{capitalizeAndSpace(multipleChoiceStatsEndpoint)} Performance</Title>
+                                    <div style={{flex: 1}}>
+                                        <FormControl>
+                                            <Select
+                                                labelId="chart-option-label-mc"
+                                                id="chart-option-mc"
+                                                value={selectedOptionsItemTypse.multipleChoice}
+                                                onChange={(event) => handleItemTypeChange(event, 'multipleChoice')}
+                                                IconComponent={ExpandMoreIcon}
+                                            >
+                                                <MenuItem value="genre">Genre</MenuItem>
+                                                <MenuItem value="movie">Top 10 Movies</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{flex: 1, textAlign: 'right'}}>
+                                        <Title>{capitalizeAndSpace(multipleChoiceStatsEndpoint)} Performance</Title>
+                                    </div>
+                                    <div style={{flex: 1}}/>
                                 </TitleWrapper>
+                                <RadarChart
+                                    height="300px"
+                                    color={[
+                                        palette.primary.dark,
+                                        palette.primary.main,
+                                        palette.primary.light,
+                                    ]}
+                                    userId={userId}
+                                    statsEndpoint={`${multipleChoiceStatsEndpoint}/${selectedOptionsItemTypse.multipleChoice}`}
+                                />
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
-                                <Grid item sx={{ width: '100%' }}>
-                                    <Card>
-                                        <CardContent>
-                                            <FormControl>
-                                                <Select
-                                                    labelId="chart-option-label-mc"
-                                                    id="chart-option-mc"
-                                                    value={selectedOptions.multipleChoice}
-                                                    onChange={(event) => handleOptionChange(event, 'multipleChoice')}
-                                                    IconComponent={ExpandMoreIcon}
-                                                >
-                                                    <MenuItem value="genre">Genre</MenuItem>
-                                                    <MenuItem value="movie">Top 10 Movies</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                            <RadarChart
-                                                height="300px"
-                                                color={[
-                                                    palette.primary.dark,
-                                                    palette.primary.main,
-                                                    palette.primary.light,
-                                                ]}
-                                                userId={userId}
-                                                statsEndpoint={`${multipleChoiceStatsEndpoint}/${selectedOptions.multipleChoice}`}
-                                            />
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-
+                    <Grid item xs={12} md={6}>
+                        <Card>
+                            <CardContent>
                                 <TitleWrapper>
-                                    <Title>{capitalizeAndSpace(audioQuizStatsEndpoint)} Performance</Title>
+                                    <div style={{flex: 1}}>
+                                        <FormControl>
+                                            <Select
+                                                labelId="chart-option-label-mc"
+                                                id="chart-option-mc"
+                                                value={selectedOptionsItemTypse.audioQuiz}
+                                                onChange={(event) => handleItemTypeChange(event, 'audioQuiz')}
+                                                IconComponent={ExpandMoreIcon}
+                                            >
+                                                <MenuItem value="genre">Genre</MenuItem>
+                                                <MenuItem value="movie">Top 10 Movies</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{flex: 1, textAlign: 'right'}}>
+                                        <Title>{capitalizeAndSpace(audioQuizStatsEndpoint)} Performance</Title>
+                                    </div>
+                                    <div style={{flex: 1}}/>
                                 </TitleWrapper>
+                                <RadarChart
+                                    height="300px"
+                                    color={[
+                                        palette.primary.dark,
+                                        palette.primary.main,
+                                        palette.primary.light,
+                                    ]}
+                                    userId={userId}
+                                    statsEndpoint={`${audioQuizStatsEndpoint}/${selectedOptionsItemTypse.audioQuiz}`}
+                                />
+                            </CardContent>
+                        </Card>
+                    </Grid>
 
-                                <Grid item sx={{ width: '100%' }}>
-                                    <Card>
-                                        <CardContent>
-                                            <FormControl>
-                                                <Select
-                                                    labelId="chart-option-label-aq"
-                                                    id="chart-option-aq"
-                                                    value={selectedOptions.audioQuiz}
-                                                    onChange={(event) => handleOptionChange(event, 'audioQuiz')}
-                                                    IconComponent={ExpandMoreIcon}
-                                                >
-                                                    <MenuItem value="genre">Genre</MenuItem>
-                                                    <MenuItem value="movie">Top 10 Movies</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                            <RadarChart
-                                                height="300px"
-                                                color={[
-                                                    palette.primary.dark,
-                                                    palette.primary.main,
-                                                    palette.primary.light,
-                                                ]}
-                                                userId={userId}
-                                                statsEndpoint={`${audioQuizStatsEndpoint}/${selectedOptions.audioQuiz}`}
-                                            />
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-
+                    <Grid item xs={12} md={6}>
+                        <Card>
+                            <CardContent>
                                 <TitleWrapper>
-                                    <Title>{capitalizeAndSpace(videoQuizStatsEndpoint)} Performance</Title>
+                                    <div style={{flex: 1}}>
+                                        <FormControl>
+                                            <Select
+                                                labelId="chart-option-label-mc"
+                                                id="chart-option-mc"
+                                                value={selectedOptionsItemTypse.videoQuiz}
+                                                onChange={(event) => handleItemTypeChange(event, 'videoQuiz')}
+                                                IconComponent={ExpandMoreIcon}
+                                            >
+                                                <MenuItem value="genre">Genre</MenuItem>
+                                                <MenuItem value="movie">Top 10 Movies</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                    <div style={{flex: 1, textAlign: 'right'}}>
+                                        <Title>{capitalizeAndSpace(videoQuizStatsEndpoint)} Performance</Title>
+                                    </div>
+                                    <div style={{flex: 1}}/>
                                 </TitleWrapper>
-
-                                <Grid item sx={{ width: '100%' }}>
-                                    <Card>
-                                        <CardContent>
-                                            <FormControl>
-                                                <Select
-                                                    labelId="chart-option-label-vq"
-                                                    id="chart-option-vq"
-                                                    value={selectedOptions.videoQuiz}
-                                                    onChange={(event) => handleOptionChange(event, 'videoQuiz')}
-                                                    IconComponent={ExpandMoreIcon}
-                                                >
-                                                    <MenuItem value="genre">Genre</MenuItem>
-                                                    <MenuItem value="movie">Top 10 Movies</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                            <RadarChart
-                                                height="300px"
-                                                color={[
-                                                    palette.primary.dark,
-                                                    palette.primary.main,
-                                                    palette.primary.light,
-                                                ]}
-                                                userId={userId}
-                                                statsEndpoint={`${videoQuizStatsEndpoint}/${selectedOptions.videoQuiz}`}
-                                            />
-                                        </CardContent>
-                                    </Card>
-                                </Grid>
-                            </Grid>
+                                <RadarChart
+                                    height="300px"
+                                    color={[
+                                        palette.primary.dark,
+                                        palette.primary.main,
+                                        palette.primary.light,
+                                    ]}
+                                    userId={userId}
+                                    statsEndpoint={`${videoQuizStatsEndpoint}/${selectedOptionsItemTypse.videoQuiz}`}
+                                />
+                            </CardContent>
                         </Card>
                     </Grid>
                 </Grid>

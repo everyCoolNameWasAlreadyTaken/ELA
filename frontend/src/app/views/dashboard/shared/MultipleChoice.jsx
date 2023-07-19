@@ -10,10 +10,13 @@ import {
     Tooltip,
     Button,
     Grid,
-    Typography
+    Typography,
+    useTheme
 } from '@mui/material';
 import {useState, useRef, useEffect} from 'react';
 import server from "../../../../axios/axios";
+import Speed from "../shared/charts/Speed";
+import Score from "../shared/charts/Score";
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -64,7 +67,7 @@ const Question = styled('p')(({theme}) => ({
     color: theme.palette.text.primary,
 }));
 
-const QuestionTitle = styled(Typography)(({ theme }) => ({
+const QuestionTitle = styled(Typography)(({theme}) => ({
     marginTop: '50px',
     right: '0px',
     width: '80%',
@@ -175,13 +178,22 @@ const GivenAnswer = styled('p')(({isCorrect}) => ({
     color: isCorrect ? 'green' : 'red',
 }));
 
-const TimeTaken = styled('p')(({theme}) => ({
+const SpeedAndScoreContainer = styled(Card)({
     display: 'flex',
-    alignSelf: 'flex-start',
-    fontWeight: 'bold',
-    margin: '5px',
-    color: theme.palette.primary.main,
-}));
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    margin: '10px 0',
+});
+
+const SpeedContainer = styled(Box)({
+    flex: '1 1 45%',
+});
+
+const ScoreContainer = styled(Box)({
+    flex: '1 1 45%',
+});
 
 const MultipleChoice = () => {
     const [quizStarted, setQuizStarted] = useState(false);
@@ -190,8 +202,9 @@ const MultipleChoice = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
-    const [timer, setTimer] = useState(0);
+    const [timeTaken, setTimeTaken] = useState(0);
     const timerRef = useRef();
+    const {palette} = useTheme();
 
     const userId = 0;
 
@@ -203,7 +216,7 @@ const MultipleChoice = () => {
 
     const startTimer = () => {
         timerRef.current = setInterval(() => {
-            setTimer((prevTimer) => prevTimer + 1);
+            setTimeTaken((prevTimer) => prevTimer + 1);
         }, 1000);
     };
 
@@ -215,7 +228,6 @@ const MultipleChoice = () => {
         try {
             const response = await server.get(`/quiz`);
             const Quizdata = response.data;
-            console.log(Quizdata)
             setQuestions(Quizdata);
         } catch (error) {
             console.error('Error:', error);
@@ -224,6 +236,7 @@ const MultipleChoice = () => {
 
     const handleStartQuiz = () => {
         setQuizStarted(true);
+        setTimeTaken(0);
         fetchQuizData();
     };
 
@@ -246,9 +259,9 @@ const MultipleChoice = () => {
             setCurrentIndex(nextIndex);
         }
         if (nextIndex === questions.length) {
-            setShowScore(true);
             stopTimer();
             submitUserAnswers();
+            setShowScore(true);
         }
     };
 
@@ -260,7 +273,7 @@ const MultipleChoice = () => {
                 totalQuestions: questions.length,
                 rightAnswers: score,
                 wrongAnswers: (questions.length - score),
-                timeTaken: timer,
+                timeTaken: timeTaken,
                 questions: questions.map((question, index) => ({
                     qid: question.qid,
                     isCorrect: question.correctIndex === question.answers.indexOf(userAnswers[index]),
@@ -287,7 +300,7 @@ const MultipleChoice = () => {
         setScore(0);
         setShowScore(false);
         setQuizStarted(false);
-        setTimer(0);
+        setTimeTaken(0);
     };
 
     const currentQuestion = questions[currentIndex];
@@ -304,9 +317,33 @@ const MultipleChoice = () => {
                         </>
                     ) : showScore ? (
                         <>
-                            <TimeTaken>{((timer/60)).toFixed(1)} minutes</TimeTaken>
+                            <SpeedAndScoreContainer>
+                                <SpeedContainer>
+                                    <Speed
+                                        height="280px"
+                                        color={[
+                                            palette.primary.dark,
+                                            palette.primary.main,
+                                            palette.primary.light,
+                                        ]}
+                                        speed={((timeTaken / 60)).toFixed(1)}
+                                    />
+                                </SpeedContainer>
+                                <ScoreContainer>
+                                    <Score
+                                        height="280px"
+                                        color={[
+                                            palette.primary.dark,
+                                            palette.primary.main,
+                                            palette.primary.light,
+                                        ]}
+                                        score={score}
+                                        questions={questions.length}
+                                    />
+                                </ScoreContainer>
+                            </SpeedAndScoreContainer>
+
                             <ContentBox>
-                                <p>Score: {score}/{questions.length}</p>
                                 {questions.map((question, index) => (
                                     <ResultBox key={index}>
                                         <QuestionFeedback>{question.question}</QuestionFeedback>
@@ -320,6 +357,7 @@ const MultipleChoice = () => {
                                     </ResultBox>
                                 ))}
                             </ContentBox>
+
                             <Tooltip title="New Quiz" placement="top">
                                 <ButtonWrapperLarge>
                                     <ContinueButton onClick={reload}>

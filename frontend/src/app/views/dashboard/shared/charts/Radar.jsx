@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactEcharts from 'echarts-for-react';
-import server from '../../../../axios/axios';
+import server from '../../../../../axios/axios';
 
 const RadarChart = ({ height, color = [], userId, statsEndpoint }) => {
     const [genreStats, setGenreStats] = useState({});
@@ -11,14 +11,13 @@ const RadarChart = ({ height, color = [], userId, statsEndpoint }) => {
                 const response = await server.get(`/users/${userId}/stats/${statsEndpoint}`);
                 const statsData = response.data;
                 setGenreStats(statsData);
-                console.log(genreStats);
             } catch (error) {
                 console.error('Error:', error);
             }
         };
 
         fetchGenreStatsData();
-    }, [statsEndpoint]);
+    }, [statsEndpoint, userId]);
 
     if (Object.keys(genreStats).length === 0) {
         return <div>Loading...</div>;

@@ -6,13 +6,15 @@ import {
     styled,
     Tooltip,
     Button,
-    Grid
+    Grid, useTheme
 } from '@mui/material';
 
 import React, {useState, useRef, useEffect} from 'react';
 import ReactPlayer from 'react-player';
 import server from "../../../../axios/axios";
 import {compareTwoStrings} from 'string-similarity';
+import Speed from "./charts/Speed";
+import Score from "./charts/Score";
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -138,14 +140,6 @@ const GivenAnswer = styled('p')(() => ({
     margin: '20px',
 }));
 
-const TimeTaken = styled('p')(({theme}) => ({
-    display: 'flex',
-    alignSelf: 'flex-start',
-    fontWeight: 'bold',
-    margin: '5px',
-    color: theme.palette.primary.main,
-}));
-
 const ViewAudio = styled(Box)(() => ({
     marginTop: '10%',
 }));
@@ -160,6 +154,23 @@ const Answers = styled(Box)({
     padding: '10px',
 });
 
+const SpeedAndScoreContainer = styled(Card)({
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    margin: '10px 0',
+});
+
+const SpeedContainer = styled(Box)({
+    flex: '1 1 45%',
+});
+
+const ScoreContainer = styled(Box)({
+    flex: '1 1 45%',
+});
+
 
 const VideoPlayer = () => {
 
@@ -167,7 +178,7 @@ const VideoPlayer = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
-    const [timer, setTimer] = useState(0);
+    const [timeTaken, setTimeTaken] = useState(0);
 
     const [clip_address, setClipAddress] = useState('');
     const [audioName, setAudioName] = useState('');
@@ -180,13 +191,12 @@ const VideoPlayer = () => {
     const [correctanswers, setAnswers] = useState([]);
     const inputRef = useRef('');
     const userId = 0;
+    const {palette} = useTheme();
 
     const fetchAudioData = async () => {
         try {
             const response = await server.get(`/video`);
             const videoData = response.data;
-            console.log("Geladene Daten: ", videoData);
-            console.log("Videodata: ", videoData.questions[0]);
             setAudioName(videoData.movie_name);
             setClipAddress(videoData.clip_address);
             setQuestions(videoData.questions);
@@ -207,7 +217,7 @@ const VideoPlayer = () => {
 
     const startTimer = () => {
         timerRef.current = setInterval(() => {
-            setTimer((prevTimer) => prevTimer + 1);
+            setTimeTaken((prevTimer) => prevTimer + 1);
         }, 1000);
     };
 
@@ -215,9 +225,6 @@ const VideoPlayer = () => {
         if (quizStarted && currentIndex === 0) {
             startTimer();
         }
-        return () => {
-            stopTimer();
-        };
     }, [quizStarted, currentIndex]);
 
     const stopTimer = () => {
@@ -226,8 +233,8 @@ const VideoPlayer = () => {
 
     const handleStartQuiz = () => {
         setQuizStarted(true);
+        setTimeTaken(0);
         fetchAudioData();
-        startTimer();
     };
 
     const handleUserAnsweres = (event) => {
@@ -314,7 +321,7 @@ const VideoPlayer = () => {
                 totalQuestions: questions.length,
                 rightAnswers: score,
                 wrongAnswers: (questions.length - score),
-                timeTaken: timer,
+                timeTaken: timeTaken,
                 questions: questions.map((question, index) => ({
                     isCorrect: handleUserInputErrors(userAnswers[index].toString(), correctanswers[index].toString()).UserisCorrect,
                     title: audioName,
@@ -343,6 +350,7 @@ const VideoPlayer = () => {
                 setScore(0);
                 setShowScore(false);
                 setQuizStarted(false);
+                setTimeTaken(0);
             })
             .catch((error) => console.error('ERROR', error));
     };
@@ -365,8 +373,33 @@ const VideoPlayer = () => {
                             </>
                         ) : showScore ? (
                             <>
+                                <SpeedAndScoreContainer>
+                                    <SpeedContainer>
+                                        <Speed
+                                            height="280px"
+                                            color={[
+                                                palette.primary.dark,
+                                                palette.primary.main,
+                                                palette.primary.light,
+                                            ]}
+                                            speed={((timeTaken / 60)).toFixed(1)}
+                                        />
+                                    </SpeedContainer>
+                                    <ScoreContainer>
+                                        <Score
+                                            height="280px"
+                                            color={[
+                                                palette.primary.dark,
+                                                palette.primary.main,
+                                                palette.primary.light,
+                                            ]}
+                                            score={score}
+                                            questions={questions.length}
+                                        />
+                                    </ScoreContainer>
+                                </SpeedAndScoreContainer>
+
                                 <ContentBox>
-                                    <p>Score: {score}/{questions.length}</p>
                                     {questions.map((question, index) => (
                                         <ResultBox key={index}>
                                             <QuestionFeedback>{question.question}</QuestionFeedback>
@@ -381,7 +414,7 @@ const VideoPlayer = () => {
                                         </ResultBox>
                                     ))}
                                 </ContentBox>
-                                <TimeTaken>{((timer/60)).toFixed(1)} minutes</TimeTaken>
+
                                 <Tooltip title="New Quiz" placement="top">
                                     <ButtonWrapperLarge>
                                         <ContinueButton onClick={reload}>
@@ -391,9 +424,7 @@ const VideoPlayer = () => {
                                 </Tooltip>
                             </>
                         ) : (
-
                             <>
-
                                 <ContentBox>
                                     <QuizStatusBox>
                                         {`${currentIndex + 1}/${questions.length}`}
