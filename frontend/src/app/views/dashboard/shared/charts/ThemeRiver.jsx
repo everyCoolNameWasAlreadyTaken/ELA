@@ -12,6 +12,7 @@ const ThemeRiver = ({userId, statsEndpoint}) => {
                     const response = await server.get(`/users/${userId}/stats/${statsEndpoint}`);
                     const statsData = response.data;
                     setThemeData(statsData.data);
+                    console.log(themeData)
                     setLegend(statsData.legend);
                 } catch (error) {
                     console.error('Error:', error);
@@ -30,8 +31,25 @@ const ThemeRiver = ({userId, statsEndpoint}) => {
             return <div>Loading...</div>;
         }
 
+    const getOption = () => {
+        const colors = ["#5470c6", "#91cc75", "#fac858"];
 
-        const option = {
+        const series = legend.map(name => ({
+            name,
+            type: "themeRiver",
+            stack: name,
+            emphasis: {
+                itemStyle: {
+                    shadowBlur: 20,
+                    shadowColor: "rgba(0, 0, 0, 0.8)"
+                }
+            },
+            data: themeData
+                .filter(item => item[2] === name)
+                .map(item => [item[0], item[1], item[2]])
+        }));
+
+        return {
             tooltip: {
                 trigger: "axis",
                 axisPointer: {
@@ -66,28 +84,13 @@ const ThemeRiver = ({userId, statsEndpoint}) => {
                     }
                 }
             },
-            series: [
-                {
-                    type: 'themeRiver',
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 20,
-                            shadowColor: 'rgba(0, 0, 0, 0.8)'
-                        }
-                    },
-                    data: [
-                        themeData.map((item) => [item.time, item.value, item.name])
-                    ]
-                }
-            ],
+            series,
         };
-
+    };
 
         return (
             <ReactEcharts
-                option={{
-                    ...option,
-                }}
+                option={getOption()}
                 style={{height: "400px"}}
             />
         );
