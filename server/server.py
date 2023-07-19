@@ -203,6 +203,21 @@ def get_user_progress_data(user_id):
     return jsonify(res), code
 
 
+@app.route('/users/<int:user_id>/stats/percentage')
+def get_quiz_percentages(user_id):
+    res, code = calculate_quiz_percentages(user_id)
+    return jsonify(res), code
+
+
+@app.route('/users/<int:user_id>/stats/itemTypes/<string:selected_option>')
+def get_item_type_stats(user_id, selected_option):
+    if selected_option == 'numbers':
+        res, code = calculate_item_type_stats(user_id)
+    if selected_option == 'percentages':
+        res, code = calculate_item_type_stats_percentage(user_id)
+    return jsonify(res), code
+
+
 if __name__ == '__main__':
     app.run(host=HOST, port=SERVER_PORT, debug=True)
 

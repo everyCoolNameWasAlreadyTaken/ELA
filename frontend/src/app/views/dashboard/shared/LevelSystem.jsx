@@ -9,12 +9,12 @@ const ContainerStyle = styled(Box)({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '250px', 
-    
+    height: '80%',
+
   });
 
   const imageStyle = {
-    objectFit: 'contain', 
+    objectFit: 'contain',
     maxWidth: '100%',
     maxHeight: '100%',
     borderRadius: '15px',
@@ -24,7 +24,7 @@ const LevelSystem = () => {
 
 
 
-    
+
 
 
     return (

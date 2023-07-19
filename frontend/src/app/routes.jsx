@@ -7,12 +7,8 @@ import materialRoutes from 'app/views/material-kit/MaterialRoutes';
 // session pages
 const NotFound = Loadable(lazy(() => import('app/views/sessions/NotFound')));
 
-// echart page
-const AppEchart = Loadable(lazy(() => import('app/views/charts/echarts/AppEchart')));
-
 // dashboard page
 const Analytics = Loadable(lazy(() => import('app/views/dashboard/Analytics')));
-
 
 // Audio page
 const Page_Audio = Loadable(lazy(() => import('app/views/dashboard/Page_Audio')));
@@ -31,6 +27,9 @@ const Page_Video = Loadable(lazy(() => import('app/views/dashboard/Page_Video'))
 
 // Clustering page
 const Page_Clustering = Loadable(lazy(() => import('app/views/dashboard/Page_Clustering')));
+
+// levelling
+const Level = Loadable(lazy(() => import('app/views/dashboard/Level')));
 
 
 const routes = [
@@ -80,12 +79,12 @@ const routes = [
                 element: <Page_Clustering/>,
             },
 
-
-            // e-chart rooute
+            // Levelling
             {
-                path: '/charts/echarts',
-                element: <AppEchart/>,
-            }
+                path: '/dashboard/Level',
+                element: <Level/>,
+            },
+
         ]
     },
 

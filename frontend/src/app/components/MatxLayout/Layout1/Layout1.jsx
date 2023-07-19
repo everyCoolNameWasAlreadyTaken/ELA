@@ -7,7 +7,6 @@ import useSettings from 'app/hooks/useSettings';
 import { sidenavCompactWidth, sideNavWidth } from 'app/utils/constant';
 import Footer from '../../Footer';
 import SidenavTheme from '../../MatxTheme/SidenavTheme/SidenavTheme';
-import SecondarySidebar from '../../SecondarySidebar/SecondarySidebar';
 import Layout1Sidenav from './Layout1Sidenav';
 import Layout1Topbar from './Layout1Topbar';
 
@@ -136,8 +135,6 @@ const Layout1 = () => {
 
         {settings.footer.show && settings.footer.fixed && <Footer />}
       </LayoutContainer>
-
-      {settings.secondarySidebar.show && <SecondarySidebar />}
     </Layout1Root>
   );
 };

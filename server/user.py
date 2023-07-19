@@ -322,7 +322,7 @@ def calculate_top_movies_percentage(user_id, item_type_in):
         return "Error calculating top movies percentage: " + str(e), 500
 
 
-def get_theme_river_data(user_id_in):
+def get_list_item_types(user_id_in):
     try:
         user = collection.find_one({"_id": user_id_in})
         item_types = []
@@ -343,7 +343,7 @@ def get_percentage_per_item_type_and_date(user_id_in):
         user = collection.find_one({"_id": user_id_in})
 
         if user:
-            item_types = get_theme_river_data(user_id_in)
+            item_types = get_list_item_types(user_id_in)
             percentage_stats = []
 
             for item_type, item_data in user["Quizdata"].items():
@@ -369,7 +369,134 @@ def get_percentage_per_item_type_and_date(user_id_in):
         return "Error retrieving percentage stats: " + str(e), 500
 
 
+def calculate_quiz_percentages(user_id_in):
+    try:
+        user = collection.find_one({"_id": user_id_in})
+
+        if user:
+            quiz_types = get_list_item_types(user_id_in)
+            quiz_type_counts = {}
+
+            for quiz_type in quiz_types:
+                quizzes = user["Quizdata"][quiz_type]["data"]
+                quiz_type_counts[quiz_type] = len(quizzes)
+
+            total_quizzes_taken = sum(quiz_type_counts.values())
+
+            data_list = []
+            for quiz_type, count in quiz_type_counts.items():
+                percentage = (count / total_quizzes_taken) * 100
+                data_list.append({'name': quiz_type, 'value': round(percentage, 2)})
+
+            return {'data': data_list}, 200
+        else:
+            return "User not found", 404
+
+    except Exception as e:
+        return "Error retrieving percentage stats: " + str(e), 500
+
+
+def calculate_quiz_percentages_answers(user_id_in):
+    try:
+        user = collection.find_one({"_id": user_id_in})
+
+        if user:
+            quiz_types = get_list_item_types(user_id_in)
+            quiz_type_counts = {}
+
+            for quiz_type in quiz_types:
+                quizzes = user["Quizdata"][quiz_type]["data"]
+                quiz_type_counts[quiz_type] = len(quizzes)
+
+            total_quizzes_taken = sum(quiz_type_counts.values())
+
+            data_list = []
+            for quiz_type, count in quiz_type_counts.items():
+                percentage = (count / total_quizzes_taken) * 100
+                data_list.append({'name': quiz_type, 'value': round(percentage, 2)})
+
+            return {'data': data_list}, 200
+        else:
+            return "User not found", 404
+
+    except Exception as e:
+        return "Error retrieving percentage stats: " + str(e), 500
+
+
+def calculate_item_type_stats(user_id_in):
+    try:
+        user = collection.find_one({"_id": user_id_in})
+
+        if user:
+            quiz_types = get_list_item_types(user_id_in)
+            item_type_stats = [['Quiz', 'Right Answers', 'Wrong Answers']]
+
+            for quiz_type in quiz_types:
+                quizzes = user["Quizdata"].get(quiz_type, {}).get("data", [])
+                right_answers = 0
+                wrong_answers = 0
+
+                for quiz in quizzes:
+                    right_answers += quiz.get("rightAnswers", 0)
+                    wrong_answers += quiz.get("wrongAnswers", 0)
+
+                item_type_stats.append([
+                    quiz_type,
+                    right_answers,
+                    wrong_answers
+                ])
+
+            return {
+                'data': item_type_stats,
+            }, 200
+        else:
+            return "User not found", 404
+
+    except Exception as e:
+        return "Error retrieving item type stats: " + str(e), 500
+
+
+def calculate_item_type_stats_percentage(user_id_in):
+    try:
+        user = collection.find_one({"_id": user_id_in})
+
+        if user:
+            quiz_types = get_list_item_types(user_id_in)
+            item_type_stats = [['Quiz', 'Right Answers', 'Wrong Answers']]
+
+            for quiz_type in quiz_types:
+                quizzes = user.get("Quizdata", {}).get(quiz_type, {}).get("data", [])
+                total_answers = 0
+                right_answers = 0
+
+                for quiz in quizzes:
+                    total_answers += quiz.get("rightAnswers", 0) + quiz.get("wrongAnswers", 0)
+                    right_answers += quiz.get("rightAnswers", 0)
+
+                if total_answers > 0:
+                    right_percentage = (right_answers / total_answers) * 100
+                    wrong_percentage = 100 - right_percentage
+                else:
+                    right_percentage = 0
+                    wrong_percentage = 0
+
+                item_type_stats.append([
+                    quiz_type,
+                    round(right_percentage, 2),
+                    round(wrong_percentage, 2)
+                ])
+
+            return {
+                'data': item_type_stats,
+            }, 200
+        else:
+            return "User not found", 404
+
+    except Exception as e:
+        return "Error retrieving item type stats: " + str(e), 500
+
+
 if __name__ == '__main__':
     user_id = 0
-    top_movies_percentage = get_percentage_per_item_type_and_date(user_id)
+    top_movies_percentage = calculate_item_type_stats_percentage(user_id)
     print(top_movies_percentage)

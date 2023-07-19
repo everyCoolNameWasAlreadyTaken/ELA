@@ -17,14 +17,15 @@ export const navigations = [
       { name: 'Theme Rotation', iconText: 'TH', path: '/dashboard/Page_Audio' },
     ]
   },
-  
-  
+
+
   { label: 'Exam', type: 'label' },
   { name: 'Random Exam', path: '/dashboard/Page_RandomExam', icon: 'school' },
 
   { label: 'UserData ', type: 'label' },
   { name: 'Clustering', path: '/dashboard/Page_Clustering', icon: 'admin_panel_settings' },
-  
+  { name: 'Your Level', path: '/dashboard/Level', icon: 'movie_filter' },
+
 
 
   //--------------------------Below here is Documentation and Assets in Navigation-------------------------------
