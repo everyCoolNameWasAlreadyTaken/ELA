@@ -188,11 +188,11 @@ const SpeedAndScoreContainer = styled(Card)({
 });
 
 const SpeedContainer = styled(Box)({
-    flex: '1 1 45%', // Adjust the flex value to adjust the width of the Speed component
+    flex: '1 1 45%',
 });
 
 const ScoreContainer = styled(Box)({
-    flex: '1 1 45%', // Adjust the flex value to adjust the width of the Score component
+    flex: '1 1 45%',
 });
 
 const MultipleChoice = () => {
@@ -209,12 +209,10 @@ const MultipleChoice = () => {
     const userId = 0;
 
     useEffect(() => {
-        if (quizStarted) {
+        if (quizStarted && currentIndex === 0) {
             startTimer();
-        } else {
-            stopTimer();
         }
-    }, [quizStarted]);
+    }, [quizStarted, currentIndex]);
 
     const startTimer = () => {
         timerRef.current = setInterval(() => {

@@ -7,6 +7,9 @@ const Score = ({ height, color = [], score, questions }) => {
     const scorePercent= (score/questions) * 100;
 
     const option = {
+        tooltip: {
+            formatter: 'Your scored {c}%'
+        },
         series: [
             {
                 type: 'gauge',
