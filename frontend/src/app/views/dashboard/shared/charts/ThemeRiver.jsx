@@ -1,53 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import ReactEcharts from 'echarts-for-react';
 import server from '../../../../../axios/axios';
 
-const ThemeRiver = ({ userId, statsEndpoint }) => {
-    const [themeData, setThemeData] = useState([]);
-    const [legend, setLegend] = useState([]);
+const ThemeRiver = ({userId, statsEndpoint}) => {
+        const [themeData, setThemeData] = useState([]);
+        const [legend, setLegend] = useState([]);
 
-    useEffect(() => {
-        const fetchThemeStatsData = async () => {
-            try {
-                const response = await server.get(`/users/${userId}/stats/${statsEndpoint}`);
-                const statsData = response.data;
-                setThemeData(statsData.data);
-                setLegend(statsData.legend);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-
-        fetchThemeStatsData();
-    }, [statsEndpoint, userId]);
-
-    useEffect(() => {
-        console.log(themeData);
-        console.log(legend);
-    }, [themeData, legend]);
-
-    if (Object.keys(themeData).length === 0) {
-        return <div>Loading...</div>;
-    }
-
-    const getOption = () => {
-        const colors = ["#5470c6", "#91cc75", "#fac858"];
-
-        const series = legend.map(name => ({
-            name,
-            type: "themeRiver",
-            emphasis: {
-                itemStyle: {
-                    shadowBlur: 20,
-                    shadowColor: "rgba(0, 0, 0, 0.8)"
+        useEffect(() => {
+            const fetchThemeStatsData = async () => {
+                try {
+                    const response = await server.get(`/users/${userId}/stats/${statsEndpoint}`);
+                    const statsData = response.data;
+                    setThemeData(statsData.data);
+                    setLegend(statsData.legend);
+                } catch (error) {
+                    console.error('Error:', error);
                 }
-            },
-            data: themeData
-                .filter(item => item[2] === name)
-                .map(item => [item[0], item[1], item[2]])
-        }));
+            };
 
-        return {
+            fetchThemeStatsData();
+        }, [statsEndpoint, userId]);
+
+        useEffect(() => {
+            console.log(themeData);
+            console.log(legend);
+        }, [themeData, legend]);
+
+        if (Object.keys(themeData).length === 0) {
+            return <div>Loading...</div>;
+        }
+
+
+        const option = {
             tooltip: {
                 trigger: "axis",
                 axisPointer: {
@@ -82,17 +66,31 @@ const ThemeRiver = ({ userId, statsEndpoint }) => {
                     }
                 }
             },
-            series,
-            color: colors
+            series: [
+                {
+                    type: 'themeRiver',
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 20,
+                            shadowColor: 'rgba(0, 0, 0, 0.8)'
+                        }
+                    },
+                    data: [
+                        themeData.map((item) => [item.time, item.value, item.name])
+                    ]
+                }
+            ],
         };
-    };
 
-    return (
-        <ReactEcharts
-            option={getOption()}
-            style={{ height: "400px" }}
-        />
-    );
+
+        return (
+            <ReactEcharts
+                option={{
+                    ...option,
+                }}
+                style={{height: "400px"}}
+            />
+        );
 };
 
 export default ThemeRiver;

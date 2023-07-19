@@ -6,13 +6,15 @@ import {
     styled,
     Tooltip,
     Button,
-    Grid
+    Grid, useTheme
 } from '@mui/material';
 
 import React, {useState, useRef, useEffect} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
 import {compareTwoStrings} from 'string-similarity';
+import Speed from "./charts/Speed";
+import Score from "./charts/Score";
 
 
 const CardRoot = styled(Card)(({theme}) => ({
@@ -140,14 +142,6 @@ const GivenAnswer = styled('p')(({isCorrect}) => ({
 
 }));
 
-const TimeTaken = styled('p')(({theme}) => ({
-    display: 'flex',
-    alignSelf: 'flex-start',
-    fontWeight: 'bold',
-    margin: '5px',
-    color: theme.palette.primary.main,
-}));
-
 const ViewAudio = styled(Box)(() => ({
     marginTop: '10%',
 }));
@@ -162,6 +156,22 @@ const Answers = styled(Box)({
     padding: '10px',
 });
 
+const SpeedAndScoreContainer = styled(Card)({
+    display: 'flex',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    margin: '10px 0',
+});
+
+const SpeedContainer = styled(Box)({
+    flex: '1 1 45%',
+});
+
+const ScoreContainer = styled(Box)({
+    flex: '1 1 45%',
+});
 
 const AudioPlayer = () => {
 
@@ -169,7 +179,7 @@ const AudioPlayer = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
-    const [timer, setTimer] = useState(0);
+    const [timeTaken, setTimeTaken] = useState(0);
 
     const [clip_address, setClipAddress] = useState('');
     const [audioName, setAudioName] = useState('');
@@ -181,13 +191,12 @@ const AudioPlayer = () => {
     const inputRef = useRef('');
     const timerRef = useRef();
     const userId = 0;
+    const {palette} = useTheme();
 
     const fetchAudioData = async () => {
         try {
             const response = await server.get(`/audio`);
             const audioData = response.data;
-            console.log("Geladene Daten: ", audioData);
-            console.log("Audiodata: ", audioData.questions[0]);
             setAudioName(audioData.movie_name);
             setClipAddress(audioData.clip_address);
             setQuestions(audioData.questions);
@@ -206,7 +215,7 @@ const AudioPlayer = () => {
 
     const startTimer = () => {
         timerRef.current = setInterval(() => {
-            setTimer((prevTimer) => prevTimer + 1);
+            setTimeTaken((prevTimer) => prevTimer + 1);
         }, 1000);
     };
 
@@ -214,9 +223,6 @@ const AudioPlayer = () => {
         if (quizStarted && currentIndex === 0) {
             startTimer();
         }
-        return () => {
-            stopTimer();
-        };
     }, [quizStarted, currentIndex]);
 
     const stopTimer = () => {
@@ -225,8 +231,8 @@ const AudioPlayer = () => {
 
     const handleStartQuiz = () => {
         setQuizStarted(true);
+        setTimeTaken(0);
         fetchAudioData();
-        startTimer();
     };
 
     const handleUserAnsweres = (event) => {
@@ -287,8 +293,8 @@ const AudioPlayer = () => {
             setCurrentIndex(nextIndex);
         } else {
             stopTimer();
-            setShowScore(true);
             submitUserAnswers(UserisCorrect);
+            setShowScore(true);
         }
     };
 
@@ -311,7 +317,7 @@ const AudioPlayer = () => {
                 totalQuestions: questions.length,
                 rightAnswers: score,
                 wrongAnswers: (questions.length - score),
-                timeTaken: timer,
+                timeTaken: timeTaken,
                 questions: questions.map((question, index) => ({
                     isCorrect: handleUserInputErrors(userAnswers[index].toString(), correctanswers[index].toString()).UserisCorrect,
                     title: audioName,
@@ -362,8 +368,33 @@ const AudioPlayer = () => {
                             </>
                         ) : showScore ? (
                             <>
+                                <SpeedAndScoreContainer>
+                                    <SpeedContainer>
+                                        <Speed
+                                            height="280px"
+                                            color={[
+                                                palette.primary.dark,
+                                                palette.primary.main,
+                                                palette.primary.light,
+                                            ]}
+                                            speed={((timeTaken / 60)).toFixed(1)}
+                                        />
+                                    </SpeedContainer>
+                                    <ScoreContainer>
+                                        <Score
+                                            height="280px"
+                                            color={[
+                                                palette.primary.dark,
+                                                palette.primary.main,
+                                                palette.primary.light,
+                                            ]}
+                                            score={score}
+                                            questions={questions.length}
+                                        />
+                                    </ScoreContainer>
+                                </SpeedAndScoreContainer>
+
                                 <ContentBox>
-                                    <p>Score: {score}/{questions.length}</p>
                                     {questions.map((question, index) => (
                                         <ResultBox key={index}>
                                             <QuestionFeedback>{question.question}</QuestionFeedback>
@@ -377,7 +408,6 @@ const AudioPlayer = () => {
                                         </ResultBox>
                                     ))}
                                 </ContentBox>
-                                <TimeTaken>{((timer/60)).toFixed(1)} minutes</TimeTaken>
                                 <Tooltip title="New Quiz" placement="top">
                                     <ButtonWrapperLarge>
                                         <ContinueButton onClick={reload}>
@@ -387,9 +417,7 @@ const AudioPlayer = () => {
                                 </Tooltip>
                             </>
                         ) : (
-
                             <>
-
                                 <ContentBox>
                                     <QuizStatusBox>
                                         {`${currentIndex + 1}/${questions.length}`}

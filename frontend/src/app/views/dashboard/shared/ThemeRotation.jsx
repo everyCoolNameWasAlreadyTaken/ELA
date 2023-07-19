@@ -25,12 +25,6 @@ const SubTitle = styled('span')(({ theme }) => ({
   fontSize: '0.875rem',
   color: theme.palette.text.secondary,
 }));
-const ViewAudio = styled(Box)(() => ({
-  marginTop: '50px',
-  marginLeft: '40%',
-}));
-
-
 
 
 const ThemeRotation = () => {

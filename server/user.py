@@ -344,7 +344,7 @@ def get_percentage_per_item_type_and_date(user_id_in):
 
         if user:
             item_types = get_list_item_types(user_id_in)
-            percentage_stats = []
+            data_by_item_type = {item_type: [] for item_type in item_types}
 
             for item_type, item_data in user["Quizdata"].items():
                 if "data" in item_data:
@@ -355,8 +355,12 @@ def get_percentage_per_item_type_and_date(user_id_in):
                         right_answers = data_point["rightAnswers"]
                         percentage = int((right_answers / total_questions) * 100)
 
-                        data_entry = [date, percentage, item_type]
-                        percentage_stats.append(data_entry)
+                        data_entry = { 'time': date, 'value': percentage, 'name': item_type }
+                        data_by_item_type[item_type].append(data_entry)
+
+            percentage_stats = []
+            for item_type, data_entries in data_by_item_type.items():
+                percentage_stats.extend(data_entries)
 
             return {
                 'data': percentage_stats,
@@ -498,5 +502,5 @@ def calculate_item_type_stats_percentage(user_id_in):
 
 if __name__ == '__main__':
     user_id = 0
-    top_movies_percentage = calculate_item_type_stats_percentage(user_id)
+    top_movies_percentage = get_percentage_per_item_type_and_date(user_id)
     print(top_movies_percentage)
