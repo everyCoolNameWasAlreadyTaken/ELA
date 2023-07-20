@@ -1,7 +1,7 @@
 import {Card, CardContent, Grid, styled, useTheme, FormControl, Select, MenuItem} from '@mui/material';
 import {Fragment, useState} from 'react';
 import RadarChart from './shared/charts/Radar';
-import ThemeRiver from "./shared/charts/ThemeRiver";
+import StackedChart from "./shared/charts/StackedChart";
 import Doughnut from "./shared/charts/Doughnut";
 import ComparisonChart from "./shared/charts/ComparisonChart";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -83,10 +83,17 @@ const Analytics = () => {
                         <Card sx={{px: 3, py: 2, mb: 3, height: '100%'}}>
                             <CardContent>
                                 <TitleWrapperSolid>
-                                    <Title>Your Progress Over Time</Title>
+                                    <Title>Your Right Answer Percentage</Title>
                                 </TitleWrapperSolid>
-                                <ThemeRiver userId={userId}
-                                            statsEndpoint={`${themeStatsEndpoint}`}/>
+                                <StackedChart height="300px"
+                                              color={[
+                                                  palette.primary.dark,
+                                                  palette.primary.main,
+                                                  palette.primary.light,
+                                                  palette.primary.contrastText,
+                                              ]}
+                                              userId={userId}
+                                              statsEndpoint={`${themeStatsEndpoint}`}/>
                             </CardContent>
                         </Card>
                     </Grid>

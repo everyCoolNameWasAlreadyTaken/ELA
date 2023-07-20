@@ -3,6 +3,7 @@ import json
 import logging
 from datetime import datetime
 import re
+import pandas as pd
 
 host = 'localhost'
 port = 27017
@@ -322,20 +323,50 @@ def calculate_top_movies_percentage(user_id, item_type_in):
         return "Error calculating top movies percentage: " + str(e), 500
 
 
-def get_list_item_types(user_id_in):
-    try:
-        user = collection.find_one({"_id": user_id_in})
-        item_types = []
+def get_list_item_types(quiz_data):
+    item_types = []
 
-        if user:
-            for item_type, item_data in user["Quizdata"].items():
-                if "data" in item_data:
-                    item_types.append(item_type)
+    for item_type, item_data in quiz_data.items():
+        if "data" in item_data:
+            item_types.append(item_type)
 
-        return item_types
+    return item_types
 
-    except Exception as e:
-        raise Exception("Error retrieving theme river data: " + str(e))
+
+def get_dates_in_user_data(quiz_data):
+    dates = []
+
+    for item_type, item_data in quiz_data.items():
+        if "data" in item_data:
+            for data_point in item_data["data"]:
+                date_str = re.sub(r'[^0-9]+$', '', data_point["date"])
+                date = datetime.fromisoformat(date_str).strftime("%Y/%m/%d")
+                dates.append(date)
+
+    dates = pd.Series(dates).drop_duplicates().tolist()
+    dates.sort()
+
+    return dates
+
+
+def get_data_per_date(quiz_data, date_list, item_type):
+    percentages = []
+    for date in date_list:
+        total = 0
+        right = 0
+        for data_point in quiz_data:
+            date_str = re.sub(r'[^0-9]+$', '', data_point["date"])
+            data_point_date = datetime.fromisoformat(date_str).strftime("%Y/%m/%d")
+            if date == data_point_date:
+                total += data_point["totalQuestions"]
+                right += data_point["rightAnswers"]
+        if right != 0:
+            percentage = round(((right / total) * 100), 2)
+            percentages.append(percentage)
+        else:
+            percentages.append(0)
+
+    return percentages
 
 
 def get_percentage_per_item_type_and_date(user_id_in):
@@ -343,28 +374,21 @@ def get_percentage_per_item_type_and_date(user_id_in):
         user = collection.find_one({"_id": user_id_in})
 
         if user:
-            item_types = get_list_item_types(user_id_in)
-            data_by_item_type = {item_type: [] for item_type in item_types}
+            user_quiz_data = user["Quizdata"]
+            item_types = get_list_item_types(user_quiz_data)
+            dates = get_dates_in_user_data(user_quiz_data)
 
-            for item_type, item_data in user["Quizdata"].items():
-                if "data" in item_data:
-                    for data_point in item_data["data"]:
-                        date_str = re.sub(r'[^0-9]+$', '', data_point["date"])
-                        date = datetime.fromisoformat(date_str).strftime("%Y/%m/%d")
-                        total_questions = data_point["totalQuestions"]
-                        right_answers = data_point["rightAnswers"]
-                        percentage = int((right_answers / total_questions) * 100)
-
-                        data_entry = [date, percentage, item_type]
-                        data_by_item_type[item_type].append(data_entry)
-
-            percentage_stats = []
-            for item_type, data_entries in data_by_item_type.items():
-                percentage_stats.extend(data_entries)
+            data = []
+            for item_type in item_types:
+                quizzes = user_quiz_data.get(item_type, {}).get("data", [])
+                if len(quizzes) != 0:
+                    percent_per_date = get_data_per_date(quizzes, dates, item_type)
+                    data.append(percent_per_date)
 
             return {
-                'data': percentage_stats,
-                'legend': item_types
+                'legend': item_types,
+                'dates': dates,
+                'data': data,
             }, 200
         else:
             return "User not found", 404
@@ -378,34 +402,8 @@ def calculate_quiz_percentages(user_id_in):
         user = collection.find_one({"_id": user_id_in})
 
         if user:
-            quiz_types = get_list_item_types(user_id_in)
-            quiz_type_counts = {}
-
-            for quiz_type in quiz_types:
-                quizzes = user["Quizdata"][quiz_type]["data"]
-                quiz_type_counts[quiz_type] = len(quizzes)
-
-            total_quizzes_taken = sum(quiz_type_counts.values())
-
-            data_list = []
-            for quiz_type, count in quiz_type_counts.items():
-                percentage = (count / total_quizzes_taken) * 100
-                data_list.append({'name': quiz_type, 'value': round(percentage, 2)})
-
-            return {'data': data_list}, 200
-        else:
-            return "User not found", 404
-
-    except Exception as e:
-        return "Error retrieving percentage stats: " + str(e), 500
-
-
-def calculate_quiz_percentages_answers(user_id_in):
-    try:
-        user = collection.find_one({"_id": user_id_in})
-
-        if user:
-            quiz_types = get_list_item_types(user_id_in)
+            quiz_data = user["Quizdata"]
+            quiz_types = get_list_item_types(quiz_data)
             quiz_type_counts = {}
 
             for quiz_type in quiz_types:
@@ -432,7 +430,8 @@ def calculate_item_type_stats(user_id_in):
         user = collection.find_one({"_id": user_id_in})
 
         if user:
-            quiz_types = get_list_item_types(user_id_in)
+            quiz_data = user["Quizdata"]
+            quiz_types = get_list_item_types(quiz_data)
             item_type_stats = [['Quiz', 'Right Answers', 'Wrong Answers']]
 
             for quiz_type in quiz_types:
@@ -465,7 +464,8 @@ def calculate_item_type_stats_percentage(user_id_in):
         user = collection.find_one({"_id": user_id_in})
 
         if user:
-            quiz_types = get_list_item_types(user_id_in)
+            quiz_data = user["Quizdata"]
+            quiz_types = get_list_item_types(quiz_data)
             item_type_stats = [['Quiz', 'Right Answers', 'Wrong Answers']]
 
             for quiz_type in quiz_types:
