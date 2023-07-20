@@ -1,84 +1,176 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import parse from "html-react-parser";
+import {
+  Box,
+  Card,
+  Icon,
+  IconButton,
+  styled,
+  Tooltip,
+  Button,
+  Grid, useTheme
+} from '@mui/material';
+import React, { useState, useRef, useEffect } from "react";
+import server from "../../../../axios/axios";
+
+
+const CardRoot = styled(Card)(({theme}) => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  marginBottom: '24px',
+  padding: '24px !important',
+  [theme.breakpoints.down('sm')]: {
+      paddingLeft: '16px !important',
+  },
+}));
+
+const ContentBox = styled(Box)({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+});
+
+const StartButton = styled(Button)(({theme}) => ({
+  alignSelf: 'center',
+  background: theme.palette.primary.main,
+  color: '#fff',
+  borderRadius: '4px',
+  fontSize: '1rem',
+  fontWeight: 'bold',
+  padding: '12px 24px',
+  '&:hover': {
+      background: theme.palette.primary.dark,
+  },
+}));
 
 const WikipediaQuiz = () => {
-  const [article, setArticle] = useState("");
-  const [quizData, setQuizData] = useState([]);
 
-  useEffect(() => {
-    const fetchRandomFilmArticle = async () => {
-      try {
-        const response = await axios.get("/random-film-article"); // Ändern Sie die URL, um Ihren Flask-Server zu verwenden
-
-        setArticle(response.data.extract);
-        prepareQuizData(response.data.extract);
-      } catch (error) {
-        console.error("Error fetching Wikipedia article:", error);
-      }
-    };
-    fetchRandomFilmArticle();
-  }, []);
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [timeTaken, setTimeTaken] = useState(0);
+  const [showScore, setShowScore] = useState(false);
 
 
-  const prepareQuizData = (articleText) => {
-    // Zählen Sie die Wörter im ersten Absatz
-    const words = articleText.split(" ");
-    const totalWords = words.length;
+  const [article, setArticle] = useState(" ");
+  const [answerearticle, setanswereArticle] = useState(" ");
+  const [correctarticle, setcorrectArticle] = useState(" ");
+  const [inputs, setInputs] = useState({});
 
-    // Bestimmen Sie die Anzahl der Wörter, die Sie ausblenden möchten (z. B. 20% des Absatzes)
-    const wordsToHideCount = Math.ceil(totalWords * 0.2); // 20% der Wörter ausblenden
 
-    // Generieren Sie eine Liste von zufälligen Indizes, die aus der Anzahl der Wörter ausgewählt werden sollen
-    const randomIndexes = [];
-    while (randomIndexes.length < wordsToHideCount) {
-      const randomIndex = Math.floor(Math.random() * totalWords);
-      if (!randomIndexes.includes(randomIndex)) {
-        randomIndexes.push(randomIndex);
-      }
+  const fetchWikiArticle = async () => {
+    try {
+      const response = await server.get(`/wikiarticle`);
+      const textdata = response.data;
+      setArticle(textdata.paragraph_with_blanks);
+      setcorrectArticle(textdata.first_paragraph);
+
+
+
+     } catch (error) {
+          console.error("Error fetching Wikipedia article:", error);
     }
-
-    // Erzeugen Sie eine Liste mit Quizdaten, wobei die ausgewählten Wörter ausgeblendet werden
-    let hiddenCounter = 0;
-    const quizData = words.map((word, index) => {
-      if (randomIndexes.includes(index)) {
-        hiddenCounter++;
-        return {
-          original: word,
-          question: "__".repeat(word.length), // Ersetzen des Wortes durch Unterstriche als Platzhalter
-          answer: word,
-        };
-      } else {
-        return {
-          original: word,
-          question: word, // Das Wort bleibt unverändert, da es nicht ausgeblendet wird
-          answer: word,
-        };
-      }
-    });
-
-    setQuizData(quizData);
   };
 
-  return (
-    <div>
-      {quizData.map((item, index) => (
-        <div key={index}>
-          {parse(item.question)} {/* Rendern der Quizfrage */}
-          <input
-            type="text"
-            value={item.answer}
-            onChange={(e) => {
-              // Implementieren Sie hier die Logik zur Handhabung der Benutzereingabe
-              const updatedQuizData = [...quizData];
-              updatedQuizData[index].answer = e.target.value;
-              setQuizData(updatedQuizData);
-            }}
-          />
+  const handleReplaceBlanks = (text) => {
+    const placeholders = text.split('_');
+    if (placeholders.length > 1) {
+      const inputFields = placeholders.slice(1).map((placeholder, index) => {
+        const inputName = `input${index}`;
+        return (
+          <React.Fragment key={index}>
+            <input
+              type="text"
+              name={inputName}
+              value={inputs[inputName] || ''}
+              onChange={(e) => handleChangeInput(e, inputName)}
+            />
+            {placeholder}
+          </React.Fragment>
+        );
+      });
+
+      return (
+        <div>
+          {placeholders[0]}
+          {inputFields}
         </div>
-      ))}
-    </div>
-  );
+      );
+    }
+    return text;
+  };
+
+  const handleMergeText = () => {
+    let mergedText = article;
+    const placeholders = article.split('_');
+    placeholders.slice(1).forEach((placeholder, index) => {
+      const inputName = `input${index}`;
+      const userInput = inputs[inputName] || '';
+      mergedText = mergedText.replace(placeholder, `${userInput}${placeholder}`);
+    });
+    setanswereArticle(mergedText);
+    setShowScore(true);
+  };
+
+  const handleChangeInput = (event, inputName) => {
+    const { value } = event.target;
+    setInputs({ ...inputs, [inputName]: value });
+  };
+
+
+
+  const handleStartQuiz = () => {
+    setQuizStarted(true);
+    setTimeTaken(0);
+    fetchWikiArticle();
+  };
+
+  const handleShowUserInput = () => {
+    return (
+      <div>
+
+      </div>
+    );
+  }
+
+ 
+
+return (
+  <CardRoot>
+      <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={8} lg={9}>
+              <ContentBox>
+                {!quizStarted ? (
+                    <>
+                      <ContentBox>
+                        <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
+                      </ContentBox>
+                    </>
+                ):!showScore ?(  
+                    <>
+                      <ContentBox>
+                        <div>
+                          {handleReplaceBlanks(article)}
+                          <button onClick={handleMergeText}>Verschmelzen und ausgeben</button>
+                        </div>
+                      </ContentBox>
+                    </>
+                ) : (
+                  <>
+                    <ContentBox>
+                        <div>
+                          <p>Your Text</p>
+                          <p>{answerearticle}</p>
+                          <p>Wikis Text</p>
+                          <p>{correctarticle}</p>
+                        </div>
+                    </ContentBox>
+                  </>
+                )}
+              </ContentBox>
+          </Grid>
+      </Grid>
+  </CardRoot>
+                      
+);
 };
+
 
 export default WikipediaQuiz;

@@ -158,7 +158,7 @@ def remove_random_nouns(paragraph, percentage):
     
     # Entferne die ausgewählten Substantive aus dem Absatz
     for noun in nouns_to_remove:
-        paragraph = paragraph.replace(noun, "________", 1)
+        paragraph = paragraph.replace(noun, "_", 1)
     
     return paragraph
 
