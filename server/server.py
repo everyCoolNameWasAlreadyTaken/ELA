@@ -5,6 +5,11 @@ from automated_questions import *
 from qa import *
 from flask_cors import CORS
 import logging
+import requests
+import random
+from bs4 import BeautifulSoup
+import json
+import wikipediaapi
 
 app = Flask(__name__)
 
@@ -116,6 +121,97 @@ def video_qa():
     combined_data = combime_method(random_audio_id, filtered_movie, database,
                                    ".mp4", "Video")
     return jsonify(combined_data)
+
+
+def extract_table_from_wikipedia(url, column_indices):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find('table', {'class': 'wikitable'})
+
+    data = []
+    rows = table.find_all('tr')
+    for row in rows[1:]:
+        cells = [cell.get_text(strip=True) for cell in row.find_all('td')]
+        selected_cells = [cells[idx] for idx in column_indices]
+        data.append(selected_cells)
+
+    return data
+
+def get_nouns_from_paragraph(paragraph):
+    # Einfache Methode, um Substantive (Nomen) aus dem Absatz zu extrahieren
+    words = re.findall(r'\b\w+\b', paragraph)
+    nouns = [word for word in words if word.istitle()]
+    return nouns
+
+def get_first_paragraph_from_wikipedia_article(wikipedia_article_title):
+    wiki_wiki = wikipediaapi.Wikipedia(user_agent="Mozilla/5.0")
+    page = wiki_wiki.page(wikipedia_article_title)
+    if page.exists():
+        return page.summary.split('\n', 1)[0]  # Den ersten Absatz aus der Zusammenfassung extrahieren
+
+    return "Kein erster Absatz gefunden."
+
+def remove_random_nouns(paragraph, percentage):
+    nouns = get_nouns_from_paragraph(paragraph)
+    num_nouns_to_remove = int(len(nouns) * (percentage / 100))
+    nouns_to_remove = random.sample(nouns, num_nouns_to_remove)
+    
+    # Entferne die ausgewählten Substantive aus dem Absatz
+    for noun in nouns_to_remove:
+        paragraph = paragraph.replace(noun, "________", 1)
+    
+    return paragraph
+
+@app.route('/wikiarticle')
+def get_table():
+    wikipedia_url = "https://de.wikipedia.org/wiki/Liste_der_erfolgreichsten_Filme_nach_Einspielergebnis"
+    column_indices_to_extract = [2]  # Index der zu extrahierenden Spalten
+    table_data = extract_table_from_wikipedia(wikipedia_url, column_indices_to_extract)
+
+    # Einen zufälligen Eintrag aus der Liste wählen
+    random_entry = random.choice(table_data)
+
+    # Den Filmtitel aus der ersten Spalte erhalten (Index 0)
+    movie_title = random_entry[0]
+
+    # Wikipedia-Artikel zum Filmtitel suchen (englische Wikipedia)
+    wikipedia_search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&srsearch={movie_title}"
+    response = requests.get(wikipedia_search_url)
+    data = response.json()
+
+    # Den Wikipedia-Artikel-Titel des ersten Treffers erhalten
+    if 'query' in data and 'search' in data['query']:
+        search_results = data['query']['search']
+        if search_results:
+            first_result = search_results[0]
+            wikipedia_article_title = first_result['title']
+
+            # Wikipedia-Artikel-Link erstellen (englische Wikipedia)
+            wikipedia_article_link = f"https://en.wikipedia.org/wiki/{wikipedia_article_title.replace(' ', '_')}"
+
+    # Den ersten Absatz des Wikipedia-Artikels erhalten
+    first_paragraph = get_first_paragraph_from_wikipedia_article(wikipedia_article_title)
+
+    # Einen gewissen Prozentsatz der zufälligen Substantive entfernen
+    paragraph_with_blanks = remove_random_nouns(first_paragraph, percentage=30)
+
+
+    # Substantive aus dem Absatz extrahieren
+    nouns = get_nouns_from_paragraph(first_paragraph)
+
+    # Das Ergebnis als JSON-Antwort zurückgeben
+    response_data = {
+        "movie_title": movie_title,
+        "wikipedia_article_link": wikipedia_article_link,
+        "first_paragraph": first_paragraph,
+        "paragraph_with_blanks": paragraph_with_blanks
+    }
+    return jsonify(response_data)
+
+
+    # Wenn kein Wikipedia-Artikel gefunden wurde
+    return jsonify({"message": "Kein Wikipedia-Artikel gefunden."}), 404
+
 
 
 @app.route('/chat', methods=['GET', 'POST'])

@@ -5,8 +5,9 @@ export const navigations = [
     name: 'Classic',
     icon: 'local_library',
     children: [
-      { name: 'Single Choice', iconText: 'MC', path: '/dashboard/Page_MC' },
+      { name: 'Single Choice', iconText: 'SC', path: '/dashboard/Page_MC' },
       { name: 'Poster Matching', iconText: 'MA', path: '/dashboard/Page_Matching' },
+      { name: 'Wiki Gaps', iconText: 'WI', path: '/dashboard/Page_WikiGaps' },
     ]
   },
   {
