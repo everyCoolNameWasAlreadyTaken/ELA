@@ -51,49 +51,40 @@ const Level = () => {
 
     const fetchUserLevel = async () => {
         try {
-            const response = await server.get(`/`); //TODO: Set Backend Route to fetch Database Values
+            const response = await server.get(`/users/0/stats/level`);
             const userdata = response.data;
-            setcorrectQuizzes(userdata.correctQuizzes);
-            settotalQuizzes(userdata.totalQuizzes);
-            console.log("correctQuizzes: ", correctQuizzes);
-            console.log("totalQuizzes: ", totalQuizzes);
+            setcorrectQuizzes(userdata.rightAnswers);
+            settotalQuizzes(userdata.totalQuestions);
 
         } catch (error) {
             console.error('Error:', error);
         }
     };
     const calculateUserLevel = () => {
-        //TODO: Remove Comment to fetchUserLevel
-        //fetchUserLevel();
-        var correctPercent = (39 / 100)*100; //Remove Hardcoded Values Replace with (correctQuizzes,totalQuizzes)
+        fetchUserLevel();
+        var correctPercent = (correctQuizzes / totalQuizzes)*100; 
         switch (true) {
             case correctPercent < 40:   //Stufe 0
-                console.log("Stufe 0")
                 setuserLevel("Level 0 - Freshman");
                 setPicture("/assets/images/Level_Pics/Lvl0.jpg");
                 break;
             case correctPercent < 55:   //Stufe 1
-                console.log("Stufe 1")
                 setuserLevel("Level 1 - Junior Script Assistant");
                 setPicture("/assets/images/Level_Pics/Lvl1.jpg");
                 break;
             case correctPercent < 65:   //Stufe 2
-                console.log("Stufe 2")
                 setuserLevel("Level 2 - Junior Light Operator");
                 setPicture("/assets/images/Level_Pics/Lvl2.jpg");
                 break;
             case correctPercent < 80:   //Stufe 3
-                console.log("Stufe 3")
                 setuserLevel("Level 3 - Second Camera Operator");
                 setPicture("/assets/images/Level_Pics/Lvl3.jpg");
                 break;
             case correctPercent < 90:   //Stufe 4
-                console.log("Stufe 4")
                 setuserLevel("Level 4 - Chief Camera Operator");
                 setPicture("/assets/images/Level_Pics/Lvl4.jpg");
                 break;
             default:                    //Stufe 5
-                console.log("Stufe 5")
                 setuserLevel("Level 5 - Director");
                 setPicture("/assets/images/Level_Pics/Lvl5.jpg");
                 break;
