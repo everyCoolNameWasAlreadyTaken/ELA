@@ -7,7 +7,6 @@ import {
 import {useState} from 'react';
 import TrailerRotation from './TrailerRotation';
 import ThemeRotation from './ThemeRotation';
-import SingleChoiceRotation from './SingleChoiceRotation';
 
 
 const CardHeader = styled(Box)(() => ({
@@ -84,7 +83,6 @@ const RandomExamRotation = () => {
 
       <Box overflow="auto">
           {/* TODO: Hier muss noch die Logik zum nacheinander Anzeiger der Itemtypes eingefügt werden*/}
-          <SingleChoiceRotation />
           {/* <TrailerRotation /> */}
           {/* <ThemeRotation /> */}
       </Box>

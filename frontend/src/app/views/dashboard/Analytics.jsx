@@ -8,6 +8,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
+    justifyContent: 'center',
     [theme.breakpoints.down('sm')]: {margin: '16px'},
 }));
 
@@ -76,9 +77,8 @@ const Analytics = () => {
 
     return (
         <Fragment>
-            <ContentBox className="analytics" justifyContent="center">
+            <ContentBox className="analytics">
                 <Grid container spacing={3}>
-
                     <Grid item xs={12}>
                         <Card sx={{px: 3, py: 2, mb: 3, height: '100%'}}>
                             <CardContent>

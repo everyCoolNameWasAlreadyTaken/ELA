@@ -323,6 +323,46 @@ def calculate_top_movies_percentage(user_id, item_type_in):
         return "Error calculating top movies percentage: " + str(e), 500
 
 
+def get_questions(quizzes):
+    total_questions = 0
+    for quiz in quizzes:
+        total_questions += quiz.get("totalQuestions", 0)
+    return total_questions
+
+
+def get_right_answers(quizzes):
+    right_answers = 0
+    for quiz in quizzes:
+        right_answers += quiz.get("rightAnswers", 0)
+    return right_answers
+
+
+def get_total_questions_and_answers(user_id_in):
+    try:
+        user = collection.find_one({"_id": user_id_in})
+
+        if user:
+            user_quiz_data = user["Quizdata"]
+            quiz_types = get_list_item_types(user_quiz_data)
+            right_answers = 0
+            total_questions = 0
+
+            for quiz_type in quiz_types:
+                quizzes = user["Quizdata"].get(quiz_type, {}).get("data", [])
+                right_answers += get_right_answers(quizzes)
+                total_questions += get_questions(quizzes)
+
+            return {
+                'rightAnswers': right_answers,
+                'totalQuestions': total_questions,
+                }, 200
+        else:
+                return "User not found", 404
+
+    except Exception as e:
+        return "Error retrieving percentage stats: " + str(e), 500
+
+
 def get_list_item_types(quiz_data):
     item_types = []
 
@@ -349,7 +389,7 @@ def get_dates_in_user_data(quiz_data):
     return dates
 
 
-def get_data_per_date(quiz_data, date_list, item_type):
+def get_data_per_date(quiz_data, date_list):
     percentages = []
     for date in date_list:
         total = 0

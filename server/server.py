@@ -218,6 +218,12 @@ def get_item_type_stats(user_id, selected_option):
     return jsonify(res), code
 
 
+@app.route('/users/<int:user_id>/stats/level')
+def get_level_stats(user_id):
+    res, code = get_total_questions_and_answers(user_id)
+    return jsonify(res), code
+
+
 if __name__ == '__main__':
     app.run(host=HOST, port=SERVER_PORT, debug=True)
 
