@@ -64,7 +64,7 @@ const QuestionTitle = styled(Typography)(({theme}) => ({
     color: theme.palette.text.primary,
 }));
 
-const QuestionContent = styled('div')(({theme}) => ({
+const QuestionContent = styled('div')({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -73,7 +73,7 @@ const QuestionContent = styled('div')(({theme}) => ({
     '& .MuiFormControlLabel-root': {
         marginLeft: '0',
     },
-}));
+});
 
 const QuestionFeedback = styled('p')(({theme}) => ({
     marginTop: '5px',
