@@ -3,12 +3,9 @@ import {
     Card,
     CardContent,
     FormControlLabel,
-    Icon,
-    IconButton,
     Radio,
     RadioGroup,
     styled,
-    Tooltip,
     Button,
     Typography,
     useTheme
@@ -20,6 +17,8 @@ import Score from "../shared/charts/Score";
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
+    display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     [theme.breakpoints.down('sm')]: {margin: '16px'},
@@ -32,10 +31,18 @@ const StartButton = styled(Button)(({theme}) => ({
     borderRadius: '100px',
     fontSize: '2rem',
     fontWeight: 'bold',
-    padding: '60px',
+    padding: '16px 32px',
     '&:hover': {
         background: theme.palette.primary.dark,
     },
+}));
+
+const QuestionCard = styled(Card)(({theme}) => ({
+    marginBottom: theme.spacing(2),
+    height: '500px',
+    width: '800px',
+    flexDirection: 'column',
+    justifyContent: 'center',
 }));
 
 const Question = styled('p')(({theme}) => ({
@@ -49,14 +56,23 @@ const Question = styled('p')(({theme}) => ({
 }));
 
 const QuestionTitle = styled(Typography)(({theme}) => ({
-    marginTop: '50px',
-    right: '0px',
-    width: '80%',
-    height: '20px',
-    fontSize: '1rem',
+    marginTop: '5px',
+    fontSize: '2rem',
+    textAlign: 'center',
     fontWeight: 'bold',
     zIndex: 1,
     color: theme.palette.text.primary,
+}));
+
+const QuestionContent = styled('div')(({theme}) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '55px',
+    marginTop: '20px',
+    '& .MuiFormControlLabel-root': {
+        marginLeft: '0',
+    },
 }));
 
 const QuestionFeedback = styled('p')(({theme}) => ({
@@ -106,46 +122,34 @@ const QuizStatusBox = styled(Box)(({theme}) => ({
     zIndex: 1,
 }));
 
-const ButtonWrapper = styled('span')(({theme}) => ({
+const ContinueButtonWrapper = styled('div')(({theme}) => ({
     display: 'flex',
-    position: 'absolute',
-    top: '280px',
-    right: '50px',
-    width: '50px',
-    height: '50px',
-    justifyContent: 'center',
-    float: 'right',
-    [theme.breakpoints.down('sm')]: {
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-    },
+    justifyContent: 'flex-end',
+    marginRight: theme.spacing(2),
 }));
 
-const ButtonWrapperLarge = styled('span')(({theme}) => ({
-    display: 'flex',
-    position: 'absolute',
-    top: '820px',
-    right: '50px',
-    width: '50px',
-    height: '50px',
-    justifyContent: 'center',
-    float: 'right',
-    [theme.breakpoints.down('sm')]: {
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-    },
-}));
-
-const ContinueButton = styled(IconButton)({
+const ContinueButton = styled(Button)(({theme, disabled}) => ({
     alignSelf: 'flex-end',
-    height: '40px',
-    width: '40px',
-    overflow: 'hidden',
+    height: '55px',
+    width: '130px',
     borderRadius: '300px',
     justifyContent: 'center',
-});
+    fontWeight: 'bold',
+    fontSize: '1.15rem',
+    background: disabled ? theme.palette.grey[500] : theme.palette.primary.main,
+    color: disabled ? '#fff' : theme.palette.primary.contrastText,
+    '&:hover': {
+        background: disabled ? theme.palette.grey[500] : theme.palette.primary.dark,
+    },
+}));
+
+const ResultCard = styled(Card)(({theme}) => ({
+    marginBottom: theme.spacing(2),
+    height: '150px',
+    width: '800px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+}));
 
 const CorrectAnswer = styled('p')({
     fontWeight: 'bold',
@@ -319,7 +323,7 @@ const MultipleChoice = () => {
                         </ScoreContainer>
                     </SpeedAndScoreContainer>
                     {questions.map((question, index) => (
-                        <Card>
+                        <ResultCard>
                             <CardContent key={index}>
                                 <QuestionFeedback>{question.question}</QuestionFeedback>
                                 <CorrectAnswer>
@@ -329,52 +333,48 @@ const MultipleChoice = () => {
                                     isCorrect={questions[index].correctIndex === questions[index].answers.indexOf(userAnswers[index])}>
                                     Your Answer: {userAnswers[index]}
                                 </GivenAnswer>
-
                             </CardContent>
-                        </Card>
+                        </ResultCard>
                     ))}
-                    <Tooltip title="New Quiz" placement="top">
-                        <ButtonWrapperLarge>
-                            <ContinueButton onClick={reload}>
-                                <Icon color="primary">replay</Icon>
-                            </ContinueButton>
-                        </ButtonWrapperLarge>
-                    </Tooltip>
+                    <ContinueButtonWrapper>
+                        <ContinueButton onClick={reload}>
+                            New Quiz
+                        </ContinueButton>
+                    </ContinueButtonWrapper>
+
                 </>
             ) : (
                 <>
-                    <Card>
+                    <QuestionCard>
                         <CardContent>
                             <QuizStatusBox>
                                 {`${currentIndex + 1}/${questions.length}`}
                             </QuizStatusBox>
                             {currentQuestion && (
                                 <QuestionTitle>
-                                    Movie: {currentQuestion.title}
+                                    {currentQuestion.title}
                                 </QuestionTitle>
                             )}
-                            <Question>{currentQuestion?.question}</Question>
-                            <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
-                                {currentQuestion?.answers.map((choice, index) => (
-                                    <AnswerOption
-                                        key={index}
-                                        value={choice}
-                                        control={<Radio color="primary"/>}
-                                        label={choice}
-                                    />
-                                ))}
-                            </Answers>
+                            <QuestionContent>
+                                <Question>{currentQuestion?.question}</Question>
+                                <Answers value={userAnswers[currentIndex] || ''} onChange={handleAnswerSelection}>
+                                    {currentQuestion?.answers.map((choice, index) => (
+                                        <AnswerOption
+                                            key={index}
+                                            value={choice}
+                                            control={<Radio color="primary"/>}
+                                            label={choice}
+                                        />
+                                    ))}
+                                </Answers>
+                            </QuestionContent>
                         </CardContent>
-                    </Card>
-                    <Tooltip title="Continue" placement="top">
-                        <ButtonWrapper>
-                            <ContinueButton onClick={handleNextQuestion}
-                                            disabled={!userAnswers[currentIndex]}>
-                                <Icon
-                                    color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
-                            </ContinueButton>
-                        </ButtonWrapper>
-                    </Tooltip>
+                    </QuestionCard>
+                    <ContinueButtonWrapper>
+                        <ContinueButton onClick={handleNextQuestion} disabled={!userAnswers[currentIndex]}>
+                            Continue
+                        </ContinueButton>
+                    </ContinueButtonWrapper>
                 </>
             )}
         </ContentBox>

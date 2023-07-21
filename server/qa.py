@@ -47,11 +47,13 @@ def read_questions_from_file(file_path):
         for item in data:
             quid = item['qid']
             question = item['question']
-            answers = item['answers']
-            correct_index = item['correct_index']
+            answers = filter_answers(item['answers'])
+            answers.append("None of the above")
+            correct_index = set_null_index(item['correct_index'], len(answers))
             year = item['year']
             name = item['name']
             genre = item['genre']
+
             questions.append({
                 'qid': quid,
                 'question': question,
@@ -62,4 +64,17 @@ def read_questions_from_file(file_path):
                 'genre': genre
             })
     return questions
+
+
+def filter_answers(answers):
+    answers_out = [answer for answer in answers if answer != ""]
+    return answers_out
+
+
+def set_null_index(correct_index, len_answers):
+    if correct_index is None:
+        correct_index = len_answers - 1
+    return correct_index
+
+
 

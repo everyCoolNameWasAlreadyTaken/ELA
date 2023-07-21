@@ -422,7 +422,7 @@ def get_percentage_per_item_type_and_date(user_id_in):
             for item_type in item_types:
                 quizzes = user_quiz_data.get(item_type, {}).get("data", [])
                 if len(quizzes) != 0:
-                    percent_per_date = get_data_per_date(quizzes, dates, item_type)
+                    percent_per_date = get_data_per_date(quizzes, dates)
                     data.append(percent_per_date)
 
             return {
