@@ -3,6 +3,7 @@
     "fs": "^0.0.1-security",
     "html-react-parser": "^4.0.0",
     "natural": "^6.5.0",
+    "nltk": "^0.0.1",
     "os": "^0.1.2",
     "react-audio-player": "^0.17.0",
     "react-player": "^2.12.0",
