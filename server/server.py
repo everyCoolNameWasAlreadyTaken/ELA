@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 import openai
 from user import *
@@ -13,10 +14,10 @@ logger = logging.getLogger('werkzeug')
 
 SERVER_PORT = 5000
 HOST = '0.0.0.0'
-openai.api_key = ""
-query = "Write a poem for ducks"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-movie_name = "The Shawshank Redemption"
+if openai.api_key == "":
+    logger.info(jsonify("empty"))
 
 
 @app.route('/')
@@ -129,7 +130,7 @@ def chat():
     response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
                                             messages=[{
                                                 "role": "user",
-                                                "content": query
+                                                "content": "Say this is a test!",
                                             }])
     return response.choices[0].message.content
 
@@ -185,7 +186,8 @@ def get_user_mc_stats(user_id, item_type, selected_option):
 
     Returns:
     - If successful: Returns a JSON response containing the genre statistics for the user and the specified item type.
-    - If error: Returns a JSON response with an error message indicating the error encountered during the retrieval process.
+    - If error: Returns a JSON response with an error message indicating the error encountered during the retrieval
+    process.
     """
     item_type_cap = item_type[0].upper() + item_type[1:]
     if selected_option == 'genre':
@@ -226,5 +228,3 @@ def get_level_stats(user_id):
 
 if __name__ == '__main__':
     app.run(host=HOST, port=SERVER_PORT, debug=True)
-
-

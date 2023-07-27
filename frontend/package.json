@@ -46,7 +46,15 @@
     "react-router-dom": "^6.9.0",
     "react-scripts": "^5.0.1",
     "shortid": "^2.2.16",
-    "yup": "^1.0.2"
+    "yup": "^1.0.2",
+    "fs": "^0.0.1-security",
+    "natural": "^6.5.0",
+    "os": "^0.1.2",
+    "react-audio-player": "^0.17.0",
+    "react-player": "^2.12.0",
+    "react-youtube": "^10.1.0",
+    "string-similarity": "^4.0.4",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@babel/runtime": "^7.21.0",
