@@ -145,8 +145,8 @@ const ContinueButton = styled(Button)(({theme, disabled}) => ({
 
 const ResultCard = styled(Card)(({theme}) => ({
     marginBottom: theme.spacing(2),
-    height: '150px',
-    width: '800px',
+    height: '200px',
+    width: '850px',
     flexDirection: 'column',
     justifyContent: 'center',
 }));
