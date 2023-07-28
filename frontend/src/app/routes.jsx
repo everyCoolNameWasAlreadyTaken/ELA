@@ -13,9 +13,6 @@ const Analytics = Loadable(lazy(() => import('app/views/dashboard/Analytics')));
 // Audio page
 const Page_Audio = Loadable(lazy(() => import('app/views/dashboard/Page_Audio')));
 
-// matching page
-const Page_Matching = Loadable(lazy(() => import('app/views/dashboard/Page_Matching')));
-
 // MC page
 const Page_MC = Loadable(lazy(() => import('app/views/dashboard/Page_MC')));
 
@@ -30,6 +27,9 @@ const Page_Clustering = Loadable(lazy(() => import('app/views/dashboard/Page_Clu
 
 // levelling
 const Level = Loadable(lazy(() => import('app/views/dashboard/Level')));
+
+// levelling
+const Wiki = Loadable(lazy(() => import('app/views/dashboard/Page_ClozeText')));
 
 
 const routes = [
@@ -48,11 +48,6 @@ const routes = [
             {
                 path: '/dashboard/Page_Audio',
                 element: <Page_Audio/>,
-            },
-            // matching
-            {
-                path: '/dashboard/Page_Matching',
-                element: <Page_Matching/>,
             },
 
             // MC
@@ -85,6 +80,11 @@ const routes = [
                 element: <Level/>,
             },
 
+            // Wiki
+            {
+                path: '/dashboard/Page_ClozeText',
+                element: <Wiki/>,
+            },
         ]
     },
 
