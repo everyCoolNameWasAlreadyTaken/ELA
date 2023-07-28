@@ -6,7 +6,7 @@ export const navigations = [
     icon: 'local_library',
     children: [
       { name: 'Single Choice', iconText: 'SC', path: '/dashboard/Page_MC' },
-      { name: 'Wiki Gaps', iconText: 'WI', path: '/dashboard/Page_ClozeText' },
+      { name: 'Cloze Text', iconText: 'CZ', path: '/dashboard/Page_ClozeText' },
     ]
   },
   {
