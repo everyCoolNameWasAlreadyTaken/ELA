@@ -29,7 +29,7 @@ const Page_Clustering = Loadable(lazy(() => import('app/views/dashboard/Page_Clu
 const Level = Loadable(lazy(() => import('app/views/dashboard/Level')));
 
 // levelling
-const Wiki = Loadable(lazy(() => import('app/views/dashboard/Page_WikiGaps')));
+const Wiki = Loadable(lazy(() => import('app/views/dashboard/Page_ClozeText')));
 
 
 const routes = [
@@ -82,7 +82,7 @@ const routes = [
 
             // Wiki
             {
-                path: '/dashboard/Page_WikiGaps',
+                path: '/dashboard/Page_ClozeText',
                 element: <Wiki/>,
             },
         ]

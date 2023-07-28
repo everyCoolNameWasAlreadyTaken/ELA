@@ -1,7 +1,7 @@
 import { Grid, styled } from '@mui/material';
 import { Fragment } from 'react';
 
-import WikipediaQuiz from './shared/WikiText';
+import ClozeText from './shared/ClozeText';
 
 
 const ContentBox = styled('div')(({ theme }) => ({
@@ -17,7 +17,7 @@ const Analytics = () => {
       <ContentBox className="analytics">
         <Grid container spacing={3}>
           <Grid item lg={12} md={12} sm={12} xs={12}>
-          <WikipediaQuiz/>
+          <ClozeText/>
           </Grid>
         </Grid>
       </ContentBox>

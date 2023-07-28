@@ -43,6 +43,28 @@ const StartButton = styled(Button)(({theme}) => ({
   },
 }));
 
+const ButtonWrapperLarge = styled('span')(({theme}) => ({
+  display: 'flex',
+  width: '50px',
+  height: '50px',
+  justifyContent: 'center',
+  float: 'right',
+  [theme.breakpoints.down('sm')]: {
+      position: 'fixed',
+      bottom: '24px',
+      right: '24px',
+  },
+}));
+
+const ContinueButton = styled(IconButton)({
+  alignSelf: 'flex-end',
+  height: '40px',
+  width: '40px',
+  overflow: 'hidden',
+  borderRadius: '300px',
+  justifyContent: 'center',
+});
+
 const WikipediaQuiz = () => {
 
   const [quizStarted, setQuizStarted] = useState(false);
@@ -129,20 +151,32 @@ const WikipediaQuiz = () => {
 
     
     setShowScore(true);
-    console.log(mergedText)
     setAnswerArticle(mergedText);
-    console.log(answerarticle)
-    console.log(mergedText)
-    
-    handleTextScore();
   };
 
- 
-  const handleTextScore = () => {
-    const levenshteinDistance = leven(correctarticle, answerarticle );
-    setuserScore(levenshteinDistance);
-    console.log("Textscore: ", levenshteinDistance)
+  const calculateAccuracy = (correctText, userText) => {
+    const correctWords = correctText.split(/\s+/);
+    const userWords = userText.split(/\s+/);
+    
+    let totalWords = correctWords.length;
+    let correctWordsCount = 0;
+    
+    for (let i = 0; i < totalWords; i++) {
+      if (correctWords[i] === userWords[i]) {
+        correctWordsCount++;
+      }
+    }
+    
+    const accuracy = (correctWordsCount / totalWords) * 100;
+    return accuracy;
   };
+
+  const handleTextScore = () => {
+    const accuracy = calculateAccuracy(correctarticle, answerarticle);
+    const roundedScore = Math.round(accuracy);
+    setuserScore(roundedScore);
+  };
+  
 
 
   const handleChangeInput = (event, inputName) => {
@@ -161,9 +195,18 @@ const WikipediaQuiz = () => {
     console.log("Correct Text: ", correctarticle);
   }
 
-
   
-  
+  const reload = () => {
+    setuserScore(0)
+    setArticle(" ");
+    setAnswerArticle(" ");
+    setcorrectArticle(" ");
+    setInputs({});
+    setShowScore(false);
+    setQuizStarted(false);
+    setTimeTaken(0);
+    setLoading(false);
+};
   
 
  
@@ -191,8 +234,7 @@ return (
                           ):(
                             <>
                               {handleReplaceBlanks(article)}
-                              <button onClick={handleMergeText}>Abgegen</button>
-                              <button onClick={showText}>Text</button>
+                              <button onClick={handleMergeText}>Submit</button>
                           </>
                           )}
 
@@ -202,14 +244,37 @@ return (
                 ) : (
                   <>
                     <ContentBox>
+                      
                         <div>
-                          <p>Score: </p>
-                          <p>{userScore}</p>
-                          <p>Your Text</p>
-                          <p>{answerarticle}</p>
-                          <p>Wikis Text</p>
-                          <p>{correctarticle}</p>
+                          {userScore !== 0 ? (
+                            <>
+                            <ContentBox>
+                              <p>Your Text</p>
+                              <p>{answerarticle}</p>
+                              <p>Wikis Text</p>
+                              <p>{correctarticle}</p>
+                              <p>Score: </p>
+                              <p>{userScore}</p>
+                              <Tooltip title="New Quiz" placement="top">
+                                <ButtonWrapperLarge>
+                                    <ContinueButton onClick={reload}>
+                                        <Icon color="primary">replay</Icon>
+                                    </ContinueButton>
+                                </ButtonWrapperLarge>
+                              </Tooltip>
+                            </ContentBox>
+
+
+                            </>
+                            ) : (
+                              <>
+                              {handleTextScore()}
+                              </>
+                            )}
+                          
                         </div>
+                        
+
                     </ContentBox>
                   </>
                 )}

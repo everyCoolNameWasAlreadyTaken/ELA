@@ -172,33 +172,58 @@ def get_table():
     random_entry = random.choice(table_data)
     movie_title = random_entry[0]
 
-    wikipedia_search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&srsearch={movie_title}"
+    wikipedia_search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&srsearch={movie_title} movie film"
     response = requests.get(wikipedia_search_url)
     data = response.json()
 
+    wikipedia_article_title = None
+    wikipedia_article_link = None
 
     if 'query' in data and 'search' in data['query']:
         search_results = data['query']['search']
         if search_results:
             first_result = search_results[0]
             wikipedia_article_title = first_result['title']
-
             wikipedia_article_link = f"https://en.wikipedia.org/wiki/{wikipedia_article_title.replace(' ', '_')}"
 
-    first_paragraph = get_first_paragraph_from_wikipedia_article(wikipedia_article_title)
+    if wikipedia_article_title:
+        first_paragraph = get_first_paragraph_from_wikipedia_article(wikipedia_article_title)
+        processed_text, replaced_words = extract_and_replace_important_information(first_paragraph, 12)
 
-    processed_text, replaced_words = extract_and_replace_important_information(first_paragraph,12)
+        while processed_text is None or all(replaced_word == "_" for replaced_word in replaced_words.values()):
+            # Kein passendes Wort gefunden oder alle ersetzen Wörter mit _ sind Null
+            # Einen neuen Wikipedia-Artikel holen und die Funktion erneut aufrufen
+            response = requests.get(wikipedia_search_url)
+            data = response.json()
 
-    response_data = {
-        "movie_title": movie_title,
-        "wikipedia_article_link": wikipedia_article_link,
-        "first_paragraph": first_paragraph,
-        "paragraph_with_blanks": processed_text,
-        "replaced words": replaced_words
-    }
-    return jsonify(response_data)
+            wikipedia_article_title = None
+            wikipedia_article_link = None
 
-    return jsonify({"message": "Kein Wikipedia-Artikel gefunden."}), 404
+            if 'query' in data and 'search' in data['query']:
+                search_results = data['query']['search']
+                if search_results:
+                    first_result = search_results[0]
+                    wikipedia_article_title = first_result['title']
+                    wikipedia_article_link = f"https://en.wikipedia.org/wiki/{wikipedia_article_title.replace(' ', '_')}"
+
+            if wikipedia_article_title:
+                first_paragraph = get_first_paragraph_from_wikipedia_article(wikipedia_article_title)
+                processed_text, replaced_words = extract_and_replace_important_information(first_paragraph, 12)
+            else:
+                break
+
+        if processed_text:
+            response_data = {
+                "movie_title": movie_title,
+                "wikipedia_article_link": wikipedia_article_link,
+                "first_paragraph": first_paragraph,
+                "paragraph_with_blanks": processed_text,
+                "replaced_words": replaced_words
+            }
+            return jsonify(response_data)
+
+    return jsonify({"message": "Kein passender Wikipedia-Artikel gefunden."}), 404
+
 
 
 
