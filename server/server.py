@@ -172,6 +172,7 @@ def handle_user_answers(user_id):
         storage process.
     """
     res, code = store_user_answers(user_id, request.json)
+    # handle feedback creation here
     return jsonify(res), code
 
 

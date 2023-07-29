@@ -540,6 +540,10 @@ def calculate_item_type_stats_percentage(user_id_in):
         return "Error retrieving item type stats: " + str(e), 500
 
 
+def prompt_generator():
+    
+
+
 if __name__ == '__main__':
     user_id = 0
     top_movies_percentage = get_percentage_per_item_type_and_date(user_id)

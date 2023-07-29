@@ -8,7 +8,7 @@ import {
     Button,
     Grid, useTheme
 } from '@mui/material';
-
+import {useUserContext} from "./UserContext";
 import React, {useState, useRef, useEffect} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
@@ -190,7 +190,7 @@ const AudioPlayer = () => {
     const [correctanswers, setAnswers] = useState([]);
     const inputRef = useRef('');
     const timerRef = useRef();
-    const userId = 0;
+    const {userId} = useUserContext();
     const {palette} = useTheme();
 
     const fetchAudioData = async () => {

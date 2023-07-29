@@ -8,13 +8,14 @@ import {
     Button,
     Grid, useTheme
 } from '@mui/material';
-
+import {useUserContext} from "./UserContext";
 import React, {useState, useRef, useEffect} from 'react';
 import ReactPlayer from 'react-player';
 import server from "../../../../axios/axios";
 import {compareTwoStrings} from 'string-similarity';
 import Speed from "./charts/Speed";
 import Score from "./charts/Score";
+import {useUserContext} from "./UserContext";
 
 const CardRoot = styled(Card)(({theme}) => ({
     display: 'flex',
@@ -190,7 +191,7 @@ const VideoPlayer = () => {
     const [userAnswers, setUserAnswers] = useState([]);
     const [correctanswers, setAnswers] = useState([]);
     const inputRef = useRef('');
-    const userId = 0;
+    const {userId} = useUserContext();
     const {palette} = useTheme();
 
     const fetchAudioData = async () => {
