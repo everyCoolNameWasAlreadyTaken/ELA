@@ -1,46 +1,52 @@
-import { Card, Grid, styled, useTheme } from '@mui/material';
-import { Fragment } from 'react';
-import TrailerRotation from './shared/TrailerRotation';
+import {Box, Card, styled} from '@mui/material';
 
-const ContentBox = styled('div')(({ theme }) => ({
-  margin: '30px',
-  [theme.breakpoints.down('sm')]: { margin: '16px' },
+import VideoPlayer from "./shared/VideoPlayer";
+
+const ContentBox = styled('div')(({theme}) => ({
+    margin: '30px',
+    [theme.breakpoints.down('sm')]: {margin: '16px'},
+}));
+
+const CardHeader = styled(Box)(() => ({
+    display: 'flex',
+    paddingLeft: '24px',
+    paddingRight: '24px',
+    marginBottom: '12px',
+    alignItems: 'center',
+    justifyContent: 'center',
 }));
 
 const Title = styled('span')(() => ({
-  fontSize: '1rem',
-  fontWeight: '500',
-  marginRight: '.5rem',
-  textTransform: 'capitalize',
+    fontSize: '1.25rem',
+    fontWeight: '500',
+    textTransform: 'capitalize',
+    margin: '5px'
 }));
 
-const SubTitle = styled('span')(({ theme }) => ({
-  fontSize: '0.875rem',
-  color: theme.palette.text.secondary,
+
+const SubTitle = styled('span')(({theme}) => ({
+    fontSize: '1.25rem',
+    color: theme.palette.text.secondary,
+    margin: '5px'
 }));
 
-const H4 = styled('h4')(({ theme }) => ({
-  fontSize: '1rem',
-  fontWeight: '500',
-  marginBottom: '16px',
-  textTransform: 'capitalize',
-  color: theme.palette.text.secondary,
-}));
+const PageVideo = () => {
+    return (
 
-const Analytics = () => {
-  const { palette } = useTheme();
+        <ContentBox>
+            <Card elevation={3} sx={{pt: '20px', mb: 3}}>
+                <CardHeader>
+                    <Title>Trailer Quiz</Title>
+                    <SubTitle>Play the Video and give the answer. To continue press the Button on the buttom right
+                        corner.</SubTitle>
+                </CardHeader>
+            </Card>
+            <Box overflow="auto" justifyContent="center">
+                <VideoPlayer/>
+            </Box>
+        </ContentBox>
 
-  return (
-    <Fragment>
-      <ContentBox className="analytics">
-        <Grid container spacing={3}>
-          <Grid item lg={12} md={12} sm={12} xs={12}>
-            <TrailerRotation />
-          </Grid>
-        </Grid>
-      </ContentBox>
-    </Fragment>
-  );
+    );
 };
 
-export default Analytics;
+export default PageVideo;

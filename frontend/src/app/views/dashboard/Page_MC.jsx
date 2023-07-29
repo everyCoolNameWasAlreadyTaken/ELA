@@ -1,5 +1,4 @@
-import {Box, Card, Grid, styled} from '@mui/material';
-import {Fragment} from 'react';
+import {Box, Card, styled} from '@mui/material';
 import MultipleChoice from "./shared/MultipleChoice";
 
 const ContentBox = styled('div')(({theme}) => ({
@@ -42,8 +41,6 @@ const Page_MC = () => {
                     <SubTitle>Select one out of five possible answers. To submit your answer, press the Button on the
                         right.</SubTitle>
                 </CardHeader>
-
-
             </Card>
             <Box overflow="auto" justifyContent="center">
                 <MultipleChoice/>
