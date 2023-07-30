@@ -90,7 +90,6 @@ def audio_qa():
                                    "data/audio_answers.csv", database)
     combined_data = combime_method(random_audio_id, filtered_audio, database,
                                    ".mp3", "Audio")
-    logger.info(combined_data)
     return jsonify(combined_data)
 
 
