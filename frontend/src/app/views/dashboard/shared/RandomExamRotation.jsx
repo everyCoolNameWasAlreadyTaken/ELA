@@ -5,8 +5,6 @@ import {
   Button,
 } from '@mui/material';
 import {useState} from 'react';
-import TrailerRotation from './TrailerRotation';
-import ThemeRotation from './ThemeRotation';
 
 
 const CardHeader = styled(Box)(() => ({

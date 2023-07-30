@@ -68,6 +68,10 @@ To get started with CineQuizz, follow the instructions below.
    ```bash
    FLASK_APP=server.py
    FLASK_ENV=development
+   
+   # Put your OpenAI API key here for feedback support.
+   # If you do this, be sure not to share this key with anyone and DO NOT COMMIT IT.
+   OPENAI_API_KEY= <Your_OpenAI_API_key>
    ```
 
 Customize the environment variables according to your specific requirements.

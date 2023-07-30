@@ -8,12 +8,14 @@ const App = () => {
     const content = useRoutes(routes);
 
     return (
+
         <SettingsProvider>
             <MatxTheme>
                 <CssBaseline/>
                 {content}
             </MatxTheme>
         </SettingsProvider>
+
     );
 };
 
