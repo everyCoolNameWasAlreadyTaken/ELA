@@ -147,7 +147,6 @@ const Answers = styled(Box)({
         border: '1px solid #ccc',
         borderRadius: '4px',
         marginBottom: '10px',
-        // Add more styles as per your preference
     },
 });
 
