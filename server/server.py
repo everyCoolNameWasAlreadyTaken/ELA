@@ -6,6 +6,13 @@ from automated_questions import *
 from qa import *
 from flask_cors import CORS
 import logging
+import requests
+import random
+from bs4 import BeautifulSoup
+import json
+import wikipediaapi
+import spacy
+
 
 app = Flask(__name__)
 
@@ -117,6 +124,106 @@ def video_qa():
     combined_data = combime_method(random_audio_id, filtered_movie, database,
                                    ".mp4", "Video")
     return jsonify(combined_data)
+
+
+def extract_table_from_wikipedia(url, column_indices):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    table = soup.find('table', {'class': 'wikitable'})
+
+    data = []
+    rows = table.find_all('tr')
+    for row in rows[1:]:
+        cells = [cell.get_text(strip=True) for cell in row.find_all('td')]
+        selected_cells = [cells[idx] for idx in column_indices]
+        data.append(selected_cells)
+
+    return data
+
+def get_first_paragraph_from_wikipedia_article(wikipedia_article_title):
+    wiki_wiki = wikipediaapi.Wikipedia(user_agent="Mozilla/5.0")
+    page = wiki_wiki.page(wikipedia_article_title)
+    if page.exists():
+        return page.summary.split('\n', 1)[0]  # Den ersten Absatz aus der Zusammenfassung extrahieren
+
+    return "Kein erster Absatz gefunden."
+
+
+
+def extract_and_replace_important_information(text, num_replacements=3):
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text)
+    entities = [ent.text for ent in doc.ents if ent.label_ in ["PERSON", "ORG"]]
+    num_replacements = min(num_replacements, len(entities))
+    replace_entities = random.sample(entities, num_replacements)
+    replaced_words = {}
+
+    for entity_text in replace_entities:
+        replaced_words[entity_text] = "_" * len(entity_text)
+        text = text.replace(entity_text, replaced_words[entity_text])
+
+    return text.strip(), replaced_words
+
+@app.route('/wikiarticle')
+def get_table():
+    wikipedia_url = "https://de.wikipedia.org/wiki/Liste_der_erfolgreichsten_Filme_nach_Einspielergebnis"
+    column_indices_to_extract = [2]
+
+    table_data = extract_table_from_wikipedia(wikipedia_url, column_indices_to_extract)
+    random_entry = random.choice(table_data)
+    movie_title = random_entry[0]
+
+    wikipedia_search_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&format=json&srsearch={movie_title} movie film"
+    response = requests.get(wikipedia_search_url)
+    data = response.json()
+
+    wikipedia_article_title = None
+    wikipedia_article_link = None
+
+    if 'query' in data and 'search' in data['query']:
+        search_results = data['query']['search']
+        if search_results:
+            first_result = search_results[0]
+            wikipedia_article_title = first_result['title']
+            wikipedia_article_link = f"https://en.wikipedia.org/wiki/{wikipedia_article_title.replace(' ', '_')}"
+
+    if wikipedia_article_title:
+        first_paragraph = get_first_paragraph_from_wikipedia_article(wikipedia_article_title)
+        processed_text, replaced_words = extract_and_replace_important_information(first_paragraph, 12)
+
+        while processed_text is None or all(replaced_word == "_" for replaced_word in replaced_words.values()):
+            # Kein passendes Wort gefunden oder alle ersetzen Wörter mit _ sind Null
+            # Einen neuen Wikipedia-Artikel holen und die Funktion erneut aufrufen
+            response = requests.get(wikipedia_search_url)
+            data = response.json()
+
+            wikipedia_article_title = None
+            wikipedia_article_link = None
+
+            if 'query' in data and 'search' in data['query']:
+                search_results = data['query']['search']
+                if search_results:
+                    first_result = search_results[0]
+                    wikipedia_article_title = first_result['title']
+                    wikipedia_article_link = f"https://en.wikipedia.org/wiki/{wikipedia_article_title.replace(' ', '_')}"
+
+            if wikipedia_article_title:
+                first_paragraph = get_first_paragraph_from_wikipedia_article(wikipedia_article_title)
+                processed_text, replaced_words = extract_and_replace_important_information(first_paragraph, 12)
+            else:
+                break
+
+        if processed_text:
+            response_data = {
+                "movie_title": movie_title,
+                "wikipedia_article_link": wikipedia_article_link,
+                "first_paragraph": first_paragraph,
+                "paragraph_with_blanks": processed_text,
+                "replaced_words": replaced_words
+            }
+            return jsonify(response_data)
+
+    return jsonify({"message": "Kein passender Wikipedia-Artikel gefunden."}), 404
 
 
 @app.route('/users/<int:user_id>/chat', methods=['GET', 'POST'])
