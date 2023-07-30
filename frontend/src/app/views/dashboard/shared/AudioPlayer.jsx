@@ -1,70 +1,83 @@
 import {
     Box,
     Card,
-    Icon,
-    IconButton,
     styled,
-    Tooltip,
     Button,
-    Grid, useTheme
+    useTheme,
+    CardContent
 } from '@mui/material';
-import {useUserContext} from "./UserContext";
+import {useUserContext} from "../../../contexts/UserContext";
 import React, {useState, useRef, useEffect} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
 import {compareTwoStrings} from 'string-similarity';
 import Speed from "./charts/Speed";
 import Score from "./charts/Score";
+import FeedbackButton from "./FeedbackButton";
 
 
-const CardRoot = styled(Card)(({theme}) => ({
+const ContentBox = styled('div')(({theme}) => ({
+    margin: '30px',
     display: 'flex',
-    flexWrap: 'wrap',
-    marginBottom: '24px',
-    padding: '24px !important',
-    [theme.breakpoints.down('sm')]: {
-        paddingLeft: '16px !important',
-    },
-}));
-
-const ContentBox = styled(Box)({
-    position: 'relative',
-    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
-    flexWrap: 'wrap',
-});
+    [theme.breakpoints.down('sm')]: {margin: '16px'},
+}));
 
 const StartButton = styled(Button)(({theme}) => ({
     alignSelf: 'center',
     background: theme.palette.primary.main,
     color: '#fff',
-    borderRadius: '4px',
-    fontSize: '1rem',
+    borderRadius: '100px',
+    fontSize: '2rem',
     fontWeight: 'bold',
-    padding: '12px 24px',
+    padding: '16px 32px',
     '&:hover': {
         background: theme.palette.primary.dark,
     },
 }));
 
-const ResultBox = styled(Box)({
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-    width: '100%',
-    margin: '2px',
-    marginBottom: '5px',
-    padding: '2px',
-});
+const QuestionCard = styled(Card)(({theme}) => ({
+    marginBottom: theme.spacing(2),
+    height: '500px',
+    width: '800px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+}));
 
 const Question = styled('p')(({theme}) => ({
-    marginTop: '40px',
-    paddingTop: '5px',
+    marginTop: '10px',
+    paddingTop: '10px',
     paddingBottom: '5px',
     width: '90%',
     fontSize: '1rem',
     fontWeight: '50',
     color: theme.palette.text.primary,
 }));
+
+const QuizStatusBox = styled(Box)(({theme}) => ({
+    position: 'absolute',
+    padding: '8px',
+    margin: '4px',
+    background: theme.palette.primary.main,
+    color: '#fff',
+    borderRadius: '7px',
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    zIndex: 1,
+}));
+
+const QuestionContent = styled('div')({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '55px',
+    marginTop: '20px',
+    '& .MuiFormControlLabel-root': {
+        marginLeft: '0',
+    },
+});
 
 const QuestionFeedback = styled('p')(({theme}) => ({
     marginTop: '5px',
@@ -76,60 +89,34 @@ const QuestionFeedback = styled('p')(({theme}) => ({
     color: theme.palette.text.primary,
 }));
 
-const QuizStatusBox = styled(Box)(({theme}) => ({
-    position: 'absolute',
-    top: '0px',
-    left: '0px',
-    padding: '8px',
-    background: theme.palette.primary.main,
-    color: '#fff',
-    borderRadius: '4px',
-    fontSize: '0.9rem',
-    fontWeight: 'bold',
-    zIndex: 1,
-}));
-
-const ButtonWrapper = styled('span')(({theme}) => ({
-    /*  display: 'flex',
-        position: 'absolute',
-        top: '280px',
-        right: '50px',
-        width: '50px',
-        height: '50px',
-        justifyContent: 'center',
-        float: 'right', */
-    [theme.breakpoints.down('sm')]: {
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-    },
-}));
-
-const ButtonWrapperLarge = styled('span')(({theme}) => ({
+const ContinueButtonWrapper = styled('div')(({theme}) => ({
     display: 'flex',
-    position: 'absolute',
-    top: '820px',
-    right: '50px',
-    width: '50px',
-    height: '50px',
-    justifyContent: 'center',
-    float: 'right',
-    [theme.breakpoints.down('sm')]: {
-        position: 'fixed',
-        bottom: '24px',
-        right: '24px',
-    },
+    justifyContent: 'flex-end',
+    marginRight: theme.spacing(2),
 }));
 
-const ContinueButton = styled(IconButton)({
-    margin: '1px',
+const ContinueButton = styled(Button)(({theme, disabled}) => ({
     alignSelf: 'flex-end',
-    height: '40px',
-    width: '40px',
-    overflow: 'hidden',
+    height: '55px',
+    width: '130px',
     borderRadius: '300px',
     justifyContent: 'center',
-});
+    fontWeight: 'bold',
+    fontSize: '1.15rem',
+    background: disabled ? theme.palette.grey[500] : theme.palette.primary.main,
+    color: disabled ? '#fff' : theme.palette.primary.contrastText,
+    '&:hover': {
+        background: disabled ? theme.palette.grey[500] : theme.palette.primary.dark,
+    },
+}));
+
+const ResultCard = styled(Card)(({theme}) => ({
+    marginBottom: theme.spacing(2),
+    height: '200px',
+    width: '850px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+}));
 
 const CorrectAnswer = styled('p')({
     fontWeight: 'bold',
@@ -139,13 +126,12 @@ const CorrectAnswer = styled('p')({
 const GivenAnswer = styled('p')(({isCorrect}) => ({
     fontWeight: 'bold',
     margin: '20px',
-
+    color: isCorrect ? 'green' : 'red',
 }));
 
 const ViewAudio = styled(Box)(() => ({
     marginTop: '10%',
 }));
-
 
 const Answers = styled(Box)({
     fontSize: '1rem',
@@ -154,6 +140,15 @@ const Answers = styled(Box)({
     width: '90%',
     marginTop: '5px',
     padding: '10px',
+    '& input[type="text"]': {
+        width: '100%',
+        padding: '8px',
+        fontSize: '1rem',
+        border: '1px solid #ccc',
+        borderRadius: '4px',
+        marginBottom: '10px',
+        // Add more styles as per your preference
+    },
 });
 
 const SpeedAndScoreContainer = styled(Card)({
@@ -190,7 +185,7 @@ const AudioPlayer = () => {
     const [correctanswers, setAnswers] = useState([]);
     const inputRef = useRef('');
     const timerRef = useRef();
-    const {userId} = useUserContext();
+    const userId = 0;
     const {palette} = useTheme();
 
     const fetchAudioData = async () => {
@@ -263,14 +258,15 @@ const AudioPlayer = () => {
             similarityThreshold = 1;
         }
 
-          const similarity = compareTwoStrings(userInput, correctAnswers);
-          var UserisCorrect = false;
-          if (similarity >= similarityThreshold) {
+        const similarity = compareTwoStrings(userInput, correctAnswers);
+        var UserisCorrect = false;
+        if (similarity >= similarityThreshold) {
             UserisCorrect = true;
-          }else{
-            UserisCorrect = false;}
+        } else {
+            UserisCorrect = false;
+        }
         return {UserisCorrect, similarity};
-      }
+    }
 
 
     const handleNextQuestion = () => {
@@ -278,16 +274,19 @@ const AudioPlayer = () => {
             inputRef.current.value = "";
         }
 
-        const {UserisCorrect, similarity}  = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
+        const {
+            UserisCorrect,
+            similarity
+        } = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
 
         if (UserisCorrect) {
             setScore(score + 1);
             console.log("Die Antwort ist korrekt!");
             console.log("answerscore", similarity);
-          } else {
+        } else {
             console.log("Die Antwort ist falsch!");
             console.log("answerscore", similarity);
-          }
+        }
         const nextIndex = currentIndex + 1;
         if (nextIndex < questions.length) {
             setCurrentIndex(nextIndex);
@@ -300,13 +299,15 @@ const AudioPlayer = () => {
 
     function makeTextColourful(similarity) {
         var textStyle = 'red';
-        if (similarity.similarity==1){
-         textStyle = 'green';}
-            else if (similarity.similarity>0){
-                 textStyle = 'orange';
-            } else{
-                 textStyle = 'red';}
-          return (textStyle);}
+        if (similarity.similarity == 1) {
+            textStyle = 'green';
+        } else if (similarity.similarity > 0) {
+            textStyle = 'orange';
+        } else {
+            textStyle = 'red';
+        }
+        return (textStyle);
+    }
 
 
     const submitUserAnswers = () => {
@@ -337,7 +338,7 @@ const AudioPlayer = () => {
     };
 
     const reload = () => {
-        fetch('/quiz')
+        fetch('/audio')
             .then((response) => response.json())
             .then((data) => {
                 setQuestions(data);
@@ -350,107 +351,92 @@ const AudioPlayer = () => {
             .catch((error) => console.error('ERROR', error));
     };
 
-
     const currentQuestion = questions[currentIndex];
 
-
     return (
-        <CardRoot>
-            <Grid container spacing={2}>
-                <Grid item xs={12} sm={6} md={8} lg={9}>
-                    <ContentBox>
-                        {!quizStarted ? (
-                            <>
-                                <ContentBox>
-                                    <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
-
-                                </ContentBox>
-                            </>
-                        ) : showScore ? (
-                            <>
-                                <SpeedAndScoreContainer>
-                                    <SpeedContainer>
-                                        <Speed
-                                            height="280px"
-                                            color={[
-                                                palette.primary.dark,
-                                                palette.primary.main,
-                                                palette.primary.light,
-                                            ]}
-                                            speed={((timeTaken / 60)).toFixed(1)}
-                                        />
-                                    </SpeedContainer>
-                                    <ScoreContainer>
-                                        <Score
-                                            height="280px"
-                                            color={[
-                                                palette.primary.dark,
-                                                palette.primary.main,
-                                                palette.primary.light,
-                                            ]}
-                                            score={score}
-                                            questions={questions.length}
-                                        />
-                                    </ScoreContainer>
-                                </SpeedAndScoreContainer>
-
-                                <ContentBox>
-                                    {questions.map((question, index) => (
-                                        <ResultBox key={index}>
-                                            <QuestionFeedback>{question.question}</QuestionFeedback>
-                                            <CorrectAnswer>
-                                                Correct
-                                                Answer: {correctanswers[index]}</CorrectAnswer>
-                                            <GivenAnswer style={{ color: makeTextColourful(handleUserInputErrors(userAnswers[index],correctanswers[index]))
-                                                 }}>
-                                                Your Answer: {userAnswers[index]}
-                                            </GivenAnswer>
-                                        </ResultBox>
-                                    ))}
-                                </ContentBox>
-                                <Tooltip title="New Quiz" placement="top">
-                                    <ButtonWrapperLarge>
-                                        <ContinueButton onClick={reload}>
-                                            <Icon color="primary">replay</Icon>
-                                        </ContinueButton>
-                                    </ButtonWrapperLarge>
-                                </Tooltip>
-                            </>
-                        ) : (
-                            <>
-                                <ContentBox>
-                                    <QuizStatusBox>
-                                        {`${currentIndex + 1}/${questions.length}`}
-                                    </QuizStatusBox>
-                                    <ViewAudio>
-                                        <ReactAudioPlayer
-                                            src={clip_address}
-                                            controls/>
-                                    </ViewAudio>
-                                    <Question>{currentQuestion?.question}
-                                    </Question>
-                                    <Answers>
-                                        Ihre Antwort:
-                                        <input type="text" value={userAnswers[currentIndex + 1]}
-                                               onChange={handleUserAnsweres} ref={inputRef}/>
-                                    </Answers>
-
-                                    <Tooltip title="Continue" placement="top">
-                                        <ButtonWrapper>
-                                            <ContinueButton onClick={handleNextQuestion}
-                                                            disabled={!userAnswers[currentIndex]}>
-                                                <Icon
-                                                    color={userAnswers[currentIndex] ? "primary" : "disabled"}>arrow_right_alt</Icon>
-                                            </ContinueButton>
-                                        </ButtonWrapper>
-                                    </Tooltip>
-                                </ContentBox>
-                            </>
-                        )}
-                    </ContentBox>
-                </Grid>
-            </Grid>
-        </CardRoot>
+        <ContentBox>
+            {!quizStarted ? (
+                <>
+                    <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
+                </>
+            ) : showScore ? (
+                <>
+                    <SpeedAndScoreContainer>
+                        <SpeedContainer>
+                            <Speed
+                                height="280px"
+                                color={[
+                                    palette.primary.dark,
+                                    palette.primary.main,
+                                    palette.primary.light,
+                                ]}
+                                speed={((timeTaken / 60)).toFixed(1)}
+                            />
+                        </SpeedContainer>
+                        <ScoreContainer>
+                            <Score
+                                height="280px"
+                                color={[
+                                    palette.primary.dark,
+                                    palette.primary.main,
+                                    palette.primary.light,
+                                ]}
+                                score={score}
+                                questions={questions.length}
+                            />
+                        </ScoreContainer>
+                    </SpeedAndScoreContainer>
+                    {questions.map((question, index) => (
+                        <ResultCard>
+                            <CardContent key={index}>
+                                <QuestionFeedback>{question.question}</QuestionFeedback>
+                                <CorrectAnswer>
+                                    Correct Answer: {correctanswers[index]}
+                                </CorrectAnswer>
+                                <GivenAnswer style={{
+                                    color: makeTextColourful(handleUserInputErrors(userAnswers[index], correctanswers[index]))
+                                }}>
+                                    Your Answer: {userAnswers[index]}
+                                </GivenAnswer>
+                            </CardContent>
+                        </ResultCard>
+                    ))}
+                    <ContinueButtonWrapper>
+                        <ContinueButton onClick={reload}>
+                            New Quiz
+                        </ContinueButton>
+                    </ContinueButtonWrapper>
+                </>
+            ) : (
+                <>
+                    <QuestionCard>
+                        <CardContent>
+                            <QuizStatusBox>
+                                {`${currentIndex + 1}/${questions.length}`}
+                            </QuizStatusBox>
+                            <QuestionContent>
+                                <ViewAudio>
+                                    <ReactAudioPlayer
+                                        src={clip_address}
+                                        controls/>
+                                </ViewAudio>
+                                <Question>{currentQuestion?.question}</Question>
+                                <Answers>
+                                    Ihre Antwort:
+                                    <input type="text" value={userAnswers[currentIndex + 1]}
+                                           onChange={handleUserAnsweres} ref={inputRef}/>
+                                </Answers>
+                            </QuestionContent>
+                        </CardContent>
+                    </QuestionCard>
+                    <ContinueButtonWrapper>
+                        <ContinueButton onClick={handleNextQuestion} disabled={!userAnswers[currentIndex]}>
+                            Continue
+                        </ContinueButton>
+                    </ContinueButtonWrapper>
+                </>
+            )}
+        </ContentBox>
     );
 };
 

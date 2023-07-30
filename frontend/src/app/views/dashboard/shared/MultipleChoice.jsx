@@ -15,7 +15,6 @@ import server from "../../../../axios/axios";
 import Speed from "../shared/charts/Speed";
 import Score from "../shared/charts/Score";
 import FeedbackButton from "./FeedbackButton";
-import {useUserContext} from "./UserContext";
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
@@ -191,7 +190,9 @@ const MultipleChoice = () => {
     const [timeTaken, setTimeTaken] = useState(0);
     const timerRef = useRef();
     const {palette} = useTheme();
-    const {userId} = useUserContext();
+    const userId = 0;
+
+    console.log(userId);
 
     useEffect(() => {
         if (quizStarted && currentIndex === 0) {
@@ -340,16 +341,6 @@ const MultipleChoice = () => {
                         <ContinueButton onClick={reload}>
                             New Quiz
                         </ContinueButton>
-                        <FeedbackButton
-                            itemType="MultipleChoice"
-                            timeTaken={timeTaken}
-                            questionData={questions.map((question, index) => ({
-                                title: question.title,
-                                year: question.year,
-                                correctAnswer: question.answers[question.correctIndex],
-                                userAnswer: userAnswers[index],
-                            }))}
-                        />
                     </ContinueButtonWrapper>
                 </>
             ) : (

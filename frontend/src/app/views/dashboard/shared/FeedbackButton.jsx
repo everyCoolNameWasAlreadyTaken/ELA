@@ -3,7 +3,6 @@ import {
     Button, styled,
 } from '@mui/material';
 import server from "../../../../axios/axios";
-import {useUserContext} from "./UserContext";
 
 const StyledButton = styled(Button)(({theme, disabled}) => ({
     alignSelf: 'flex-end',
@@ -21,7 +20,7 @@ const StyledButton = styled(Button)(({theme, disabled}) => ({
 }));
 
 const FeedbackButton = ({ itemType, timeTaken, questionData }) => {
-    const {userId} = useUserContext();
+    const userId = 0;
     const handleFeedbackClick = () => {
         const feedbackData = {
             itemType: itemType,
