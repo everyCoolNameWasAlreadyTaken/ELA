@@ -1,21 +1,19 @@
 import {
     Box,
     Card,
-    Icon,
-    IconButton,
     styled,
-    Tooltip,
     Button,
-    Grid, useTheme, CardContent
+    useTheme,
+    CardContent
 } from '@mui/material';
-import {useUserContext} from "../../../contexts/UserContext";
 import React, {useState, useRef, useEffect} from 'react';
 import ReactPlayer from 'react-player';
 import server from "../../../../axios/axios";
 import {compareTwoStrings} from 'string-similarity';
 import Speed from "./charts/Speed";
 import Score from "./charts/Score";
-import ReactAudioPlayer from "react-audio-player";
+import FeedbackDisplay from "./FeedbackDisplay";
+import Spinner from "./Spinner";
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
@@ -41,7 +39,7 @@ const StartButton = styled(Button)(({theme}) => ({
 
 const QuestionCard = styled(Card)(({theme}) => ({
     marginBottom: theme.spacing(2),
-    height: '500px',
+    height: '630px',
     width: '800px',
     flexDirection: 'column',
     justifyContent: 'center',
@@ -97,6 +95,7 @@ const ContinueButtonWrapper = styled('div')(({theme}) => ({
 }));
 
 const ContinueButton = styled(Button)(({theme, disabled}) => ({
+    margin: '20px',
     alignSelf: 'flex-end',
     height: '55px',
     width: '130px',
@@ -108,6 +107,22 @@ const ContinueButton = styled(Button)(({theme, disabled}) => ({
     color: disabled ? '#fff' : theme.palette.primary.contrastText,
     '&:hover': {
         background: disabled ? theme.palette.grey[500] : theme.palette.primary.dark,
+    },
+}));
+
+const FeedbackButton = styled(Button)(({theme}) => ({
+    margin: '20px',
+    alignSelf: 'flex-end',
+    height: '55px',
+    width: '180px',
+    borderRadius: '300px',
+    justifyContent: 'center',
+    fontWeight: 'bold',
+    fontSize: '1.15rem',
+    background: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+        background: theme.palette.primary.dark,
     },
 }));
 
@@ -189,6 +204,9 @@ const VideoPlayer = () => {
     const inputRef = useRef('');
     const userId = 0;
     const {palette} = useTheme();
+    const [feedbackData, setFeedbackData] = useState('');
+    const [feedback, setFeedback] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchAudioData = async () => {
         try {
@@ -199,7 +217,6 @@ const VideoPlayer = () => {
             setQuestions(videoData.questions);
             setGenre(videoData.genre);
             setYear(videoData.year.toString());
-
 
             var answers = videoData.questions.map(function (question) {
                 return question.answer;
@@ -338,21 +355,57 @@ const VideoPlayer = () => {
     };
 
     const reload = () => {
-        fetch('/video')
-            .then((response) => response.json())
-            .then((data) => {
-                setQuestions(data);
-                setUserAnswers([]);
-                setCurrentIndex(0);
-                setScore(0);
-                setShowScore(false);
-                setQuizStarted(false);
-                setTimeTaken(0);
-            })
-            .catch((error) => console.error('ERROR', error));
+        setQuestions([]);
+        setUserAnswers([]);
+        setCurrentIndex(0);
+        setScore(0);
+        setShowScore(false);
+        setQuizStarted(false);
+        setIsLoading(false);
+        setFeedback(false);
+        setFeedbackData('');
+        fetchAudioData();
     };
 
     const currentQuestion = questions[currentIndex];
+
+    const mappedString = questions
+        .map((question, index) => {
+            const myAnswer = userAnswers[index] || 'N/A';
+            return `Question: """${question.question}""", My Answer: """${myAnswer}""", Correct Answer: """${question.answer}"""`;
+        })
+        .join('\n');
+
+    const feedbackPrompt = 'I am currently participating in an online quiz about movies, their genre, directors ' +
+        'and actors. I just finished an Audio Quiz where I got to listen to a 20 second movie theme sample. ' +
+        `The Movie is ${audioName}` + 'This was the result at the end:\n ' + mappedString +
+        `\nIt took me ${timeTaken} Minutes to complete the Quiz. Can you give me a short synopsis of the movie and 
+        also if I have wrong answers provide a suggestion why I have thought that "My Answer" was true while it was 
+        wrong. Can you give the synopsis first and then one paragraph with the suggestion for each question?`;
+
+    const handleFeedbackClick = () => {
+        setIsLoading(true);
+        setFeedbackData('');
+        setFeedback(false);
+        setShowScore(false);
+        console.log(questions)
+        console.log(feedbackPrompt)
+
+        server
+            .post(`/users/${userId}/chat`, {content: feedbackPrompt})
+            .then((response) => {
+                console.log(response.data);
+                const responseData = response.data.response;
+                setFeedbackData(responseData);
+                setFeedback(true);
+            })
+            .catch((error) => {
+                console.error('Error sending answer data:', error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
 
     return (
         <ContentBox>
@@ -404,6 +457,24 @@ const VideoPlayer = () => {
                             </CardContent>
                         </ResultCard>
                     ))}
+                    <ContinueButtonWrapper>
+                        <ContinueButton onClick={reload}>
+                            New Quiz
+                        </ContinueButton>
+                        <FeedbackButton
+                            onClick={handleFeedbackClick}
+                            variant="contained"
+                            color="primary"
+                        >Get Feedback</FeedbackButton>
+                    </ContinueButtonWrapper>
+                </>
+            ) : isLoading ? (
+                <>
+                    <Spinner/>
+                </>
+            ) : feedback ? (
+                <>
+                    <FeedbackDisplay feedbackData={feedbackData}/>
                     <ContinueButtonWrapper>
                         <ContinueButton onClick={reload}>
                             New Quiz

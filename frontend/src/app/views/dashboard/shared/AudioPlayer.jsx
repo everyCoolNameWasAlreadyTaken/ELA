@@ -6,14 +6,14 @@ import {
     useTheme,
     CardContent
 } from '@mui/material';
-import {useUserContext} from "../../../contexts/UserContext";
 import React, {useState, useRef, useEffect} from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import server from "../../../../axios/axios";
 import {compareTwoStrings} from 'string-similarity';
 import Speed from "./charts/Speed";
 import Score from "./charts/Score";
-import FeedbackButton from "./FeedbackButton";
+import FeedbackDisplay from "./FeedbackDisplay";
+import Spinner from "./Spinner";
 
 
 const ContentBox = styled('div')(({theme}) => ({
@@ -96,6 +96,7 @@ const ContinueButtonWrapper = styled('div')(({theme}) => ({
 }));
 
 const ContinueButton = styled(Button)(({theme, disabled}) => ({
+    margin: '20px',
     alignSelf: 'flex-end',
     height: '55px',
     width: '130px',
@@ -107,6 +108,22 @@ const ContinueButton = styled(Button)(({theme, disabled}) => ({
     color: disabled ? '#fff' : theme.palette.primary.contrastText,
     '&:hover': {
         background: disabled ? theme.palette.grey[500] : theme.palette.primary.dark,
+    },
+}));
+
+const FeedbackButton = styled(Button)(({theme}) => ({
+    margin: '20px',
+    alignSelf: 'flex-end',
+    height: '55px',
+    width: '180px',
+    borderRadius: '300px',
+    justifyContent: 'center',
+    fontWeight: 'bold',
+    fontSize: '1.15rem',
+    background: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+        background: theme.palette.primary.dark,
     },
 }));
 
@@ -181,11 +198,14 @@ const AudioPlayer = () => {
     const [genre, setGenre] = useState('');
     const [year, setYear] = useState(0);
     const [userAnswers, setUserAnswers] = useState([]);
-    const [correctanswers, setAnswers] = useState([]);
+    const [correctAnswers, setCorrectAnswers] = useState([]);
     const inputRef = useRef('');
     const timerRef = useRef();
     const userId = 0;
     const {palette} = useTheme();
+    const [feedbackData, setFeedbackData] = useState('');
+    const [feedback, setFeedback] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchAudioData = async () => {
         try {
@@ -200,8 +220,7 @@ const AudioPlayer = () => {
             var answers = audioData.questions.map(function (question) {
                 return question.answer;
             });
-            setAnswers(answers);
-
+            setCorrectAnswers(answers);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -276,7 +295,7 @@ const AudioPlayer = () => {
         const {
             UserisCorrect,
             similarity
-        } = handleUserInputErrors(userAnswers[currentIndex].toString(), correctanswers[currentIndex].toString());
+        } = handleUserInputErrors(userAnswers[currentIndex].toString(), correctAnswers[currentIndex].toString());
 
         if (UserisCorrect) {
             setScore(score + 1);
@@ -319,7 +338,7 @@ const AudioPlayer = () => {
                 wrongAnswers: (questions.length - score),
                 timeTaken: timeTaken,
                 questions: questions.map((question, index) => ({
-                    isCorrect: handleUserInputErrors(userAnswers[index].toString(), correctanswers[index].toString()).UserisCorrect,
+                    isCorrect: handleUserInputErrors(userAnswers[index].toString(), correctAnswers[index].toString()).UserisCorrect,
                     title: audioName,
                     year: year,
                     genre: genre,
@@ -337,20 +356,57 @@ const AudioPlayer = () => {
     };
 
     const reload = () => {
-        fetch('/audio')
-            .then((response) => response.json())
-            .then((data) => {
-                setQuestions(data);
-                setUserAnswers([]);
-                setCurrentIndex(0);
-                setScore(0);
-                setShowScore(false);
-                setQuizStarted(false);
-            })
-            .catch((error) => console.error('ERROR', error));
+        setQuestions([]);
+        setUserAnswers([]);
+        setCurrentIndex(0);
+        setScore(0);
+        setShowScore(false);
+        setQuizStarted(false);
+        setIsLoading(false);
+        setFeedback(false);
+        setFeedbackData('');
+        fetchAudioData();
     };
 
     const currentQuestion = questions[currentIndex];
+
+    const mappedString = questions
+        .map((question, index) => {
+            const myAnswer = userAnswers[index] || 'N/A';
+            return `Question: """${question.question}""", My Answer: """${myAnswer}""", Correct Answer: """${question.answer}"""`;
+        })
+        .join('\n');
+
+    const feedbackPrompt = 'I am currently participating in an online quiz about movies, their genre, directors ' +
+        'and actors. I just finished an Audio Quiz where I got to listen to a 20 second movie theme sample. ' +
+        `The Movie is ${audioName}` + 'This was the result at the end:\n ' + mappedString +
+        `\nIt took me ${timeTaken} Minutes to complete the Quiz. Can you give me a short synopsis of the movie and 
+        also provide a suggestion why I have thought that "My Answer" was true while it was wrong. Can you give the 
+        synopsis first and then one paragraph with the suggestion for each question?`;
+
+    const handleFeedbackClick = () => {
+        setIsLoading(true);
+        setFeedbackData('');
+        setFeedback(false);
+        setShowScore(false);
+        console.log(questions)
+        console.log(feedbackPrompt)
+
+        server
+            .post(`/users/${userId}/chat`, {content: feedbackPrompt})
+            .then((response) => {
+                console.log(response.data);
+                const responseData = response.data.response;
+                setFeedbackData(responseData);
+                setFeedback(true);
+            })
+            .catch((error) => {
+                console.error('Error sending answer data:', error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
 
     return (
         <ContentBox>
@@ -390,16 +446,34 @@ const AudioPlayer = () => {
                             <CardContent key={index}>
                                 <QuestionFeedback>{question.question}</QuestionFeedback>
                                 <CorrectAnswer>
-                                    Correct Answer: {correctanswers[index]}
+                                    Correct Answer: {correctAnswers[index]}
                                 </CorrectAnswer>
                                 <GivenAnswer style={{
-                                    color: makeTextColourful(handleUserInputErrors(userAnswers[index], correctanswers[index]))
+                                    color: makeTextColourful(handleUserInputErrors(userAnswers[index], correctAnswers[index]))
                                 }}>
                                     Your Answer: {userAnswers[index]}
                                 </GivenAnswer>
                             </CardContent>
                         </ResultCard>
                     ))}
+                    <ContinueButtonWrapper>
+                        <ContinueButton onClick={reload}>
+                            New Quiz
+                        </ContinueButton>
+                        <FeedbackButton
+                            onClick={handleFeedbackClick}
+                            variant="contained"
+                            color="primary"
+                        >Get Feedback</FeedbackButton>
+                    </ContinueButtonWrapper>
+                </>
+            ) : isLoading ? (
+                <>
+                    <Spinner/>
+                </>
+            ) : feedback ? (
+                <>
+                    <FeedbackDisplay feedbackData={feedbackData}/>
                     <ContinueButtonWrapper>
                         <ContinueButton onClick={reload}>
                             New Quiz

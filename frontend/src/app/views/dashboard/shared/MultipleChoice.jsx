@@ -1,20 +1,21 @@
 import {
     Box,
+    Button,
     Card,
     CardContent,
     FormControlLabel,
     Radio,
     RadioGroup,
     styled,
-    Button,
     Typography,
     useTheme
 } from '@mui/material';
-import {useState, useRef, useEffect} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import server from "../../../../axios/axios";
 import Speed from "../shared/charts/Speed";
 import Score from "../shared/charts/Score";
-import FeedbackButton from "./FeedbackButton";
+import FeedbackDisplay from "./FeedbackDisplay";
+import Spinner from "./Spinner";
 
 const ContentBox = styled('div')(({theme}) => ({
     margin: '30px',
@@ -130,6 +131,7 @@ const ContinueButtonWrapper = styled('div')(({theme}) => ({
 }));
 
 const ContinueButton = styled(Button)(({theme, disabled}) => ({
+    margin: '20px',
     alignSelf: 'flex-end',
     height: '55px',
     width: '130px',
@@ -141,6 +143,22 @@ const ContinueButton = styled(Button)(({theme, disabled}) => ({
     color: disabled ? '#fff' : theme.palette.primary.contrastText,
     '&:hover': {
         background: disabled ? theme.palette.grey[500] : theme.palette.primary.dark,
+    },
+}));
+
+const FeedbackButton = styled(Button)(({theme}) => ({
+    margin: '20px',
+    alignSelf: 'flex-end',
+    height: '55px',
+    width: '180px',
+    borderRadius: '300px',
+    justifyContent: 'center',
+    fontWeight: 'bold',
+    fontSize: '1.15rem',
+    background: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    '&:hover': {
+        background: theme.palette.primary.dark,
     },
 }));
 
@@ -188,11 +206,12 @@ const MultipleChoice = () => {
     const [score, setScore] = useState(0);
     const [showScore, setShowScore] = useState(false);
     const [timeTaken, setTimeTaken] = useState(0);
+    const [feedbackData, setFeedbackData] = useState('');
+    const [feedback, setFeedback] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const timerRef = useRef();
     const {palette} = useTheme();
     const userId = 0;
-
-    console.log(userId);
 
     useEffect(() => {
         if (quizStarted && currentIndex === 0) {
@@ -286,9 +305,50 @@ const MultipleChoice = () => {
         setShowScore(false);
         setQuizStarted(false);
         setTimeTaken(0);
+        setIsLoading(false);
+        setFeedback(false);
+        setFeedbackData('');
     };
 
+    const correctAnswers = questions.map(item => item.answers[item.correctIndex]);
     const currentQuestion = questions[currentIndex];
+
+    const mappedString = questions
+        .map((question, index) => {
+            const myAnswer = userAnswers[index] || 'N/A';
+            return `Movie: """${question.title}""", Question: """${question.question}""", My Answer: """${myAnswer}""", Correct Answer: """${correctAnswers[index]}"""`;
+        })
+        .join('\n');
+
+    const feedbackPrompt = 'I am currently participating in an online quiz about movies, their genre, directors ' +
+        'and actors. I just finished a Single Choice Quiz. I had to choose one of 5 possible answers.` This was the result' +
+        ' at the end:\n ' + mappedString +
+        `It took me ${timeTaken} Minutes to complete the Quiz. Can you give me a short synopsis of the movie based on 
+        "My Answer" and also provide a suggestion why I have thought 
+        that "My Answer" was true while it was wrong. Can you give the suggestion and the synopsis together 
+        in one paragraph for each question?`;
+
+    const handleFeedbackClick = () => {
+        setIsLoading(true);
+        setFeedbackData('');
+        setFeedback(false);
+        setShowScore(false);
+
+        server
+            .post(`/users/${userId}/chat`, {content: feedbackPrompt})
+            .then((response) => {
+                console.log(response.data);
+                const responseData = response.data.response;
+                setFeedbackData(responseData);
+                setFeedback(true);
+            })
+            .catch((error) => {
+                console.error('Error sending answer data:', error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
 
     return (
         <ContentBox>
@@ -337,6 +397,24 @@ const MultipleChoice = () => {
                             </CardContent>
                         </ResultCard>
                     ))}
+                    <ContinueButtonWrapper>
+                        <ContinueButton onClick={reload}>
+                            New Quiz
+                        </ContinueButton>
+                        <FeedbackButton
+                            onClick={handleFeedbackClick}
+                            variant="contained"
+                            color="primary"
+                        >Get Feedback</FeedbackButton>
+                    </ContinueButtonWrapper>
+                </>
+            ) : isLoading ? (
+                <>
+                    <Spinner/>
+                </>
+            ) : feedback ? (
+                <>
+                    <FeedbackDisplay feedbackData={feedbackData}/>
                     <ContinueButtonWrapper>
                         <ContinueButton onClick={reload}>
                             New Quiz

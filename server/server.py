@@ -90,6 +90,7 @@ def audio_qa():
                                    "data/audio_answers.csv", database)
     combined_data = combime_method(random_audio_id, filtered_audio, database,
                                    ".mp3", "Audio")
+    logger.info(combined_data)
     return jsonify(combined_data)
 
 
@@ -119,20 +120,28 @@ def video_qa():
     return jsonify(combined_data)
 
 
-@app.route('/chat', methods=['GET', 'POST'])
-def chat():
+@app.route('/users/<int:user_id>/chat', methods=['GET', 'POST'])
+def chat(user_id):
     """
     This method integrates ChatGPT and generates a response based on the provided query.
 
     Returns:
     - The generated response from ChatGPT as a string.
     """
-    response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
-                                            messages=[{
-                                                "role": "user",
-                                                "content": "Say this is a test!",
-                                            }])
-    return response.choices[0].message.content
+    try:
+        request_data = request.get_json()
+        content = request_data['content']
+
+        response = openai.ChatCompletion.create(model="gpt-3.5-turbo",
+                                                messages=[{
+                                                    "role": "user",
+                                                    "content": content,
+                                                }])
+
+        return jsonify({'response': response.choices[0].message.content})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
@@ -172,7 +181,6 @@ def handle_user_answers(user_id):
         storage process.
     """
     res, code = store_user_answers(user_id, request.json)
-    # handle feedback creation here
     return jsonify(res), code
 
 
