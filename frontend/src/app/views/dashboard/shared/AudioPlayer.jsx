@@ -317,7 +317,7 @@ const AudioPlayer = () => {
 
     function makeTextColourful(similarity) {
         var textStyle = 'red';
-        if (similarity.similarity == 1) {
+        if (similarity.similarity === 1) {
             textStyle = 'green';
         } else if (similarity.similarity > 0) {
             textStyle = 'orange';

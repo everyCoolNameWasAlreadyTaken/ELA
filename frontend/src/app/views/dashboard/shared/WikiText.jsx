@@ -1,48 +1,36 @@
 import {
-  Box,
   Card,
-  Icon,
-  IconButton,
   styled,
-  Tooltip,
   Button,
-  Grid, useTheme
+  CardContent
 } from '@mui/material';
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState} from "react";
 import server from "../../../../axios/axios";
-import leven from 'leven';
 
 
-const CardRoot = styled(Card)(({theme}) => ({
+
+const ContentBox = styled('div')(({theme}) => ({
+  margin: '30px',
   display: 'flex',
-  flexWrap: 'wrap',
-  marginBottom: '24px',
-  padding: '24px !important',
-  [theme.breakpoints.down('sm')]: {
-      paddingLeft: '16px !important',
-  },
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  [theme.breakpoints.down('sm')]: {margin: '16px'},
 }));
 
-const ContentBox = styled(Box)({
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  flexWrap: 'wrap',
-});
 
 const StartButton = styled(Button)(({theme}) => ({
   alignSelf: 'center',
   background: theme.palette.primary.main,
   color: '#fff',
-  borderRadius: '4px',
-  fontSize: '1rem',
+  borderRadius: '100px',
+  fontSize: '2rem',
   fontWeight: 'bold',
-  padding: '12px 24px',
+  padding: '16px 32px',
   '&:hover': {
       background: theme.palette.primary.dark,
   },
 }));
-
 const ButtonWrapperLarge = styled('span')(({theme}) => ({
   display: 'flex',
   width: '50px',
@@ -56,19 +44,69 @@ const ButtonWrapperLarge = styled('span')(({theme}) => ({
   },
 }));
 
-const ContinueButton = styled(IconButton)({
+const SubmitButton = styled(Button)(({theme}) => ({
+  margin: '20px',
   alignSelf: 'flex-end',
-  height: '40px',
-  width: '40px',
-  overflow: 'hidden',
+  height: '55px',
+  width: '350px',
   borderRadius: '300px',
   justifyContent: 'center',
-});
+  fontWeight: 'bold',
+  fontSize: '1.15rem',
+  background: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  '&:hover': {
+      background: theme.palette.primary.dark,
+  },
+}));
+
+const QuestionCard = styled(Card)(({theme}) => ({
+  marginBottom: theme.spacing(2),
+  height: '630px',
+  width: '800px',
+  flexDirection: 'column',
+  justifyContent: 'center',
+}));
+
+const ContinueButton = styled(Button)(({theme, disabled}) => ({
+  margin: '20px',
+  alignSelf: 'flex-end',
+  height: '55px',
+  width: '130px',
+  borderRadius: '300px',
+  justifyContent: 'center',
+  fontWeight: 'bold',
+  fontSize: '1.15rem',
+  background: disabled ? theme.palette.grey[500] : theme.palette.primary.main,
+  color: disabled ? '#fff' : theme.palette.primary.contrastText,
+  '&:hover': {
+      background: disabled ? theme.palette.grey[500] : theme.palette.primary.dark,
+  },
+}));
+const ContinueButtonWrapper = styled('div')(({theme}) => ({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  marginRight: theme.spacing(2),
+  marginTop: '20px',
+}));
+
+const ResultCard = styled(Card)(({theme}) => ({
+  marginBottom: theme.spacing(2),
+  height: '200px',
+  width: '850px',
+  paddingLeft: '50px',
+  paddingRight: '50px',
+  justifyContent: 'center',
+}));
+
+const Answer = styled('p')(({isCorrect}) => ({
+  fontWeight: 'bold',
+  margin: '20px',
+}));
 
 const WikipediaQuiz = () => {
 
   const [quizStarted, setQuizStarted] = useState(false);
-  const [timeTaken, setTimeTaken] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [isLoaded, setLoading] = useState(false);
 
@@ -186,16 +224,10 @@ const WikipediaQuiz = () => {
 
   const handleStartQuiz = () => {
     setQuizStarted(true);
-    setTimeTaken(0);
     fetchWikiArticle();
     
   };
 
-  const showText = () => {
-    console.log("Correct Text: ", correctarticle);
-  }
-
-  
   const reload = () => {
     setuserScore(0)
     setArticle(" ");
@@ -204,7 +236,6 @@ const WikipediaQuiz = () => {
     setInputs({});
     setShowScore(false);
     setQuizStarted(false);
-    setTimeTaken(0);
     setLoading(false);
 };
   
@@ -212,9 +243,6 @@ const WikipediaQuiz = () => {
  
 
 return (
-  <CardRoot>
-      <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={8} lg={9}>
               <ContentBox>
                 {!quizStarted ? (
                     <>
@@ -224,7 +252,8 @@ return (
                     </>
                 ):!showScore ?(  
                     <>
-                      <ContentBox>
+                      <QuestionCard>
+                        <CardContent>
                         <div>
                           {!isLoaded ? (
                           <>
@@ -234,36 +263,48 @@ return (
                           ):(
                             <>
                               {handleReplaceBlanks(article)}
-                              <button onClick={handleMergeText}>Submit</button>
+                              <ContinueButtonWrapper>
+                                <ButtonWrapperLarge>
+                              <SubmitButton onClick={handleMergeText}>Submit</SubmitButton>
+                              </ButtonWrapperLarge>
+                              </ContinueButtonWrapper>
                           </>
                           )}
 
                         </div>
-                      </ContentBox>
+                        </CardContent>
+                      </QuestionCard>
                     </>
                 ) : (
                   <>
                     <ContentBox>
-                      
+                    <QuestionCard>
+                        <CardContent>
                         <div>
                           {userScore !== 0 ? (
                             <>
                             <ContentBox>
-                              <p>Your Text</p>
-                              <p>{answerarticle}</p>
-                              <p>Wikis Text</p>
-                              <p>{correctarticle}</p>
-                              <p>Score: </p>
-                              <p>{userScore}</p>
-                              <Tooltip title="New Quiz" placement="top">
-                                <ButtonWrapperLarge>
-                                    <ContinueButton onClick={reload}>
-                                        <Icon color="primary">replay</Icon>
-                                    </ContinueButton>
-                                </ButtonWrapperLarge>
-                              </Tooltip>
+                            <ResultCard>                            
+                                Your Text
+                            <Answer>
+                                {answerarticle}
+                            </Answer>  
+                              </ResultCard>
+                              <ResultCard>                     
+                                Wikis Text
+                                <Answer>
+                                {correctarticle}
+                              </Answer> 
+                              </ResultCard>                         
                             </ContentBox>
 
+                            Score: {userScore}
+                              
+                              <ButtonWrapperLarge>
+                                  <ContinueButton onClick={reload}>
+                                      New Quiz
+                                  </ContinueButton>
+                              </ButtonWrapperLarge>
 
                             </>
                             ) : (
@@ -273,15 +314,13 @@ return (
                             )}
                           
                         </div>
-                        
+                         </CardContent>
+                      </QuestionCard> 
 
                     </ContentBox>
                   </>
                 )}
               </ContentBox>
-          </Grid>
-      </Grid>
-  </CardRoot>
                       
 );
 };
