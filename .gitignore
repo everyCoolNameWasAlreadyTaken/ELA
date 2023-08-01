@@ -3,9 +3,11 @@
 # dependencies
 node_modules
 /node_modules
+/frontend/node_modules
 /docs/node_modules
 /.pnp
 .pnp.js
+/share
 
 # testing
 /coverage

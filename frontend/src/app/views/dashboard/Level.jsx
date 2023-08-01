@@ -48,10 +48,11 @@ const Level = () => {
     const [totalQuizzes, settotalQuizzes] = useState(0);
     const [userLevel, setuserLevel] = useState(0);
     const [picture, setPicture] = useState(" ");
+    const userId = 0;
 
     const fetchUserLevel = async () => {
         try {
-            const response = await server.get(`/users/0/stats/level`);
+            const response = await server.get(`/users/${userId}/stats/level`);
             const userdata = response.data;
             setcorrectQuizzes(userdata.rightAnswers);
             settotalQuizzes(userdata.totalQuestions);
@@ -62,7 +63,7 @@ const Level = () => {
     };
     const calculateUserLevel = () => {
         fetchUserLevel();
-        var correctPercent = (correctQuizzes / totalQuizzes)*100; 
+        var correctPercent = (correctQuizzes / totalQuizzes)*100;
         switch (true) {
             case correctPercent < 40:   //Stufe 0
                 setuserLevel("Level 0 - Freshman");

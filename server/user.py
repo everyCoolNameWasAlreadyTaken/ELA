@@ -539,8 +539,3 @@ def calculate_item_type_stats_percentage(user_id_in):
     except Exception as e:
         return "Error retrieving item type stats: " + str(e), 500
 
-
-if __name__ == '__main__':
-    user_id = 0
-    top_movies_percentage = get_percentage_per_item_type_and_date(user_id)
-    print(top_movies_percentage)
