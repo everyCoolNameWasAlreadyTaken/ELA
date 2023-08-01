@@ -299,11 +299,7 @@ const AudioPlayer = () => {
 
         if (UserisCorrect) {
             setScore(score + 1);
-            console.log("Die Antwort ist korrekt!");
-            console.log("answerscore", similarity);
         } else {
-            console.log("Die Antwort ist falsch!");
-            console.log("answerscore", similarity);
         }
         const nextIndex = currentIndex + 1;
         if (nextIndex < questions.length) {
@@ -345,10 +341,8 @@ const AudioPlayer = () => {
                 }))
             }
         };
-        console.log(answerData);
         server.post(`/users/${userId}/quiz/answers`, answerData)
             .then(response => {
-                console.log(response.data)
             })
             .catch(error => {
                 console.error('Error sending answer data:', error);
@@ -495,7 +489,7 @@ const AudioPlayer = () => {
                                 </ViewAudio>
                                 <Question>{currentQuestion?.question}</Question>
                                 <Answers>
-                                    Ihre Antwort:
+                                    Your Answer:
                                     <input type="text" value={userAnswers[currentIndex + 1]}
                                            onChange={handleUserAnsweres} ref={inputRef}/>
                                 </Answers>

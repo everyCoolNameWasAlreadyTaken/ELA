@@ -298,7 +298,7 @@ return (
                               </ResultCard>                         
                             </ContentBox>
 
-                            Score: {userScore}
+                            Score: {userScore} out of 100
                               
                               <ButtonWrapperLarge>
                                   <ContinueButton onClick={reload}>
