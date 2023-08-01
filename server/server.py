@@ -144,7 +144,7 @@ def get_first_paragraph_from_wikipedia_article(wikipedia_article_title):
     wiki_wiki = wikipediaapi.Wikipedia(user_agent="Mozilla/5.0")
     page = wiki_wiki.page(wikipedia_article_title)
     if page.exists():
-        return page.summary.split('\n', 1)[0]  # Den ersten Absatz aus der Zusammenfassung extrahieren
+        return page.summary.split('\n', 1)[0] 
 
     return "Kein erster Absatz gefunden."
 

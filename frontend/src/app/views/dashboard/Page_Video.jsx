@@ -37,8 +37,8 @@ const PageVideo = () => {
             <Card elevation={3} sx={{pt: '20px', mb: 3}}>
                 <CardHeader>
                     <Title>Trailer Quiz</Title>
-                    <SubTitle>Play the Video and give the answer. To continue press the Button on the buttom right
-                        corner.</SubTitle>
+                    <SubTitle>You will see a short clip from a Movie Trailer. Answer given questions regarding the shown movie in the clip. 
+                        </SubTitle>
                 </CardHeader>
             </Card>
             <Box overflow="auto" justifyContent="center">

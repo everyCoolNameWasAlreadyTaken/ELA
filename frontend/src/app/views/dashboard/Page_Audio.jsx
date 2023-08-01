@@ -38,7 +38,7 @@ const Analytics = () => {
             <Card elevation={3} sx={{pt: '20px', mb: 3}}>
                 <CardHeader>
                     <Title>Movie Theme Quiz</Title>
-                    <SubTitle>Play the Audio and give the answer. To continue press the Button on the buttom right
+                    <SubTitle>You will hear a short clip from a Movie theme. Answer given questions regarding the played movie in the clip. 
                         corner.</SubTitle>
                 </CardHeader>
             </Card>

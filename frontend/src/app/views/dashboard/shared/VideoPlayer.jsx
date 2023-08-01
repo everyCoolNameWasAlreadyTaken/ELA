@@ -222,7 +222,6 @@ const VideoPlayer = () => {
                 return question.answer;
             });
             setAnswers(answers);
-            console.log(answers);
 
         } catch (error) {
             console.error('Error:', error);
@@ -297,11 +296,7 @@ const VideoPlayer = () => {
 
         if (UserisCorrect) {
             setScore(score + 1);
-            console.log("Die Antwort ist korrekt!");
-            console.log("answerscore", similarity);
         } else {
-            console.log("Die Antwort ist falsch!");
-            console.log("answerscore", similarity);
         }
         const nextIndex = currentIndex + 1;
         if (nextIndex < questions.length) {
@@ -314,7 +309,6 @@ const VideoPlayer = () => {
     };
 
     function makeTextColourful(similarity) {
-        console.log("The similarity is: ", similarity.similarity);
         var textStyle = 'red';
         if (similarity.similarity === 1) {
             textStyle = 'green';
@@ -323,7 +317,6 @@ const VideoPlayer = () => {
         } else {
             textStyle = 'red';
         }
-        console.log("The colour is: ", textStyle);
         return (textStyle);
     }
 
@@ -344,10 +337,8 @@ const VideoPlayer = () => {
                 }))
             }
         };
-        console.log(answerData);
         server.post(`/users/${userId}/quiz/answers`, answerData)
             .then(response => {
-                console.log(response.data)
             })
             .catch(error => {
                 console.error('Error sending answer data:', error);
@@ -497,7 +488,7 @@ const VideoPlayer = () => {
                                 </ViewAudio>
                                 <Question>{currentQuestion?.question}</Question>
                                 <Answers>
-                                    Ihre Antwort:
+                                    Your Answer:
                                     <input type="text" value={userAnswers[currentIndex + 1]}
                                            onChange={handleUserAnsweres} ref={inputRef}/>
                                 </Answers>
