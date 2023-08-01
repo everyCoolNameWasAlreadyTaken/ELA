@@ -208,7 +208,7 @@ const VideoPlayer = () => {
     const [feedback, setFeedback] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const fetchAudioData = async () => {
+    const fetchVideoData = async () => {
         try {
             const response = await server.get(`/video`);
             const videoData = response.data;
@@ -247,7 +247,7 @@ const VideoPlayer = () => {
     const handleStartQuiz = () => {
         setQuizStarted(true);
         setTimeTaken(0);
-        fetchAudioData();
+        fetchVideoData();
     };
 
     const handleUserAnsweres = (event) => {
@@ -355,7 +355,7 @@ const VideoPlayer = () => {
         setIsLoading(false);
         setFeedback(false);
         setFeedbackData('');
-        fetchAudioData();
+        fetchVideoData();
     };
 
     const currentQuestion = questions[currentIndex];
@@ -368,8 +368,8 @@ const VideoPlayer = () => {
         .join('\n');
 
     const feedbackPrompt = 'I am currently participating in an online quiz about movies, their genre, directors ' +
-        'and actors. I just finished an Audio Quiz where I got to listen to a 20 second movie theme sample. ' +
-        `The Movie is ${audioName}` + 'This was the result at the end:\n ' + mappedString +
+        'and actors. I just finished a Video  Quiz where I got to watch a 20 second movie scene sample. ' +
+        `The Movie is ${audioName}` + 'This was the result of my Quiz:\n ' + mappedString +
         `\nIt took me ${timeTaken} Minutes to complete the Quiz. Can you give me a short synopsis of the movie and 
         also if I have wrong answers provide a suggestion why I have thought that "My Answer" was true while it was 
         wrong. Can you give the synopsis first and then one paragraph with the suggestion for each question?`;
@@ -379,8 +379,6 @@ const VideoPlayer = () => {
         setFeedbackData('');
         setFeedback(false);
         setShowScore(false);
-        console.log(questions)
-        console.log(feedbackPrompt)
 
         server
             .post(`/users/${userId}/chat`, {content: feedbackPrompt})

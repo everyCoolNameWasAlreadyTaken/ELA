@@ -59,7 +59,7 @@ const Question = styled('p')(({theme}) => ({
 
 const QuestionTitle = styled(Typography)(({theme}) => ({
     marginTop: '5px',
-    fontSize: '2rem',
+    fontSize: '1.75rem',
     textAlign: 'center',
     fontWeight: 'bold',
     zIndex: 1,

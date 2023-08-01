@@ -121,7 +121,7 @@ const WikipediaQuiz = () => {
   const processTextWithPlaceholders = (text) => {
     const regex = /_+/g;
     const replacedText = text.replace(regex, '%PLACEHOLDER%');
-    
+
     return replacedText;
   };
 
@@ -173,21 +173,21 @@ const WikipediaQuiz = () => {
     let mergedText = article;
     const placeholders = article.split('%PLACEHOLDER%');
     let userInputIndex = 0;
-  
+
     for (let i = 1; i < placeholders.length; i++) {
       const inputName = `input${userInputIndex}`;
       const userInput = inputs[inputName] || '';
       const placeholder = placeholders[i];
-  
+
       if (mergedText.includes(`%PLACEHOLDER%${placeholder}`)) {
         mergedText = mergedText.replace(`%PLACEHOLDER%${placeholder}`, `${userInput}${placeholder}`);
         userInputIndex++;
       }
     }
-  
-    
 
-    
+
+
+
     setShowScore(true);
     setAnswerArticle(mergedText);
   };
@@ -195,16 +195,16 @@ const WikipediaQuiz = () => {
   const calculateAccuracy = (correctText, userText) => {
     const correctWords = correctText.split(/\s+/);
     const userWords = userText.split(/\s+/);
-    
+
     let totalWords = correctWords.length;
     let correctWordsCount = 0;
-    
+
     for (let i = 0; i < totalWords; i++) {
       if (correctWords[i] === userWords[i]) {
         correctWordsCount++;
       }
     }
-    
+
     const accuracy = (correctWordsCount / totalWords) * 100;
     return accuracy;
   };
@@ -214,7 +214,7 @@ const WikipediaQuiz = () => {
     const roundedScore = Math.round(accuracy);
     setuserScore(roundedScore);
   };
-  
+
 
 
   const handleChangeInput = (event, inputName) => {
@@ -225,7 +225,7 @@ const WikipediaQuiz = () => {
   const handleStartQuiz = () => {
     setQuizStarted(true);
     fetchWikiArticle();
-    
+
   };
 
   const reload = () => {
@@ -238,9 +238,9 @@ const WikipediaQuiz = () => {
     setQuizStarted(false);
     setLoading(false);
 };
-  
 
- 
+
+
 
 return (
               <ContentBox>
@@ -250,7 +250,7 @@ return (
                         <StartButton onClick={handleStartQuiz}>Start Quiz</StartButton>
                       </ContentBox>
                     </>
-                ):!showScore ?(  
+                ):!showScore ?(
                     <>
                       <QuestionCard>
                         <CardContent>
@@ -284,22 +284,22 @@ return (
                           {userScore !== 0 ? (
                             <>
                             <ContentBox>
-                            <ResultCard>                            
+                            <ResultCard>
                                 Your Text
                             <Answer>
                                 {answerarticle}
-                            </Answer>  
+                            </Answer>
                               </ResultCard>
-                              <ResultCard>                     
+                              <ResultCard>
                                 Wikis Text
                                 <Answer>
                                 {correctarticle}
-                              </Answer> 
-                              </ResultCard>                         
+                              </Answer>
+                              </ResultCard>
                             </ContentBox>
 
                             Score: {userScore} out of 100
-                              
+
                               <ButtonWrapperLarge>
                                   <ContinueButton onClick={reload}>
                                       New Quiz
@@ -312,16 +312,16 @@ return (
                               {handleTextScore()}
                               </>
                             )}
-                          
+
                         </div>
                          </CardContent>
-                      </QuestionCard> 
+                      </QuestionCard>
 
                     </ContentBox>
                   </>
                 )}
               </ContentBox>
-                      
+
 );
 };
 
